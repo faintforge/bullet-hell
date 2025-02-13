@@ -8,6 +8,7 @@ namespace BulletHell {
         private IntPtr sdlGLContext;
 
         public bool Open { get; private set; } = true;
+        public Vector2 Size { get; private set; }
 
         public Window(string name, int width, int height, bool resizable = false, bool vsync = false) {
             if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) < 0) {
@@ -42,6 +43,14 @@ namespace BulletHell {
                 Console.WriteLine("SDL failed to create GL context!");
                 Environment.Exit(1);
             }
+
+            if (vsync) {
+                SDL.SDL_GL_SetSwapInterval(1);
+            } else {
+                SDL.SDL_GL_SetSwapInterval(0);
+            }
+
+            Size = new Vector2(width, height);
         }
 
         ~Window() {
@@ -51,11 +60,26 @@ namespace BulletHell {
         public void PollEvents() {
             SDL.SDL_Event ev;
             while (SDL.SDL_PollEvent(out ev) == 1) {
-                switch (ev.type) {
-                    case SDL.SDL_EventType.SDL_QUIT:
-                        Open = false;
-                        break;
-                }
+                HandleEvent(ev);
+            }
+        }
+
+        private void HandleEvent(SDL.SDL_Event ev) {
+            switch (ev.type) {
+                case SDL.SDL_EventType.SDL_QUIT:
+                    Open = false;
+                    break;
+                case SDL.SDL_EventType.SDL_WINDOWEVENT:
+                    HandleWindowEvent(ev.window);
+                    break;
+            }
+        }
+
+        private void HandleWindowEvent(SDL.SDL_WindowEvent ev) {
+            switch (ev.windowEvent) {
+                case SDL.SDL_WindowEventID.SDL_WINDOWEVENT_RESIZED:
+                    Size = new Vector2(ev.data1, ev.data2);
+                    break;
             }
         }
 
