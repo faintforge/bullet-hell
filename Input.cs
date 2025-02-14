@@ -19,6 +19,8 @@ namespace BulletHell {
 
         private Dictionary<SDL.SDL_Keycode, KeyState> keyboardMap = new Dictionary<SDL.SDL_Keycode, KeyState>();
 
+        private Input() {}
+
         public bool GetKey(SDL.SDL_Keycode code) {
             KeyState result;
             if (!keyboardMap.TryGetValue(code, out result)) {
@@ -43,7 +45,7 @@ namespace BulletHell {
             return !result.IsDown && result.IsFirstFrame;
         }
 
-        public void SetKeyState(SDL.SDL_Keycode code, bool isDown) {
+        internal void SetKeyState(SDL.SDL_Keycode code, bool isDown) {
             keyboardMap[code] = new KeyState() {
                 IsFirstFrame = true,
                 IsDown = isDown,

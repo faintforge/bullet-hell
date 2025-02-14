@@ -13,6 +13,14 @@ namespace BulletHell {
                 );
             Renderer renderer = new Renderer();
 
+            byte[] pixels = {
+                255, 0, 0, 255,
+                0, 255, 0, 255,
+                0, 0, 255, 255,
+                255, 255, 0, 255,
+            };
+            Texture texture = Texture.Create<byte>(new Vector2(2), TextureFormat.RgbaU8, pixels);
+
             const float speed = 25.0f;
             Vector2 pos = new Vector2();
             Vector2 camPos = new Vector2();
@@ -43,6 +51,7 @@ namespace BulletHell {
                 camPos.Y = camPos.Y + (pos.Y - camPos.Y) * dt * 5.0f;
 
                 renderer.BeginFrame(window.Size, 50.0f, camPos);
+                texture.Bind();
                 renderer.Draw(pos, new Vector2(1.0f), Color.HSV(SDL.SDL_GetTicks() / 10, 0.75f, 1.0f));
                 renderer.Draw(new Vector2(), new Vector2(1.0f), Color.WHITE);
                 renderer.EndFrame();

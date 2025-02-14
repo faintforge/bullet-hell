@@ -34,7 +34,7 @@ namespace BulletHell {
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer);
             GL.BufferData(BufferTarget.ArrayBuffer, maxQuadCount * 6 * Marshal.SizeOf<Vertex>(), IntPtr.Zero, BufferUsage.DynamicDraw);
 
-            // Positino
+            // Position
             GL.VertexAttribPointer(
                     0,
                     2,
@@ -119,10 +119,10 @@ namespace BulletHell {
                 new Vector2( 0.5f,  0.5f),
             ];
             Vector2[] vertUV = [
-                new Vector2(1.0f, 0.0f),
-                new Vector2(0.0f, 0.0f),
-                new Vector2(1.0f, 1.0f),
                 new Vector2(0.0f, 1.0f),
+                new Vector2(1.0f, 1.0f),
+                new Vector2(0.0f, 0.0f),
+                new Vector2(1.0f, 0.0f),
             ];
 
             for (int i = 0; i < 4; i++) {
