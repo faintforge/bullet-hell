@@ -6,11 +6,12 @@ namespace BulletHell {
     public class Window {
         private IntPtr sdlWindow;
         private IntPtr sdlGLContext;
+        private bool fullscreen;
 
         public bool Open { get; private set; } = true;
         public Vector2 Size { get; private set; }
 
-        public Window(string name, int width, int height, bool resizable = false, bool vsync = false) {
+        public Window(string name, int width, int height, bool resizable = false, bool vsync = false, bool fullscreen = false) {
             if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) < 0) {
                 Console.WriteLine("SDL failed to initialize!");
                 Environment.Exit(1);
@@ -25,6 +26,10 @@ namespace BulletHell {
             if (resizable) {
                 flags |= SDL.SDL_WindowFlags.SDL_WINDOW_RESIZABLE;
             }
+            if (fullscreen) {
+                flags |= SDL.SDL_WindowFlags.SDL_WINDOW_FULLSCREEN_DESKTOP;
+            }
+            this.fullscreen = fullscreen;
 
             sdlWindow = SDL.SDL_CreateWindow(
                     "Window",
@@ -85,6 +90,24 @@ namespace BulletHell {
 
         public void SwapBuffers() {
             SDL.SDL_GL_SwapWindow(sdlWindow);
+        }
+
+        public void SetFullscreen(bool fullscreen) {
+            if (this.fullscreen == fullscreen) {
+                return;
+            }
+
+            if (fullscreen) {
+                SDL.SDL_SetWindowFullscreen(sdlWindow, (uint) SDL.SDL_WindowFlags.SDL_WINDOW_FULLSCREEN_DESKTOP);
+            } else {
+                SDL.SDL_SetWindowFullscreen(sdlWindow, 0);
+            }
+
+            this.fullscreen = fullscreen;
+        }
+
+        public void ToggleFullscreen() {
+            SetFullscreen(!fullscreen);
         }
     }
 
