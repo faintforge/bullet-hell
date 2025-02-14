@@ -19,6 +19,7 @@ namespace BulletHell {
         private int currentQuad = 0;
         private Shader shader;
         private Matrix4 projection;
+        private Vector2 cameraPos;
 
         private Vertex[] vertices;
 
@@ -90,12 +91,13 @@ namespace BulletHell {
             GL.DeleteBuffer(indexBuffer);
         }
 
-        public void BeginFrame(Vector2 screenSize, float zoom) {
+        public void BeginFrame(Vector2 screenSize, float zoom, Vector2 cameraPos) {
             currentQuad = 0;
 
             zoom /= 2.0f;
             float aspect = screenSize.X / screenSize.Y * zoom;
             projection = Matrix4.OrthographicProjection(-aspect, aspect, zoom, -zoom, -1.0f, 1.0f);
+            this.cameraPos = cameraPos;
         }
 
         public void EndFrame() {
@@ -128,6 +130,7 @@ namespace BulletHell {
                 vert.Pos = vertPos[i];
                 vert.Pos *= size;
                 vert.Pos += pos;
+                vert.Pos -= cameraPos;
 
                 vert.UV = vertUV[i];
                 vert.Color = color;

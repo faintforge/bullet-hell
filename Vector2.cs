@@ -35,5 +35,21 @@ namespace BulletHell {
         public static Vector2 operator /(Vector2 vec, float scaler) => vec.Div(scaler);
         public static Vector2 operator +(Vector2 vec, float scaler) => vec.Add(scaler);
         public static Vector2 operator -(Vector2 vec, float scaler) => vec.Sub(scaler);
+
+        public float MagnitudeSquared() {
+            return X * X + Y * Y;
+        }
+
+        public float Magnitude() {
+            return (float) Math.Sqrt(MagnitudeSquared());
+        }
+
+        public Vector2 Normalized() {
+            return this / Magnitude();
+        }
+
+        public void Normalize() {
+            this /= Magnitude();
+        }
     }
 }
