@@ -33,7 +33,8 @@ namespace BulletHell {
             return tex;
         }
 
-        public void Bind() {
+        public void Bind(uint slot) {
+            GL.ActiveTexture(TextureUnit.Texture0 + slot);
             GL.BindTexture(TextureTarget.Texture2d, handle);
         }
     }

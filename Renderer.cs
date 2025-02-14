@@ -8,6 +8,7 @@ namespace BulletHell {
             public Vector2 Pos { get; set; } = new Vector2();
             public Vector2 UV { get; set; } = new Vector2();
             public Color Color { get; set; } = new Color();
+            public float textureIndex { get; set; } = 0;
 
             public Vertex() {}
         }
@@ -20,6 +21,10 @@ namespace BulletHell {
         private Shader shader;
         private Matrix4 projection;
         private Vector2 cameraPos;
+        private Texture[] textures = new Texture[32];
+        private int currentTexture = 1;
+        private Vector2 screenSize;
+        private float zoom;
 
         private Vertex[] vertices;
 
@@ -67,6 +72,17 @@ namespace BulletHell {
                 );
             GL.EnableVertexAttribArray(2);
 
+            // Color
+            GL.VertexAttribPointer(
+                    3,
+                    1,
+                    VertexAttribPointerType.Float,
+                    false,
+                    Marshal.SizeOf<Vertex>(),
+                    Marshal.SizeOf<Vector2>() * 2 + Marshal.SizeOf<Color>()
+                );
+            GL.EnableVertexAttribArray(3);
+
             indexBuffer = GL.CreateBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
             uint[] indices = new uint[maxQuadCount * 6];
@@ -83,6 +99,15 @@ namespace BulletHell {
             GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsage.StaticDraw);
 
             shader = Shader.FromFile("assets/batch.vert.glsl", "assets/batch.frag.glsl");
+            int[] samplers = new int[32];
+            for (int i = 0; i < samplers.Length; i++) {
+                samplers[i] = i;
+            }
+            shader.Use();
+            shader.UniformInt("textures", samplers);
+
+            byte[] pixels = {255, 255, 255, 255};
+            textures[0] = Texture.Create<byte>(new Vector2(1.0f), TextureFormat.RgbaU8, pixels);
         }
 
         ~Renderer() {
@@ -92,12 +117,16 @@ namespace BulletHell {
         }
 
         public void BeginFrame(Vector2 screenSize, float zoom, Vector2 cameraPos) {
+            this.screenSize = screenSize;
+            this.zoom = zoom;
+            this.cameraPos = cameraPos;
+
             currentQuad = 0;
+            currentTexture = 1;
 
             zoom /= 2.0f;
             float aspect = screenSize.X / screenSize.Y * zoom;
             projection = Matrix4.OrthographicProjection(-aspect, aspect, zoom, -zoom, -1.0f, 1.0f);
-            this.cameraPos = cameraPos;
         }
 
         public void EndFrame() {
@@ -106,12 +135,35 @@ namespace BulletHell {
 
             shader.Use();
             shader.UniformMatrix4("projection", projection);
+            for (uint i = 0; i < currentTexture; i++) {
+                textures[i].Bind(i);
+            }
             GL.BindVertexArray(vertexArray);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
             GL.DrawElements(PrimitiveType.Triangles, currentQuad * 6, DrawElementsType.UnsignedInt, IntPtr.Zero);
         }
 
-        public void Draw(Vector2 pos, Vector2 size, Color color) {
+        public void Draw(Vector2 pos, Vector2 size, Color color, Texture? texture = null) {
+            if (currentQuad == maxQuadCount || currentTexture == textures.Length) {
+                EndFrame();
+                BeginFrame(screenSize, zoom, cameraPos);
+            }
+
+            float textureIndex = 0;
+            if (texture != null) {
+                for (int i = 0; i < currentTexture; i++) {
+                    if (texture == textures[i]) {
+                        textureIndex = i;
+                    }
+                }
+
+                if (textureIndex == 0) {
+                    textures[currentTexture] = texture;
+                    textureIndex = currentTexture;
+                    currentTexture++;
+                }
+            }
+
             Vector2[] vertPos = [
                 new Vector2(-0.5f, -0.5f),
                 new Vector2( 0.5f, -0.5f),
@@ -134,6 +186,7 @@ namespace BulletHell {
 
                 vert.UV = vertUV[i];
                 vert.Color = color;
+                vert.textureIndex = textureIndex;
             }
 
             currentQuad++;

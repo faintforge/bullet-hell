@@ -1,5 +1,6 @@
 using OpenTK.Graphics.OpenGL;
 using TKMatrix4 = OpenTK.Mathematics.Matrix4;
+using System.Runtime.InteropServices;
 
 namespace BulletHell {
     public class Shader {
@@ -81,6 +82,16 @@ namespace BulletHell {
                     matrix.L[3]
                 );
             GL.UniformMatrix4f(loc, 1, false, ref tkMatrix);
+        }
+
+        public void UniformInt(string name, int value) {
+            int loc = GL.GetUniformLocation(program, name);
+            GL.Uniform1i(loc, value);
+        }
+
+        public void UniformInt(string name, int[] array) {
+            int loc = GL.GetUniformLocation(program, name);
+            GL.Uniform1i(loc, array.Length, array);
         }
     }
 }

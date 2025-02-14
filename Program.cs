@@ -47,13 +47,13 @@ namespace BulletHell {
                 vel *= speed;
 
                 pos += vel * dt;
+                // Lerp camera to player position
                 camPos.X = camPos.X + (pos.X - camPos.X) * dt * 5.0f;
                 camPos.Y = camPos.Y + (pos.Y - camPos.Y) * dt * 5.0f;
 
                 renderer.BeginFrame(window.Size, 50.0f, camPos);
-                texture.Bind();
                 renderer.Draw(pos, new Vector2(1.0f), Color.HSV(SDL.SDL_GetTicks() / 10, 0.75f, 1.0f));
-                renderer.Draw(new Vector2(), new Vector2(1.0f), Color.WHITE);
+                renderer.Draw(new Vector2(), new Vector2(1.0f), Color.WHITE, texture);
                 renderer.EndFrame();
 
                 if (Input.Instance.GetKeyOnDown(SDL.SDL_Keycode.SDLK_F11)) {
