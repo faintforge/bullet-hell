@@ -77,6 +77,15 @@ namespace BulletHell {
                 case SDL.SDL_EventType.SDL_WINDOWEVENT:
                     HandleWindowEvent(ev.window);
                     break;
+                case SDL.SDL_EventType.SDL_KEYDOWN:
+                case SDL.SDL_EventType.SDL_KEYUP: {
+                    SDL.SDL_Keycode code = ev.key.keysym.sym;
+                    if (ev.key.repeat == 1) {
+                        break;
+                    }
+                    bool isDown = ev.type == SDL.SDL_EventType.SDL_KEYDOWN;
+                    Input.Instance.SetKeyState(code, isDown);
+                } break;
             }
         }
 
