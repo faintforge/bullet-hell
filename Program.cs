@@ -13,13 +13,8 @@ namespace BulletHell {
                 );
             Renderer renderer = new Renderer();
 
-            byte[] pixels = {
-                255, 0, 0, 255,
-                0, 255, 0, 255,
-                0, 0, 255, 255,
-                255, 255, 0, 255,
-            };
-            Texture texture = Texture.Create<byte>(new Vector2(2), TextureFormat.RgbaU8, pixels);
+            Vector2 vec = new Vector2(1.0f, 0.0f);
+            vec.Rotate(45.0f);
 
             const float speed = 25.0f;
             Vector2 pos = new Vector2();
@@ -33,7 +28,7 @@ namespace BulletHell {
                 last = curr;
 
                 GL.Viewport(0, 0, (int) window.Size.X, (int) window.Size.Y);
-                GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+                GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                 GL.Clear(ClearBufferMask.ColorBufferBit);
 
                 Vector2 vel = new Vector2();
@@ -53,7 +48,7 @@ namespace BulletHell {
 
                 renderer.BeginFrame(window.Size, 50.0f, camPos);
                 renderer.Draw(pos, new Vector2(1.0f), Color.HSV(SDL.SDL_GetTicks() / 10, 0.75f, 1.0f));
-                renderer.Draw(new Vector2(), new Vector2(1.0f), Color.WHITE, texture);
+                renderer.Draw(new Vector2(), new Vector2(1.0f), Color.WHITE, null, (float) SDL.SDL_GetTicks() / 1000.0f);
                 renderer.EndFrame();
 
                 if (Input.Instance.GetKeyOnDown(SDL.SDL_Keycode.SDLK_F11)) {

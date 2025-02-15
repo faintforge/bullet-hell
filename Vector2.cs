@@ -51,5 +51,15 @@ namespace BulletHell {
         public void Normalize() {
             this /= Magnitude();
         }
+
+        public Vector2 Rotated(float angle) {
+            return new Vector2(
+                     X * (float) Math.Cos(angle) + Y * (float) Math.Sin(angle),
+                    -X * (float) Math.Sin(angle) + Y * (float) Math.Cos(angle)
+                );
+        }
+        public void Rotate(float angle) {
+            this = Rotated(angle);
+        }
     }
 }

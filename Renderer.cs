@@ -7,7 +7,7 @@ namespace BulletHell {
         private struct Vertex {
             public Vector2 Pos { get; set; } = new Vector2();
             public Vector2 UV { get; set; } = new Vector2();
-            public Color Color { get; set; } = new Color();
+            public Color Color { get; set; } = Color.WHITE;
             public float textureIndex { get; set; } = 0;
 
             public Vertex() {}
@@ -143,7 +143,7 @@ namespace BulletHell {
             GL.DrawElements(PrimitiveType.Triangles, currentQuad * 6, DrawElementsType.UnsignedInt, IntPtr.Zero);
         }
 
-        public void Draw(Vector2 pos, Vector2 size, Color color, Texture? texture = null) {
+        public void Draw(Vector2 pos, Vector2 size, Color color, Texture? texture = null, float rotation = 0.0f) {
             if (currentQuad == maxQuadCount || currentTexture == textures.Length) {
                 EndFrame();
                 BeginFrame(screenSize, zoom, cameraPos);
@@ -180,6 +180,7 @@ namespace BulletHell {
             for (int i = 0; i < 4; i++) {
                 ref Vertex vert = ref vertices[currentQuad * 4 + i];
                 vert.Pos = vertPos[i];
+                vert.Pos = vert.Pos.Rotated(rotation);
                 vert.Pos *= size;
                 vert.Pos += pos;
                 vert.Pos -= cameraPos;

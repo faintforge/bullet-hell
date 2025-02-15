@@ -1,4 +1,7 @@
+using System.Runtime.InteropServices;
+
 namespace BulletHell {
+    [StructLayout(LayoutKind.Sequential)]
     public struct Color {
         public readonly static Color WHITE = Color.HexRGB(0xffffff);
         public readonly static Color BLACK = Color.HexRGB(0x000000);
