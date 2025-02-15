@@ -30,6 +30,8 @@ namespace BulletHell {
             GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureWrapS, (int) TextureWrapMode.ClampToEdge);
             GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureWrapT, (int) TextureWrapMode.ClampToEdge);
 
+            tex.Size = size;
+
             return tex;
         }
 

@@ -13,6 +13,8 @@ namespace BulletHell {
                 );
             Renderer renderer = new Renderer();
 
+            Font font = new Font("/usr/share/fonts/TTF/SplineSans-Regular.ttf", 32, new Vector2(512));
+
             Vector2 vec = new Vector2(1.0f, 0.0f);
             vec.Rotate(45.0f);
 
@@ -49,6 +51,10 @@ namespace BulletHell {
                 renderer.BeginFrame(window.Size, 50.0f, camPos);
                 renderer.Draw(pos, new Vector2(1.0f), Color.HSV(SDL.SDL_GetTicks() / 10, 0.75f, 1.0f));
                 renderer.Draw(new Vector2(), new Vector2(1.0f), Color.WHITE, null, (float) SDL.SDL_GetTicks() / 1000.0f);
+                renderer.EndFrame();
+
+                renderer.BeginFrame(window.Size, window.Size.Y, new Vector2());
+                renderer.Draw(new Vector2(), font.Atlas.Size, Color.WHITE, font.Atlas);
                 renderer.EndFrame();
 
                 if (Input.Instance.GetKeyOnDown(SDL.SDL_Keycode.SDLK_F11)) {

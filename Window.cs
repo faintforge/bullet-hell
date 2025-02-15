@@ -18,6 +18,11 @@ namespace BulletHell {
                 Environment.Exit(1);
             }
 
+            if (SDL_ttf.TTF_Init() < 0) {
+                Console.WriteLine("SDL failed to initialize TTF subsystem!");
+                Environment.Exit(1);
+            }
+
             GLLoader.LoadBindings(new SDLGLLoader());
             SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_MULTISAMPLESAMPLES, 4);
             SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_MAJOR_VERSION, 4);
@@ -51,6 +56,8 @@ namespace BulletHell {
                 Environment.Exit(1);
             }
             GL.Enable(EnableCap.Multisample);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);
 
             if (vsync) {
                 SDL.SDL_GL_SetSwapInterval(1);
@@ -62,6 +69,7 @@ namespace BulletHell {
         }
 
         ~Window() {
+            SDL_ttf.TTF_Quit();
             SDL.SDL_Quit();
         }
 
