@@ -49,12 +49,20 @@ namespace BulletHell {
                 camPos.Y = camPos.Y + (pos.Y - camPos.Y) * dt * 5.0f;
 
                 renderer.BeginFrame(window.Size, 50.0f, camPos);
-                renderer.Draw(pos, new Vector2(1.0f), Color.HSV(SDL.SDL_GetTicks() / 10, 0.75f, 1.0f));
-                renderer.Draw(new Vector2(), new Vector2(1.0f), Color.WHITE, null, (float) SDL.SDL_GetTicks() / 1000.0f);
+                renderer.Draw(new Vector2(), pos, new Vector2(1.0f), Color.HSV(SDL.SDL_GetTicks() / 10, 0.75f, 1.0f));
+                renderer.Draw(new Vector2(), new Vector2(), new Vector2(1.0f), Color.WHITE, null, (float) SDL.SDL_GetTicks() / 1000.0f);
                 renderer.EndFrame();
 
-                renderer.BeginFrame(window.Size, window.Size.Y, new Vector2());
-                renderer.Draw(new Vector2(), font.Atlas.Size, Color.WHITE, font.Atlas);
+                renderer.BeginFrame(window.Size, window.Size.Y, window.Size / 2.0f, true);
+
+                string str = "The quick brown fox jumps over the lazy dog.";
+                Vector2 gpos = new Vector2(8.0f);
+                foreach (char c in str) {
+                    Glyph g = font.GetGlyph(c);
+                    renderer.DrawUV(new Vector2(-1.0f), gpos, g.Size, Color.WHITE, font.Atlas, g.UVs[0], g.UVs[1]);
+                    gpos.X += g.Advance;
+                }
+
                 renderer.EndFrame();
 
                 if (Input.Instance.GetKeyOnDown(SDL.SDL_Keycode.SDLK_F11)) {

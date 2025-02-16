@@ -57,7 +57,9 @@ namespace BulletHell {
             }
             GL.Enable(EnableCap.Multisample);
             GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);
+            // GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);
+            // GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusSrcAlpha);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             if (vsync) {
                 SDL.SDL_GL_SetSwapInterval(1);

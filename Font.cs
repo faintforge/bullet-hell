@@ -2,9 +2,22 @@ using SDL2;
 using System.Runtime.InteropServices;
 
 namespace BulletHell {
+    public struct Glyph {
+        public Vector2 Size;
+        public Vector2 Offset;
+        public Vector2[] UVs;
+        public float Advance;
+    }
+
     public class Font {
+
         public Texture Atlas { get; private set; }
         IntPtr sdlFont;
+
+        const byte ASCII_START = 32;
+        const byte ASCII_END = 126;
+
+        private Glyph[] glyphs = new Glyph[ASCII_END - ASCII_START + 1];
 
         public Font(string filepath, int size, Vector2 atlasSize) {
             sdlFont = SDL_ttf.TTF_OpenFont(filepath, size);
@@ -17,8 +30,6 @@ namespace BulletHell {
 
             Vector2 atlasPos = new Vector2();
             float rowHeight = 0;
-            const byte ASCII_START = 32;
-            const byte ASCII_END = 126;
             for (ushort c = ASCII_START; c <= ASCII_END; c++) {
                 IntPtr glyphPtr = SDL_ttf.TTF_RenderGlyph_Blended(sdlFont, c, new SDL.SDL_Color{r=255, g=255, b=255, a=255});
                 SDL.SDL_Surface glyphSurface = Marshal.PtrToStructure<SDL.SDL_Surface>(glyphPtr);
@@ -45,8 +56,30 @@ namespace BulletHell {
                     }
                 }
 
+                Vector2 glyphPos = atlasPos;
+                Vector2 glyphSize = new Vector2(glyphSurface.w, glyphSurface.h);
+
                 atlasPos.X += glyphSurface.w;
                 rowHeight = Math.Max(rowHeight, glyphSurface.h);
+
+                int x0, y0;
+                int x1, y1;
+                int advance;
+                SDL_ttf.TTF_GlyphMetrics(sdlFont, c, out x0, out x1, out y0, out y1, out advance);
+
+                glyphs[c - ASCII_START] = new Glyph() {
+                    Advance = advance,
+                    // Size = new Vector2(x1 - x0, y1 - y0),
+                    Size = glyphSize,
+                    Offset = new Vector2(x0, y0),
+                    UVs = new Vector2[2] {
+                        glyphPos / atlasSize,
+                        (glyphPos + glyphSize) / atlasSize,
+                    },
+                };
+                // Console.WriteLine($"{(char) c}: ({x1 - x0}, {y1 - y0}), ({glyphSurface.w}, {glyphSurface.h}) {advance}");
+                // Console.WriteLine($"({x0}, {y0}), ({x1}, {y1})");
+                // Console.WriteLine($"({x0}, {y0}), ({x1}, {y1})");
             }
 
             Atlas = Texture.Create<byte>(atlasSize, TextureFormat.RgbaU8, atlasData);
@@ -54,6 +87,10 @@ namespace BulletHell {
 
         ~Font() {
             SDL_ttf.TTF_CloseFont(sdlFont);
+        }
+
+        public Glyph GetGlyph(char c) {
+            return glyphs[c - ASCII_START];
         }
     }
 }
