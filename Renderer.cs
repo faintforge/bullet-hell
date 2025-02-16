@@ -19,13 +19,9 @@ namespace BulletHell {
         private int maxQuadCount = 0;
         private int currentQuad = 0;
         private Shader shader;
-        private Matrix4 projection;
-        private Vector2 cameraPos;
         private Texture[] textures = new Texture[32];
         private int currentTexture = 1;
-        private Vector2 screenSize;
-        private float zoom;
-        private bool invertY;
+        private Camera cam;
 
         private Vertex[] vertices;
 
@@ -109,6 +105,8 @@ namespace BulletHell {
 
             byte[] pixels = {255, 255, 255, 255};
             textures[0] = Texture.Create<byte>(new Vector2(1.0f), TextureFormat.RgbaU8, pixels);
+
+            cam = new Camera(new Vector2(), new Vector2(), 0.0f);
         }
 
         ~Renderer() {
@@ -117,18 +115,10 @@ namespace BulletHell {
             GL.DeleteBuffer(indexBuffer);
         }
 
-        public void BeginFrame(Vector2 screenSize, float zoom, Vector2 cameraPos, bool invertY = false) {
-            this.screenSize = screenSize;
-            this.zoom = zoom;
-            this.cameraPos = cameraPos;
-            this.invertY = invertY;
-
+        public void BeginFrame(Camera cam) {
+            this.cam = cam;
             currentQuad = 0;
             currentTexture = 1;
-
-            zoom /= 2.0f;
-            float aspect = screenSize.X / screenSize.Y * zoom;
-            projection = Matrix4.OrthographicProjection(-aspect, aspect, zoom, -zoom, -1.0f, 1.0f);
         }
 
         public void EndFrame() {
@@ -136,7 +126,7 @@ namespace BulletHell {
             GL.BufferSubData<Vertex>(BufferTarget.ArrayBuffer, 0, Marshal.SizeOf<Vertex>() * currentQuad * 4, vertices);
 
             shader.Use();
-            shader.UniformMatrix4("projection", projection);
+            shader.UniformMatrix4("projection", cam.Projection);
             for (uint i = 0; i < currentTexture; i++) {
                 textures[i].Bind(i);
             }
@@ -148,7 +138,7 @@ namespace BulletHell {
         public void DrawUV(Vector2 origin, Vector2 pos, Vector2 size, Color color, Texture? texture, Vector2 uvTopLeft, Vector2 uvBottomRight, float rotation = 0.0f) {
             if (currentQuad == maxQuadCount || currentTexture == textures.Length) {
                 EndFrame();
-                BeginFrame(screenSize, zoom, cameraPos);
+                BeginFrame(cam);
             }
 
             float textureIndex = 0;
@@ -184,8 +174,8 @@ namespace BulletHell {
                 new Vector2(right, top),
             ];
 
-            Vector2 camPos = cameraPos;
-            if (invertY) {
+            Vector2 camPos = cam.Position;
+            if (cam.InvertY) {
                 pos.Y = -pos.Y;
                 origin.Y = -origin.Y;
                 camPos.Y = -camPos.Y;

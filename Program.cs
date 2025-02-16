@@ -7,7 +7,7 @@ namespace BulletHell {
             Window window = new Window(
                     "Window",
                     800, 600,
-                    resizable: false,
+                    resizable: true,
                     vsync: true,
                     fullscreen: true
                 );
@@ -20,7 +20,7 @@ namespace BulletHell {
 
             const float speed = 25.0f;
             Vector2 pos = new Vector2();
-            Vector2 camPos = new Vector2();
+            Camera cam = new Camera(window.Size, new Vector2(), 50.0f);
 
             uint last = SDL.SDL_GetTicks();
             float dt = 0.0f;
@@ -45,16 +45,18 @@ namespace BulletHell {
 
                 pos += vel * dt;
                 // Lerp camera to player position
-                camPos.X = camPos.X + (pos.X - camPos.X) * dt * 5.0f;
-                camPos.Y = camPos.Y + (pos.Y - camPos.Y) * dt * 5.0f;
+                cam.Position = new Vector2(
+                        cam.Position.X + (pos.X - cam.Position.X) * dt * 5.0f,
+                        cam.Position.Y + (pos.Y - cam.Position.Y) * dt * 5.0f);
 
-                renderer.BeginFrame(window.Size, 50.0f, camPos);
+                cam.SetScreenSize(window.Size);
+                renderer.BeginFrame(cam);
                 renderer.Draw(new Vector2(), pos, new Vector2(1.0f), Color.HSV(SDL.SDL_GetTicks() / 10, 0.75f, 1.0f));
                 renderer.Draw(new Vector2(), new Vector2(), new Vector2(1.0f), Color.WHITE, null, (float) SDL.SDL_GetTicks() / 1000.0f);
                 renderer.EndFrame();
 
-                renderer.BeginFrame(window.Size, window.Size.Y, window.Size / 2.0f, true);
-
+                Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);
+                renderer.BeginFrame(uiCam);
                 string str = "The quick brown fox jumps over the lazy dog.";
                 Vector2 gpos = new Vector2(8.0f);
                 foreach (char c in str) {
@@ -62,7 +64,6 @@ namespace BulletHell {
                     renderer.DrawUV(new Vector2(-1.0f), gpos, g.Size, Color.WHITE, font.Atlas, g.UVs[0], g.UVs[1]);
                     gpos.X += g.Advance;
                 }
-
                 renderer.EndFrame();
 
                 if (Input.Instance.GetKeyOnDown(SDL.SDL_Keycode.SDLK_F11)) {
