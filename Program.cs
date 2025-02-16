@@ -7,20 +7,25 @@ namespace BulletHell {
             Window window = new Window(
                     "Window",
                     800, 600,
-                    resizable: true,
+                    resizable: false,
                     vsync: true,
-                    fullscreen: true
+                    fullscreen: false
                 );
             Renderer renderer = new Renderer();
 
-            Font font = new Font("/usr/share/fonts/TTF/SplineSans-Regular.ttf", 32, new Vector2(512));
+            Font font = new Font("/usr/share/fonts/TTF/Lato-Regular.ttf", 32, new Vector2(512));
 
-            Vector2 vec = new Vector2(1.0f, 0.0f);
-            vec.Rotate(45.0f);
-
-            const float speed = 25.0f;
-            Vector2 pos = new Vector2();
             Camera cam = new Camera(window.Size, new Vector2(), 50.0f);
+
+            World world = new World();
+
+            Entity player = world.SpawnEntity(EntityFlag.Player | EntityFlag.Renderable);
+            player.Color = Color.RED;
+            player.Name = "player";
+
+            Entity spinner = world.SpawnEntity(EntityFlag.Renderable);
+            spinner.Color = Color.GREEN;
+            spinner.Name = "spinner";
 
             uint last = SDL.SDL_GetTicks();
             float dt = 0.0f;
@@ -33,26 +38,37 @@ namespace BulletHell {
                 GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
                 GL.Clear(ClearBufferMask.ColorBufferBit);
 
-                Vector2 vel = new Vector2();
-                vel.X -= Convert.ToInt32(Input.Instance.GetKey(SDL.SDL_Keycode.SDLK_a));
-                vel.X += Convert.ToInt32(Input.Instance.GetKey(SDL.SDL_Keycode.SDLK_d));
-                vel.Y -= Convert.ToInt32(Input.Instance.GetKey(SDL.SDL_Keycode.SDLK_s));
-                vel.Y += Convert.ToInt32(Input.Instance.GetKey(SDL.SDL_Keycode.SDLK_w));
-                if (vel.MagnitudeSquared() != 0.0f) {
-                    vel.Normalize();
-                }
-                vel *= speed;
+                spinner.Rot = (float) SDL.SDL_GetTicks() / 100.0f;
 
-                pos += vel * dt;
-                // Lerp camera to player position
-                cam.Position = new Vector2(
-                        cam.Position.X + (pos.X - cam.Position.X) * dt * 5.0f,
-                        cam.Position.Y + (pos.Y - cam.Position.Y) * dt * 5.0f);
+                world.Query(EntityFlag.Player, (entity) => {
+                    Vector2 vel = new Vector2();
+                    vel.X -= Convert.ToInt32(Input.Instance.GetKey(SDL.SDL_Keycode.SDLK_a));
+                    vel.X += Convert.ToInt32(Input.Instance.GetKey(SDL.SDL_Keycode.SDLK_d));
+                    vel.Y -= Convert.ToInt32(Input.Instance.GetKey(SDL.SDL_Keycode.SDLK_s));
+                    vel.Y += Convert.ToInt32(Input.Instance.GetKey(SDL.SDL_Keycode.SDLK_w));
+                    if (vel.MagnitudeSquared() != 0.0f) {
+                        vel.Normalize();
+                    }
+                    vel *= entity.Speed;
+                    entity.Pos += vel * dt;
+
+                    // Lerp camera to player position
+                    cam.Position = new Vector2(
+                            cam.Position.X + (entity.Pos.X - cam.Position.X) * dt * 5.0f,
+                            cam.Position.Y + (entity.Pos.Y - cam.Position.Y) * dt * 5.0f);
+                });
 
                 cam.SetScreenSize(window.Size);
                 renderer.BeginFrame(cam);
-                renderer.Draw(new Vector2(), pos, new Vector2(1.0f), Color.HSV(SDL.SDL_GetTicks() / 10, 0.75f, 1.0f));
-                renderer.Draw(new Vector2(), new Vector2(), new Vector2(1.0f), Color.WHITE, null, (float) SDL.SDL_GetTicks() / 1000.0f);
+                world.Query(EntityFlag.Renderable, (entity) => {
+                    renderer.Draw(
+                            entity.Origin,
+                            entity.Pos,
+                            entity.Size,
+                            entity.Color,
+                            entity.Texture,
+                            entity.Rot);
+                });
                 renderer.EndFrame();
 
                 Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);

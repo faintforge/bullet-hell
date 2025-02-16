@@ -5,12 +5,12 @@
 - Rendering
 - Input
 - Text rendering
-
-**Doing**
 - Entities
 
-**Needed**
+**Doing**
 - Spatial Partitioning
+
+**Needed**
 - Scene Switching
 - Collision detection
 - Player Entity / Controller
