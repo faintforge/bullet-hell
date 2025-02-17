@@ -152,6 +152,10 @@ namespace BulletHell {
         public void ToggleFullscreen() {
             SetFullscreen(!fullscreen);
         }
+
+        public void Close() {
+            Open = false;
+        }
     }
 
     internal class SDLGLLoader : IBindingsContext {

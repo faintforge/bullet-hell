@@ -39,5 +39,23 @@ namespace BulletHell {
                 Size = size,
             };
         }
+
+        public Vector2 Center() {
+            return Pos - ((Size * Origin) / 2.0f).Rotated(-Rot);
+        }
+
+        public bool ContainsPoint(Vector2 point) {
+            Vector2 center = Center();
+            Vector2 relPoint = point - center;
+            relPoint.Rotate(-Rot);
+            relPoint += center;
+
+            Vector2 min = center - Size / 2.0f;
+            Vector2 max = center + Size / 2.0f;
+            return relPoint.X >= min.X &&
+                relPoint.X <= max.X &&
+                relPoint.Y >= min.Y &&
+                relPoint.Y <= max.Y;
+        }
     }
 }

@@ -32,7 +32,7 @@ namespace BulletHell {
 
                 switch (scene) {
                     case Scene.MainMenu:
-                        MainMenu(window, renderer);
+                        MainMenu(window, renderer, ref scene);
                         break;
                     case Scene.Game:
                         game.Run(dt);
@@ -58,7 +58,7 @@ namespace BulletHell {
             AssetManager.Instance.LoadFont("lato32", "/usr/share/fonts/TTF/Lato-Regular.ttf", 32);
         }
 
-        private static void MainMenu(Window window, Renderer renderer) {
+        private static void MainMenu(Window window, Renderer renderer, ref Scene scene) {
             GL.Viewport(0, 0, (int) window.Size.X, (int) window.Size.Y);
             GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
@@ -66,6 +66,7 @@ namespace BulletHell {
             Font titleFont = AssetManager.Instance.GetFont("lato48");
             Font font = AssetManager.Instance.GetFont("lato32");
             Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);
+            Color color = Color.WHITE;
 
             renderer.BeginFrame(uiCam);
 
@@ -79,7 +80,15 @@ namespace BulletHell {
                 Pos = pos,
                 Size = font.MeasureText("Play") + 16.0f,
             };
-            renderer.Draw(playBox, Color.HexRGB(0x212121));
+            if (playBox.ContainsPoint(Input.Instance.MousePosition)) {
+                if (Input.Instance.GetButtonOnDown(MouseButton.Left)) {
+                    scene = Scene.Game;
+                }
+                color = Color.HexRGB(0x303030);
+            } else {
+                color = Color.HexRGB(0x212121);
+            }
+            renderer.Draw(playBox, color);
             pos += 8.0f;
             renderer.DrawText("Play", font, pos, Color.WHITE);
             pos.X -= 8.0f;
@@ -91,7 +100,15 @@ namespace BulletHell {
                 Pos = pos,
                 Size = font.MeasureText("Quit") + 16.0f,
             };
-            renderer.Draw(quitBox, Color.HexRGB(0x212121));
+            if (quitBox.ContainsPoint(Input.Instance.MousePosition)) {
+                if (Input.Instance.GetButtonOnDown(MouseButton.Left)) {
+                    window.Close();
+                }
+                color = Color.HexRGB(0x303030);
+            } else {
+                color = Color.HexRGB(0x212121);
+            }
+            renderer.Draw(quitBox, color);
             pos += 8.0f;
             renderer.DrawText("Quit", font, pos, Color.WHITE);
             pos.X -= 8.0f;
