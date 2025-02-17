@@ -9,8 +9,13 @@ namespace BulletHell {
         public float Advance;
     }
 
-    public class Font {
+    public struct FontMetrics {
+        public float Ascent;
+        public float Descent;
+        public float LineGap;
+    }
 
+    public class Font {
         public Texture Atlas { get; private set; }
         IntPtr sdlFont;
 
@@ -91,6 +96,24 @@ namespace BulletHell {
 
         public Glyph GetGlyph(char c) {
             return glyphs[c - ASCII_START];
+        }
+
+        public FontMetrics GetMetrics() {
+            return new FontMetrics() {
+                Ascent = SDL_ttf.TTF_FontAscent(sdlFont),
+                Descent = SDL_ttf.TTF_FontDescent(sdlFont),
+                LineGap = SDL_ttf.TTF_FontLineSkip(sdlFont),
+            };
+        }
+
+        public Vector2 MeasureText(string text) {
+            FontMetrics metrics = GetMetrics();
+            Vector2 size = new Vector2(0.0f, metrics.Ascent - metrics.Descent);
+            foreach (char c in text) {
+                Glyph glyph = GetGlyph(c);
+                size.X += glyph.Advance;
+            }
+            return size;
         }
     }
 }

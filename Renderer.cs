@@ -197,5 +197,19 @@ namespace BulletHell {
         public void Draw(Box box, Color color, Texture? texture = null) {
             DrawUV(box, color, texture, new Vector2(0.0f), new Vector2(1.0f));
         }
+
+        public void DrawText(string text, Font font, Vector2 position, Color color) {
+            Vector2 glyphPos = position;
+            foreach (char c in text) {
+                Glyph g = font.GetGlyph(c);
+                DrawUV(
+                        new Box() {
+                        Origin = new Vector2(-1.0f),
+                        Pos = glyphPos,
+                        Size = g.Size,
+                        }, color, font.Atlas, g.UVs[0], g.UVs[1]);
+                glyphPos.X += g.Advance;
+            }
+        }
     }
 }
