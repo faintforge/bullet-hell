@@ -99,6 +99,27 @@ namespace BulletHell {
                     bool isDown = ev.type == SDL.SDL_EventType.SDL_KEYDOWN;
                     Input.Instance.SetKeyState(code, isDown);
                 } break;
+                case SDL.SDL_EventType.SDL_MOUSEBUTTONDOWN:
+                case SDL.SDL_EventType.SDL_MOUSEBUTTONUP: {
+                    uint sdlButton = ev.button.button;
+                    MouseButton button = MouseButton.Left;
+                    switch (sdlButton) {
+                        case SDL.SDL_BUTTON_LEFT:
+                            button = MouseButton.Left;
+                            break;
+                        case SDL.SDL_BUTTON_MIDDLE:
+                            button = MouseButton.Middle;
+                            break;
+                        case SDL.SDL_BUTTON_RIGHT:
+                            button = MouseButton.Right;
+                            break;
+                    }
+                    bool isDown = ev.type == SDL.SDL_EventType.SDL_MOUSEBUTTONDOWN;
+                    Input.Instance.SetButtonState(button, isDown);
+                } break;
+                case SDL.SDL_EventType.SDL_MOUSEMOTION: {
+                    Input.Instance.MousePosition = new Vector2(ev.motion.x, ev.motion.y);
+                } break;
             }
         }
 

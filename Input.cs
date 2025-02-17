@@ -1,6 +1,12 @@
 using SDL2;
 
 namespace BulletHell {
+    public enum MouseButton {
+        Left,
+        Middle,
+        Right,
+    }
+
     public class Input {
         private struct KeyState {
             public bool IsDown;
@@ -18,6 +24,8 @@ namespace BulletHell {
         }
 
         private Dictionary<SDL.SDL_Keycode, KeyState> keyboardMap = new Dictionary<SDL.SDL_Keycode, KeyState>();
+        private KeyState[] mouseState = new KeyState[Enum.GetNames(typeof(MouseButton)).Length];
+        public Vector2 MousePosition { get; internal set; }
 
         private Input() {}
 
@@ -52,11 +60,36 @@ namespace BulletHell {
             };
         }
 
+        public bool GetButton(MouseButton button) {
+            return mouseState[(int) button].IsDown;
+        }
+
+        public bool GetButtonOnDown(MouseButton button) {
+            KeyState state = mouseState[(int) button];
+            return state.IsDown && state.IsFirstFrame;
+        }
+
+        public bool GetButtonOnUp(MouseButton button) {
+            KeyState state = mouseState[(int) button];
+            return !state.IsDown && state.IsFirstFrame;
+        }
+
+        internal void SetButtonState(MouseButton button, bool isDown) {
+            mouseState[(int) button] = new KeyState() {
+                IsFirstFrame = true,
+                IsDown = isDown,
+            };
+        }
+
         public void ResetFrame() {
             foreach (SDL.SDL_Keycode key in keyboardMap.Keys.ToList()) {
                 KeyState state = keyboardMap[key];
                 state.IsFirstFrame = false;
                 keyboardMap[key] = state;
+            }
+
+            for (int i = 0; i < mouseState.Length; i++) {
+                mouseState[i].IsFirstFrame = false;
             }
         }
     }

@@ -3,13 +3,14 @@
 **Done**
 - Windowing
 - Rendering
-- Input
+- Keyboard Input
 - Text rendering
 - Entities
 - Spatial Partitioning
+- Scene Switching
 
 **Doing**
-- Scene Switching
+- Mouse Input
 
 **Needed**
 - Collision detection

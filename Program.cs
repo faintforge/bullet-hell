@@ -39,6 +39,10 @@ namespace BulletHell {
                         break;
                 }
 
+                if (Input.Instance.GetButtonOnDown(MouseButton.Left)) {
+                    Console.WriteLine($"Left down at: {Input.Instance.MousePosition.X} {Input.Instance.MousePosition.Y}");
+                }
+
                 if (Input.Instance.GetKeyOnDown(SDL.SDL_Keycode.SDLK_F11)) {
                     window.ToggleFullscreen();
                 }
