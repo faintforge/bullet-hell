@@ -29,5 +29,11 @@ namespace BulletHell {
             float aspect = (ScreenSize.X / ScreenSize.Y) * halfZoom;
             Projection = Matrix4.OrthographicProjection(-aspect, aspect, halfZoom, -halfZoom, -1.0f, 1.0f);
         }
+
+        // public Vector2 WorldToScreenSpace(Vector2 world) {
+        // }
+
+        // public Vector2 ScreenToWorldSpace(Vector2 world) {
+        // }
     }
 }

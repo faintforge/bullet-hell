@@ -10,10 +10,12 @@ namespace BulletHell {
         public string Name = "unnamed";
 
         // Transform
-        public Vector2 Pos = new Vector2();
-        public Vector2 Size = new Vector2(1.0f);
-        public float Rot = 0.0f;
-        public Vector2 Origin = new Vector2();
+        public Box Transform = new Box() {
+            Pos = new Vector2(),
+            Size = new Vector2(1.0f),
+            Rot = 0.0f,
+            Origin = new Vector2(),
+        };
 
         // Player
         public float Speed = 25.0f;

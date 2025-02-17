@@ -135,7 +135,7 @@ namespace BulletHell {
             GL.DrawElements(PrimitiveType.Triangles, currentQuad * 6, DrawElementsType.UnsignedInt, IntPtr.Zero);
         }
 
-        public void DrawUV(Vector2 origin, Vector2 pos, Vector2 size, Color color, Texture? texture, Vector2 uvTopLeft, Vector2 uvBottomRight, float rotation = 0.0f) {
+        public void DrawUV(Box box, Color color, Texture? texture, Vector2 uvTopLeft, Vector2 uvBottomRight) {
             if (currentQuad == maxQuadCount || currentTexture == textures.Length) {
                 EndFrame();
                 BeginFrame(cam);
@@ -156,37 +156,34 @@ namespace BulletHell {
                 }
             }
 
-            Vector2[] vertPos = [
-                new Vector2(-0.5f, -0.5f),
-                new Vector2( 0.5f, -0.5f),
-                new Vector2(-0.5f,  0.5f),
-                new Vector2( 0.5f,  0.5f),
-            ];
+            Vector2 camPos = cam.Position;
+            if (cam.InvertY) {
+                Vector2 boxPos = box.Pos;
+                boxPos.Y = -boxPos.Y;
+                box.Pos = boxPos;
+
+                Vector2 boxOrigin = box.Origin;
+                boxOrigin.Y = -boxOrigin.Y;
+                box.Origin = boxOrigin;
+
+                camPos.Y = -camPos.Y;
+            }
+            Vector2[] vertPos = box.GetVertices();
 
             float left = uvTopLeft.X;
             float top = uvTopLeft.Y;
             float right = uvBottomRight.X;
             float bottom = uvBottomRight.Y;
             Vector2[] vertUV = [
-                new Vector2(left, bottom),
-                new Vector2(right, bottom),
-                new Vector2(left, top),
+                new Vector2(left,  top),
                 new Vector2(right, top),
+                new Vector2(left,  bottom),
+                new Vector2(right, bottom),
             ];
 
-            Vector2 camPos = cam.Position;
-            if (cam.InvertY) {
-                pos.Y = -pos.Y;
-                origin.Y = -origin.Y;
-                camPos.Y = -camPos.Y;
-            }
             for (int i = 0; i < 4; i++) {
                 ref Vertex vert = ref vertices[currentQuad * 4 + i];
                 vert.Pos = vertPos[i];
-                vert.Pos -= origin / 2.0f;
-                vert.Pos = vert.Pos.Rotated(rotation);
-                vert.Pos *= size;
-                vert.Pos += pos;
                 vert.Pos -= camPos;
 
                 vert.UV = vertUV[i];
@@ -197,8 +194,8 @@ namespace BulletHell {
             currentQuad++;
         }
 
-        public void Draw(Vector2 origin, Vector2 pos, Vector2 size, Color color, Texture? texture = null, float rotation = 0.0f) {
-            DrawUV(origin, pos, size, color, texture, new Vector2(0.0f), new Vector2(1.0f), rotation);
+        public void Draw(Box box, Color color, Texture? texture = null) {
+            DrawUV(box, color, texture, new Vector2(0.0f), new Vector2(1.0f));
         }
     }
 }

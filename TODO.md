@@ -6,12 +6,12 @@
 - Input
 - Text rendering
 - Entities
-
-**Doing**
 - Spatial Partitioning
 
-**Needed**
+**Doing**
 - Scene Switching
+
+**Needed**
 - Collision detection
 - Player Entity / Controller
 - Enemy Entity
@@ -19,5 +19,6 @@
 - Texture Loading
 
 *Optional*
+- Particles
 - Bloom / Post Processing
 - Animated Textures
