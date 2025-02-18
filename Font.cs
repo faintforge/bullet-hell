@@ -74,7 +74,6 @@ namespace BulletHell {
 
                 glyphs[c - ASCII_START] = new Glyph() {
                     Advance = advance,
-                    // Size = new Vector2(x1 - x0, y1 - y0),
                     Size = glyphSize,
                     Offset = new Vector2(x0, y0),
                     UVs = new Vector2[2] {
@@ -82,9 +81,6 @@ namespace BulletHell {
                         (glyphPos + glyphSize) / atlasSize,
                     },
                 };
-                // Console.WriteLine($"{(char) c}: ({x1 - x0}, {y1 - y0}), ({glyphSurface.w}, {glyphSurface.h}) {advance}");
-                // Console.WriteLine($"({x0}, {y0}), ({x1}, {y1})");
-                // Console.WriteLine($"({x0}, {y0}), ({x1}, {y1})");
             }
 
             Atlas = Texture.Create<byte>(atlasSize, TextureFormat.RgbaU8, atlasData);
