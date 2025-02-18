@@ -8,15 +8,15 @@
 - Entities
 - Spatial Partitioning
 - Scene Switching
-
-**Doing**
 - Mouse Input
 
-**Needed**
-- Collision detection
+**Doing**
 - Player Entity / Controller
+
+**Needed**
 - Enemy Entity
 - Projectiles
+- Collision detection
 - Texture Loading
 
 *Optional*

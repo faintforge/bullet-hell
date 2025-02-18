@@ -39,10 +39,6 @@ namespace BulletHell {
                         break;
                 }
 
-                if (Input.Instance.GetButtonOnDown(MouseButton.Left)) {
-                    Console.WriteLine($"Left down at: {Input.Instance.MousePosition.X} {Input.Instance.MousePosition.Y}");
-                }
-
                 if (Input.Instance.GetKeyOnDown(SDL.SDL_Keycode.SDLK_F11)) {
                     window.ToggleFullscreen();
                 }
@@ -58,6 +54,7 @@ namespace BulletHell {
             AssetManager.Instance.LoadFont("lato32", "/usr/share/fonts/TTF/Lato-Regular.ttf", 32);
         }
 
+        private static Vector2 quitPos = new Vector2();
         private static void MainMenu(Window window, Renderer renderer, ref Scene scene) {
             GL.Viewport(0, 0, (int) window.Size.X, (int) window.Size.Y);
             GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -95,23 +92,30 @@ namespace BulletHell {
             pos.Y += font.GetMetrics().LineGap;
             pos.Y += 16.0f;
 
+            if (quitPos.X == 0.0f) {
+                quitPos = pos;
+            }
             Box quitBox = new Box() {
                 Origin = new Vector2(-1.0f),
-                Pos = pos,
+                Pos = quitPos,
                 Size = font.MeasureText("Quit") + 16.0f,
             };
             if (quitBox.ContainsPoint(Input.Instance.MousePosition)) {
                 if (Input.Instance.GetButtonOnDown(MouseButton.Left)) {
-                    window.Close();
+                    Random rng = new Random();
+                    quitPos = new Vector2((float) rng.NextDouble(), (float) rng.NextDouble()) * (window.Size - quitBox.Size);
+                    // window.Close();
                 }
                 color = Color.HexRGB(0x303030);
             } else {
                 color = Color.HexRGB(0x212121);
             }
             renderer.Draw(quitBox, color);
-            pos += 8.0f;
-            renderer.DrawText("Quit", font, pos, Color.WHITE);
-            pos.X -= 8.0f;
+            quitPos += 8.0f;
+            renderer.DrawText("Quit", font, quitPos, Color.WHITE);
+            quitPos -= 8.0f;
+
+            pos.Y += 8.0f;
             pos.Y += font.GetMetrics().LineGap;
             pos.Y += 16.0f;
 

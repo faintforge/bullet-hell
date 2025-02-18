@@ -9,7 +9,6 @@ namespace BulletHell {
         public EntityFlag Flags;
         public string Name = "unnamed";
 
-        // Transform
         public Box Transform = new Box() {
             Pos = new Vector2(),
             Size = new Vector2(1.0f),
@@ -23,6 +22,7 @@ namespace BulletHell {
         // Renderable
         public Texture? Texture = null;
         public Color Color = Color.WHITE;
+
 
         public Entity(EntityFlag flags) {
             Flags = flags;

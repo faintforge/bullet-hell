@@ -64,22 +64,22 @@ namespace BulletHell {
         public void UniformMatrix4(string name, Matrix4 matrix) {
             int loc = GL.GetUniformLocation(program, name);
             TKMatrix4 tkMatrix = new TKMatrix4(
-                    matrix.I[0],
-                    matrix.I[1],
-                    matrix.I[2],
-                    matrix.I[3],
-                    matrix.J[0],
-                    matrix.J[1],
-                    matrix.J[2],
-                    matrix.J[3],
-                    matrix.K[0],
-                    matrix.K[1],
-                    matrix.K[2],
-                    matrix.K[3],
-                    matrix.L[0],
-                    matrix.L[1],
-                    matrix.L[2],
-                    matrix.L[3]
+                    matrix.I.X,
+                    matrix.I.Y,
+                    matrix.I.Z,
+                    matrix.I.W,
+                    matrix.J.X,
+                    matrix.J.Y,
+                    matrix.J.Z,
+                    matrix.J.W,
+                    matrix.K.X,
+                    matrix.K.Y,
+                    matrix.K.Z,
+                    matrix.K.W,
+                    matrix.L.X,
+                    matrix.L.Y,
+                    matrix.L.Z,
+                    matrix.L.W
                 );
             GL.UniformMatrix4f(loc, 1, false, ref tkMatrix);
         }

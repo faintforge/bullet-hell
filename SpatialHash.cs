@@ -53,6 +53,11 @@ namespace BulletHell {
                     if (index < 0) {
                         index += bucketCount;
                     }
+
+                    if (buckets[index] == null) {
+                        continue;
+                    }
+
                     foreach (Entity entity in buckets[index]) {
                         if ((entity.Transform.Pos - position).MagnitudeSquared() <= radius * radius) {
                             result.Add(entity);
