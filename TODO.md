@@ -13,12 +13,12 @@
 - Projectiles
 - Collision detection
 - Code Restructure
-
-**Doing**
 - Documentation
 
-**Needed**
+**Doing**
 - Enemy Entity
+
+**Needed**
 - Texture Loading
 
 *Optional*

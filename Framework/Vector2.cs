@@ -91,6 +91,7 @@ namespace BulletHell {
         public static Vector2 operator /(Vector2 a, Vector2 b) => a.Div(b);
         public static Vector2 operator +(Vector2 a, Vector2 b) => a.Add(b);
         public static Vector2 operator -(Vector2 a, Vector2 b) => a.Sub(b);
+        public static Vector2 operator -(Vector2 a) => new Vector2(-a.X, -a.Y);
 
         public static Vector2 operator *(Vector2 vec, float scaler) => vec.Mul(scaler);
         public static Vector2 operator /(Vector2 vec, float scaler) => vec.Div(scaler);
@@ -135,8 +136,8 @@ namespace BulletHell {
         /// <returns>Rotated vector.</returns>
         public Vector2 Rotated(float angle) {
             return new Vector2(
-                     X * (float) Math.Cos(angle) + Y * (float) Math.Sin(angle),
-                    -X * (float) Math.Sin(angle) + Y * (float) Math.Cos(angle)
+                    X * (float) Math.Cos(angle) - Y * (float) Math.Sin(angle),
+                    X * (float) Math.Sin(angle) + Y * (float) Math.Cos(angle)
                 );
         }
 

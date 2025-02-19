@@ -5,19 +5,10 @@ namespace BulletHell {
         private float speed = 25.0f;
         private float shootTimer = 0.0f;
         private float shootDelay = 0.1f;
+        public int Health { get; set; }
 
         public Player(World world) : base(world) {
             Color = Color.HexRGB(0xa53030);
-        }
-
-        public override void OnSpawn() {
-            // for (int y = 0; y < 64; y++) {
-            //     for (int x = 0; x < 64; x++) {
-            //         FireBolt bolt = world.SpawnEntity<FireBolt>();
-            //         bolt.Transform.Pos = new Vector2(x, y);
-            //         bolt.Transform.Rot = (float) (x + y) / 10.0f;
-            //     }
-            // }
         }
 
         public override void Update(float deltaTime) {
@@ -45,7 +36,7 @@ namespace BulletHell {
                 Vector2 mousePos = world.Camera.ScreenToWorldSpace(Input.Instance.MousePosition);
                 Vector2 direction = (mousePos - Transform.Pos).Normalized();
                 proj.Velocity = direction * 25.0f;
-                proj.Transform.Rot = (float) -Math.Atan2(direction.Y, direction.X);
+                proj.Transform.Rot = (float) Math.Atan2(direction.Y, direction.X);
             }
         }
     }

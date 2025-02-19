@@ -4,6 +4,7 @@ namespace BulletHell {
         public int Damage { get; protected set; } = 0;
         public Vector2 Velocity { get; set; } = new Vector2();
         protected float lifespan = -1.0f;
+        protected int pierce = 1;
 
         public Projectile(World world)
             : base(world) {}
@@ -20,16 +21,22 @@ namespace BulletHell {
         }
 
         public override void OnCollision(Entity other) {
-            // TODO: Damage the colliding entity and apply knockback.
-            // if (!Friendly) {
-            //     if (other is Player) {
-            //         Console.WriteLine("Hurt him!");
-            //     }
-            // } else {
-            //     if (other is Enemy) {
-            //         Console.WriteLine("Hurt it!");
-            //     }
-            // }
+            if (Friendly && other is Enemy) {
+                Enemy enemy = (Enemy) other;
+                enemy.Health -= Damage;
+                pierce -= 1;
+                enemy.OnHit(this, Damage);
+            }
+
+            if (!Friendly && other is Player) {
+                Player player = (Player) other;
+                player.Health -= Damage;
+                pierce -= 1;
+            }
+
+            if (pierce == 0) {
+                Kill();
+            }
         }
     }
 }

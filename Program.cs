@@ -17,8 +17,8 @@ namespace BulletHell {
                     fullscreen: false
                 );
             Renderer renderer = new Renderer();
-            Scene scene = Scene.MainMenu;
-            // Scene scene = Scene.Game;
+            // Scene scene = Scene.MainMenu;
+            Scene scene = Scene.Game;
 
             Game game = new Game(window, renderer);
 

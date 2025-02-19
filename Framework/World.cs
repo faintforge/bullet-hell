@@ -45,9 +45,8 @@ namespace BulletHell {
         /// <param name="radius">Circle radius.</param>
         /// <returns>List of entities within the circle.</returns>
         public List<Entity> SpatialQuery(Vector2 position, float radius) {
-            spatialStructure.Clear();
-            foreach (Entity entity in entities) {
-                spatialStructure.Insert(entity);
+            if (spatialStructure == null) {
+                return new List<Entity>();
             }
             return spatialStructure.Query(position, radius);
         }
@@ -58,9 +57,8 @@ namespace BulletHell {
         /// <param name="box">Box region.</param>
         /// <returns>List of entities within box.</returns>
         public List<Entity> SpatialQuery(Box box) {
-            spatialStructure.Clear();
-            foreach (Entity entity in entities) {
-                spatialStructure.Insert(entity);
+            if (spatialStructure == null) {
+                return new List<Entity>();
             }
             return spatialStructure.Query(box);
         }
@@ -88,6 +86,10 @@ namespace BulletHell {
                 entity.Update(deltaTime);
             }
 
+            spatialStructure.Clear();
+            foreach (Entity entity in entities) {
+                spatialStructure.Insert(entity);
+            }
             CollisionDetection();
         }
 

@@ -22,8 +22,8 @@ namespace BulletHell {
             };
             for (int i = 0; i < verts.Length; i++) {
                 verts[i] -= Origin / 2.0f;
-                verts[i].Rotate(Rot);
                 verts[i] *= Size;
+                verts[i].Rotate(Rot);
                 verts[i] += Pos;
             }
             return verts;

@@ -13,6 +13,9 @@ namespace BulletHell {
 
             world.Camera.Zoom = 50.0f;
             player = world.SpawnEntity<Player>();
+
+            Goblin enemy = world.SpawnEntity<Goblin>();
+            enemy.Transform.Pos = new Vector2(10.0f);
         }
 
         public void Run(float deltaTime) {

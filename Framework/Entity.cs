@@ -29,15 +29,18 @@ namespace BulletHell {
         /// Called when this entity type is spawned.
         /// </summary>
         public virtual void OnSpawn() {}
+
         /// <summary>
         /// Called when this entity type is killed.
         /// </summary>
         public virtual void OnKill() {}
+
         /// <summary>
         /// Called when an entity collides with this entity type.
         /// </summary>
         /// <param name="other">The colliding entity.</param>
         public virtual void OnCollision(Entity other) {}
+
         /// <summary>
         /// Called when the world takes a simulation step.
         /// </summary>
