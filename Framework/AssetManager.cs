@@ -11,6 +11,7 @@ namespace BulletHell {
         }
 
         private Dictionary<string, Font> fonts = new Dictionary<string, Font>();
+        private Dictionary<string, Texture> textures = new Dictionary<string, Texture>();
 
         private AssetManager() {}
 
@@ -37,6 +38,30 @@ namespace BulletHell {
                 throw new Exception($"Font {name} not found!");
             }
             return font;
+        }
+
+        /// <summary>
+        /// Loads a texture from the system and assigns a name to it for easy access.
+        /// </summary>
+        /// <param name="name">Name of the asset.</param>
+        /// <param name="filepath">Paht to texture.</param>
+        public void LoadTexture(string name, string filepath) {
+            Texture texture = Texture.FromFile(filepath);
+            textures.Add(name, texture);
+        }
+
+        /// <summary>
+        /// Retrieve previously loaded texture using its assigned name. 
+        /// </summary>
+        /// <param name="name">Name of the asset.</param>
+        /// <returns>The requested texture.</returns>
+        /// <exception cref="Exception">Thorws an exceptions if no texture with the requested name has been loaded.</exception>
+        public Texture GetTexture(string name) {
+            Texture? texture;
+            if (!textures.TryGetValue(name, out texture) || texture == null) {
+                throw new Exception($"Texture {name} not found!");
+            }
+            return texture;
         }
     }
 }

@@ -9,7 +9,9 @@ namespace BulletHell {
         public int Health { get; set; }
 
         public Player(World world) : base(world) {
-            Color = Color.HexRGB(0xa53030);
+            Texture = AssetManager.Instance.GetTexture("player");
+            float asepctRatio = Texture.Size.X / Texture.Size.Y;
+            Transform.Size = new Vector2(asepctRatio, 1.0f) * 2.0f;
         }
 
         public override void OnSpawn() {

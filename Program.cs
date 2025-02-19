@@ -20,9 +20,9 @@ namespace BulletHell {
             // Scene scene = Scene.MainMenu;
             Scene scene = Scene.Game;
 
-            Game game = new Game(window, renderer);
-
             LoadAssets();
+
+            Game game = new Game(window, renderer);
 
             uint last = SDL.SDL_GetTicks();
             float dt = 0.0f;
@@ -53,6 +53,7 @@ namespace BulletHell {
         private static void LoadAssets() {
             AssetManager.Instance.LoadFont("lato48", "/usr/share/fonts/TTF/Lato-Regular.ttf", 48);
             AssetManager.Instance.LoadFont("lato32", "/usr/share/fonts/TTF/Lato-Regular.ttf", 32);
+            AssetManager.Instance.LoadTexture("player", "assets/textures/player.png");
         }
 
         private static Vector2 quitPos = new Vector2();

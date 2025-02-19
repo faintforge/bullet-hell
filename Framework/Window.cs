@@ -39,6 +39,11 @@ namespace BulletHell {
                 Environment.Exit(1);
             }
 
+            if (SDL_image.IMG_Init(SDL_image.IMG_InitFlags.IMG_INIT_PNG | SDL_image.IMG_InitFlags.IMG_INIT_JPG) < 0) {
+                Console.WriteLine("SDL failed to initialize image subsystem!");
+                Environment.Exit(1);
+            }
+
             GLLoader.LoadBindings(new SDLGLLoader());
             SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_MULTISAMPLESAMPLES, 4);
             SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_MAJOR_VERSION, 4);
