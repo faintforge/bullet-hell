@@ -4,12 +4,21 @@ namespace BulletHell {
         private List<Entity>[] buckets;
         private int bucketCount;
 
+        /// <summary>
+        /// Create a spatial hash data structure.
+        /// </summary>
+        /// <param name="cellSize">Size of a single cell containing entities.</param>
+        /// <param name="bucketCount">Amount of buckets in the internal map. A higher number means fewer collisions.</param>
         public SpatialHash(Vector2 cellSize, int bucketCount) {
             buckets = new List<Entity>[bucketCount];
             this.bucketCount = bucketCount;
             this.cellSize = cellSize;
         }
 
+        /// <summary>
+        /// Insert an entity into the spatial structure.
+        /// </summary>
+        /// <param name="entity">Entity to insert.</param>
         public void Insert(Entity entity) {
             Box boundingBox = entity.Transform.GetBoundingBox();
             Vector2 min = (boundingBox.Pos - boundingBox.Size / 2.0f) / cellSize;
@@ -37,6 +46,12 @@ namespace BulletHell {
             }
         }
 
+        /// <summary>
+        /// Query for entities lying within a certain radius of a position.
+        /// </summary>
+        /// <param name="position">Center point of query.</param>
+        /// <param name="radius">Radius of query.</param>
+        /// <returns>List of entities within the specified query circle.</returns>
         public List<Entity> Query(Vector2 position, float radius) {
             Vector2 min = (position - radius) / cellSize;
             Vector2 max = (position + radius) / cellSize;
@@ -68,6 +83,11 @@ namespace BulletHell {
             return result;
         }
 
+        /// <summary>
+        /// Qeury for entities lying within a certain box region.
+        /// </summary>
+        /// <param name="box">Query region.</param>
+        /// <returns>List of entities within the specified box region.</returns>
         public List<Entity> Query(Box box) {
             Box boundingBox = box.GetBoundingBox();
 
@@ -101,12 +121,15 @@ namespace BulletHell {
             return result;
         }
 
+        /// <summary>
+        /// Clear the spatial structure of entities.
+        /// </summary>
         public void Clear() {
             buckets = new List<Entity>[bucketCount];
         }
 
-        // https://stackoverflow.com/questions/6943493/hash-table-with-64-bit-values-as-key
         private long HashPosition(int x, int y) {
+            // https://stackoverflow.com/questions/6943493/hash-table-with-64-bit-values-as-key
             long key = ((long) x << 32) & y;
             key = (~key) + (key << 21); // key = (key << 21) - key - 1;
             key = key ^ (key >>> 24);

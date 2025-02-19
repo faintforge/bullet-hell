@@ -25,6 +25,10 @@ namespace BulletHell {
 
         private Vertex[] vertices;
 
+        /// <summary>
+        /// Create a batch renderer.
+        /// </summary>
+        /// <param name="maxQuadCount">Max amount of quads in a single batch.</param>
         public Renderer(int maxQuadCount = 4096) {
             this.maxQuadCount = maxQuadCount;
             vertices = new Vertex[maxQuadCount * 6];
@@ -115,12 +119,19 @@ namespace BulletHell {
             GL.DeleteBuffer(indexBuffer);
         }
 
+        /// <summary>
+        /// Prepare the batch renderer to render a frame.
+        /// </summary>
+        /// <param name="cam">Camera to use for rendering this frame.</param>
         public void BeginFrame(Camera cam) {
             this.cam = cam;
             currentQuad = 0;
             currentTexture = 1;
         }
 
+        /// <summary>
+        /// End the frame. Render current batch to the screeen.
+        /// </summary>
         public void EndFrame() {
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer);
             GL.BufferSubData<Vertex>(BufferTarget.ArrayBuffer, 0, Marshal.SizeOf<Vertex>() * currentQuad * 4, vertices);
@@ -135,6 +146,14 @@ namespace BulletHell {
             GL.DrawElements(PrimitiveType.Triangles, currentQuad * 6, DrawElementsType.UnsignedInt, IntPtr.Zero);
         }
 
+        /// <summary>
+        /// Draw a quad to screen with specified UV coordinates.
+        /// </summary>
+        /// <param name="box">Quad information.</param>
+        /// <param name="color">Color.</param>
+        /// <param name="texture">Texture.</param>
+        /// <param name="uvTopLeft">Top left UV coordinate.</param>
+        /// <param name="uvBottomRight">Bottom right UV coordinate.</param>
         public void DrawUV(Box box, Color color, Texture? texture, Vector2 uvTopLeft, Vector2 uvBottomRight) {
             if (currentQuad == maxQuadCount || currentTexture == textures.Length) {
                 EndFrame();
@@ -194,10 +213,23 @@ namespace BulletHell {
             currentQuad++;
         }
 
+        /// <summary>
+        /// Draw a quad to screen.
+        /// </summary>
+        /// <param name="box">Quad information.</param>
+        /// <param name="color">Color.</param>
+        /// <param name="texture">Texture. If null then a solid colored quad will be drawn.</param>
         public void Draw(Box box, Color color, Texture? texture = null) {
             DrawUV(box, color, texture, new Vector2(0.0f), new Vector2(1.0f));
         }
 
+        /// <summary>
+        /// Draw text to screen. Use a screen space camera that uses screen coordinates to draw in order to use this function.
+        /// </summary>
+        /// <param name="text">String to draw.</param>
+        /// <param name="font">Font to use.</param>
+        /// <param name="position">Top left position of text.</param>
+        /// <param name="color">Color of text.</param>
         public void DrawText(string text, Font font, Vector2 position, Color color) {
             Vector2 glyphPos = position;
             foreach (char c in text) {

@@ -17,6 +17,14 @@ namespace BulletHell {
             GL.DeleteTexture(handle);
         }
 
+        /// <summary>
+        /// Create a texture.
+        /// </summary>
+        /// <typeparam name="T">Type of data used as pixel information.</typeparam>
+        /// <param name="size">2D size of the texture.</param>
+        /// <param name="format">Amount of channels and datatype used.</param>
+        /// <param name="data">Pixel data.</param>
+        /// <returns>Texture.</returns>
         public static Texture Create<T>(Vector2 size, TextureFormat format, T[] data)
             where T : unmanaged
         {
@@ -35,6 +43,10 @@ namespace BulletHell {
             return tex;
         }
 
+        /// <summary>
+        /// Bind texture to a particular slot for rendering.
+        /// </summary>
+        /// <param name="slot">Slot to bind to.</param>
         public void Bind(uint slot) {
             GL.ActiveTexture(TextureUnit.Texture0 + slot);
             GL.BindTexture(TextureTarget.Texture2d, handle);

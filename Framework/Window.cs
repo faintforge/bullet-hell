@@ -19,6 +19,15 @@ namespace BulletHell {
         public bool Open { get; private set; } = true;
         public Vector2 Size { get; private set; }
 
+        /// <summary>
+        /// Create a window.
+        /// </summary>
+        /// <param name="name">Name/title of the window.</param>
+        /// <param name="width">Width of window.</param>
+        /// <param name="height">Height of window.</param>
+        /// <param name="resizable">Is the window resizable</param>
+        /// <param name="vsync">Is the window rendering with vsync.</param>
+        /// <param name="fullscreen">Is the window fullscreen.</param>
         public Window(string name, int width, int height, bool resizable = false, bool vsync = false, bool fullscreen = false) {
             if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) < 0) {
                 Console.WriteLine("SDL failed to initialize!");
@@ -46,7 +55,7 @@ namespace BulletHell {
             this.fullscreen = fullscreen;
 
             sdlWindow = SDL.SDL_CreateWindow(
-                    "Window",
+                    name,
                     SDL.SDL_WINDOWPOS_CENTERED,
                     SDL.SDL_WINDOWPOS_CENTERED,
                     800, 600,
@@ -82,6 +91,9 @@ namespace BulletHell {
             SDL.SDL_Quit();
         }
 
+        /// <summary>
+        /// Poll window events sent by the operating system.
+        /// </summary>
         public void PollEvents() {
             SDL.SDL_Event ev;
             while (SDL.SDL_PollEvent(out ev) == 1) {
@@ -138,10 +150,17 @@ namespace BulletHell {
             }
         }
 
+        /// <summary>
+        /// Swap the front and back buffers of the window presenting the currently rendered frame.
+        /// </summary>
         public void SwapBuffers() {
             SDL.SDL_GL_SwapWindow(sdlWindow);
         }
 
+        /// <summary>
+        /// Set the fullscreen state of the window.
+        /// </summary>
+        /// <param name="fullscreen">Fullscreen value.</param>
         public void SetFullscreen(bool fullscreen) {
             if (this.fullscreen == fullscreen) {
                 return;
@@ -156,10 +175,16 @@ namespace BulletHell {
             this.fullscreen = fullscreen;
         }
 
+        /// <summary>
+        /// Toggle fullscreen. If window is fullscreen it becoems windowed and vice versa.
+        /// </summary>
         public void ToggleFullscreen() {
             SetFullscreen(!fullscreen);
         }
 
+        /// <summary>
+        /// Close the window.
+        /// </summary>
         public void Close() {
             Open = false;
         }

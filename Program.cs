@@ -8,7 +8,7 @@ namespace BulletHell {
             Game,
         }
 
-        static void Main(string[] args) {
+        private static void Main(string[] args) {
             Window window = new Window(
                     "Window",
                     800, 600,
@@ -17,8 +17,8 @@ namespace BulletHell {
                     fullscreen: false
                 );
             Renderer renderer = new Renderer();
-            // Scene scene = Scene.MainMenu;
-            Scene scene = Scene.Game;
+            Scene scene = Scene.MainMenu;
+            // Scene scene = Scene.Game;
 
             Game game = new Game(window, renderer);
 
@@ -64,7 +64,7 @@ namespace BulletHell {
             Font titleFont = AssetManager.Instance.GetFont("lato48");
             Font font = AssetManager.Instance.GetFont("lato32");
             Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);
-            Color color = Color.WHITE;
+            Color color;
 
             renderer.BeginFrame(uiCam);
 

@@ -10,17 +10,38 @@ namespace BulletHell {
         public Color Color = Color.WHITE;
         protected World world;
 
+        /// <summary>
+        /// Create an entity beloning to a world.
+        /// </summary>
+        /// <param name="world">Owning world.</param>
         public Entity(World world) {
             this.world = world;
         }
 
+        /// <summary>
+        /// Kills an entity deleting it from its world.
+        /// </summary>
         public void Kill() {
             world.KillEntity(this);
         }
 
+        /// <summary>
+        /// Called when this entity type is spawned.
+        /// </summary>
         public virtual void OnSpawn() {}
+        /// <summary>
+        /// Called when this entity type is killed.
+        /// </summary>
         public virtual void OnKill() {}
+        /// <summary>
+        /// Called when an entity collides with this entity type.
+        /// </summary>
+        /// <param name="other">The colliding entity.</param>
         public virtual void OnCollision(Entity other) {}
+        /// <summary>
+        /// Called when the world takes a simulation step.
+        /// </summary>
+        /// <param name="deltaTime">The amount of time passed in the previous frame.</param>
         public virtual void Update(float deltaTime) {}
     }
 }

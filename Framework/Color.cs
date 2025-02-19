@@ -14,6 +14,13 @@ namespace BulletHell {
         public float B { get; set; }
         public float A { get; set; }
 
+        /// <summary>
+        /// Creates a color from red, green and blue values between 0.0-1.0. Alpha channel is always 1.0.
+        /// </summary>
+        /// <param name="r">Red</param>
+        /// <param name="g">Green</param>
+        /// <param name="b">Blue</param>
+        /// <returns>RGBA color.</returns>
         public static Color RGB(float r, float g, float b) {
             Color color = new Color();
             color.R = r;
@@ -23,6 +30,14 @@ namespace BulletHell {
             return color;
         }
 
+        /// <summary>
+        /// Creates a color from red, green blue and alpha values between 0.0-1.0.
+        /// </summary>
+        /// <param name="r">Red.</param>
+        /// <param name="g">Green.</param>
+        /// <param name="b">Blue.</param>
+        /// <param name="a">Alpha.</param>
+        /// <returns>RGBA color.</returns>
         public static Color RGBA(float r, float g, float b, float a) {
             Color color = new Color();
             color.R = r;
@@ -32,6 +47,12 @@ namespace BulletHell {
             return color;
         }
 
+        /// <summary>
+        /// Creates an RGBA color from a hex value containing three channels. Two bytes correspond to each channel.
+        /// 0xRRGGBB
+        /// </summary>
+        /// <param name="hex">Hexadecimal color.</param>
+        /// <returns>RGBA color.</returns>
         public static Color HexRGB(uint hex) {
             Color color = new Color();
             color.R = (float) ((hex >> (8 * 2)) & 0xff) / (float) 0xff;
@@ -41,6 +62,12 @@ namespace BulletHell {
             return color;
         }
 
+        /// <summary>
+        /// Creates an RGBA color from a hex value containing four channels. Two bytes correspond to each channel.
+        /// 0xRRGGBBAA
+        /// </summary>
+        /// <param name="hex">Hexadecimal color.</param>
+        /// <returns>RGBA color.</returns>
         public static Color HexRGBA(uint hex) {
             Color color = new Color();
             color.R = (float) ((hex >> 8 * 3) & 0xff) / (float) 0xff;
@@ -50,6 +77,13 @@ namespace BulletHell {
             return color;
         }
 
+        /// <summary>
+        /// Creates an RGBA color from hue, saturation and lightness values.
+        /// </summary>
+        /// <param name="hue">Hue.</param>
+        /// <param name="saturation">Saturation.</param>
+        /// <param name="lightness">Lightness.</param>
+        /// <returns>RGBA color.</returns>
         public static Color HSL(float hue, float saturation, float lightness) {
             // https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB
             Color color = new Color();
@@ -69,6 +103,13 @@ namespace BulletHell {
             return color;
         }
 
+        /// <summary>
+        /// Creates an RGBA color from hue, saturation and value values.
+        /// </summary>
+        /// <param name="hue">Hue.</param>
+        /// <param name="saturation">Saturation.</param>
+        /// <param name="value">Value.</param>
+        /// <returns>RGBA color.</returns>
         public static Color HSV(float hue, float saturation, float value) {
             // https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB
             Color color = new Color();

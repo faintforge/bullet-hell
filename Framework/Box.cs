@@ -5,6 +5,14 @@ namespace BulletHell {
         public float Rot { get; set; }
         public Vector2 Origin { get; set; }
 
+        /// <summary>
+        /// Gets the vertices of the box in a specific order.
+        /// [0] = Top left
+        /// [1] = Top right
+        /// [2] = Bottom right
+        /// [3] = Bottom left
+        /// </summary>
+        /// <returns>Array of four vertices.</returns>
         public Vector2[] GetVertices() {
             Vector2[] verts = new Vector2[4] {
                 new Vector2(-0.5f,  0.5f),
@@ -21,6 +29,11 @@ namespace BulletHell {
             return verts;
         }
 
+        /// <summary>
+        /// Gets an axis aligned bounding box from a potentially unaligned box.
+        /// The origin of this box will always be (0, 0) and have no rotation.
+        /// </summary>
+        /// <returns>Axis aligned bounding box.</returns>
         public Box GetBoundingBox() {
             Vector2[] verts = GetVertices();
             Vector2 min = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
@@ -40,10 +53,19 @@ namespace BulletHell {
             };
         }
 
+        /// <summary>
+        /// Gets the center point the box in world space.
+        /// </summary>
+        /// <returns>Center coordinates.</returns>
         public Vector2 Center() {
-            return Pos - ((Size * Origin) / 2.0f).Rotated(-Rot);
+            return Pos - (Size * Origin / 2.0f).Rotated(-Rot);
         }
 
+        /// <summary>
+        /// Checks if a point lies within the box.
+        /// </summary>
+        /// <param name="point">Point to check against.</param>
+        /// <returns>Whether the point lies within the box or not.</returns>
         public bool IntersectsPoint(Vector2 point) {
             Vector2 center = Center();
             Vector2 relPoint = point - center;
@@ -58,6 +80,12 @@ namespace BulletHell {
                 relPoint.Y <= max.Y;
         }
 
+        /// <summary>
+        /// Checks if a circle intersects the box.
+        /// </summary>
+        /// <param name="position">Circle position.</param>
+        /// <param name="radius">Circle radius.</param>
+        /// <returns>Whether the circle intersects the box or not.</returns>
         public bool IntersectsCircle(Vector2 position, float radius) {
             // https://www.jeffreythompson.org/collision-detection/circle-rect.php
             Vector2 center = Center();
@@ -78,6 +106,11 @@ namespace BulletHell {
             return distance.MagnitudeSquared() <= radius * radius;
         }
 
+        /// <summary>
+        /// Checks if two boxes are intersecting eachother using the separating axis theorem.
+        /// </summary>
+        /// <param name="other">The other box to check against.</param>
+        /// <returns>Whether the boxes are intersecting or not.</returns>
         public bool IntersectsBox(Box other) {
             Vector2[] aVertices = GetVertices();
             Vector2[] bVertices = other.GetVertices();

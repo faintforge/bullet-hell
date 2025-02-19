@@ -10,8 +10,18 @@ namespace BulletHell {
 
         public Matrix4() {}
 
-        // http://learnwebgl.brown37.net/08_projections/projections_ortho.html
+        /// <summary>
+        /// Create an orthographic projection matrix.
+        /// </summary>
+        /// <param name="left">Left clipping plane.</param>
+        /// <param name="right">Right clipping plane.</param>
+        /// <param name="top">Top clipping plane.</param>
+        /// <param name="bottom">Bottom clipping plane.</param>
+        /// <param name="near">Near clipping plane.</param>
+        /// <param name="far">Far clipping plane.</param>
+        /// <returns>Orthographic projection matrix.</returns>
         public static Matrix4 OrthographicProjection(float left, float right, float top, float bottom, float near, float far) {
+            // http://learnwebgl.brown37.net/08_projections/projections_ortho.html
             Matrix4 mat = new Matrix4();
 
             float scaleX = 2.0f / (right - left);
@@ -30,8 +40,18 @@ namespace BulletHell {
             return mat;
         }
 
-        // https://en.wikipedia.org/wiki/Orthographic_projection#Geometry
+        /// <summary>
+        /// Create an inverse orthographic projection matrix.
+        /// </summary>
+        /// <param name="left">Left clipping plane.</param>
+        /// <param name="right">Right clipping plane.</param>
+        /// <param name="top">Top clipping plane.</param>
+        /// <param name="bottom">Bottom clipping plane.</param>
+        /// <param name="near">Near clipping plane.</param>
+        /// <param name="far">Far clipping plane.</param>
+        /// <returns>Inverse orthographic projection matrix.</returns>
         public static Matrix4 InverseOrthographicProjection(float left, float right, float top, float bottom, float near, float far) {
+            // https://en.wikipedia.org/wiki/Orthographic_projection#Geometry
             Matrix4 mat = new Matrix4();
 
             float scaleX = (right - left) / 2.0f;

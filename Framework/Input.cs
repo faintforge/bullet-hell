@@ -29,6 +29,11 @@ namespace BulletHell {
 
         private Input() {}
 
+        /// <summary>
+        /// Get current state of key.
+        /// </summary>
+        /// <param name="code">Keycode.</param>
+        /// <returns>True if key is pressed, false if not.</returns>
         public bool GetKey(SDL.SDL_Keycode code) {
             KeyState result;
             if (!keyboardMap.TryGetValue(code, out result)) {
@@ -37,6 +42,11 @@ namespace BulletHell {
             return result.IsDown;
         }
 
+        /// <summary>
+        /// Check if key was pressed this frame.
+        /// </summary>
+        /// <param name="code">Keycode.</param>
+        /// <returns>True if key was pressed this frame, false if not.</returns>
         public bool GetKeyOnDown(SDL.SDL_Keycode code) {
             KeyState result;
             if (!keyboardMap.TryGetValue(code, out result)) {
@@ -45,6 +55,11 @@ namespace BulletHell {
             return result.IsDown && result.IsFirstFrame;
         }
 
+        /// <summary>
+        /// Check if key was released this frame.
+        /// </summary>
+        /// <param name="code">Keycode.</param>
+        /// <returns>True if key was released this frame, false if not.</returns>
         public bool GetKeyOnUp(SDL.SDL_Keycode code) {
             KeyState result;
             if (!keyboardMap.TryGetValue(code, out result)) {
@@ -53,6 +68,11 @@ namespace BulletHell {
             return !result.IsDown && result.IsFirstFrame;
         }
 
+        /// <summary>
+        /// Internal function to set the state of a key. This is used to set state from the event handling code in the windowing system.
+        /// </summary>
+        /// <param name="code">Keycode.</param>
+        /// <param name="isDown">Is the key down.</param>
         internal void SetKeyState(SDL.SDL_Keycode code, bool isDown) {
             keyboardMap[code] = new KeyState() {
                 IsFirstFrame = true,
@@ -60,20 +80,40 @@ namespace BulletHell {
             };
         }
 
+        /// <summary>
+        /// Get current state of a mouse button.
+        /// </summary>
+        /// <param name="button">Mouse button.</param>
+        /// <returns>True if button is pressed, false if not.</returns>
         public bool GetButton(MouseButton button) {
             return mouseState[(int) button].IsDown;
         }
 
+        /// <summary>
+        /// Check if button was pressed this frame.
+        /// </summary>
+        /// <param name="button">Mouse button.</param>
+        /// <returns>True if button was pressed this frame, false if not.</returns>
         public bool GetButtonOnDown(MouseButton button) {
             KeyState state = mouseState[(int) button];
             return state.IsDown && state.IsFirstFrame;
         }
 
+        /// <summary>
+        /// Check if button was released this frame.
+        /// </summary>
+        /// <param name="button">Mouse button.</param>
+        /// <returns>True if button was released this frame, false if not.</returns>
         public bool GetButtonOnUp(MouseButton button) {
             KeyState state = mouseState[(int) button];
             return !state.IsDown && state.IsFirstFrame;
         }
 
+        /// <summary>
+        /// Internal function to set the state of a mouse button. This is used to set state from the event handling code in the windowing system.
+        /// </summary>
+        /// <param name="button">Mouse button.</param>
+        /// <param name="isDown">Is the button down.</param>
         internal void SetButtonState(MouseButton button, bool isDown) {
             mouseState[(int) button] = new KeyState() {
                 IsFirstFrame = true,
@@ -81,6 +121,9 @@ namespace BulletHell {
             };
         }
 
+        /// <summary>
+        /// Resets the frame specific data in the input system. This should be called before polling for window events to work properly. If called after, OnDown and OnUp functions will never return true.
+        /// </summary>
         public void ResetFrame() {
             foreach (SDL.SDL_Keycode key in keyboardMap.Keys.ToList()) {
                 KeyState state = keyboardMap[key];

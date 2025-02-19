@@ -10,6 +10,12 @@ namespace BulletHell {
             GL.DeleteProgram(program);
         }
 
+        /// <summary>
+        /// Create a shader from GLSL source strings.
+        /// </summary>
+        /// <param name="vertexSource">Vertex shader source code.</param>
+        /// <param name="fragmentSource">Fragment shader source code.</param>
+        /// <returns>Shader.</returns>
         public static Shader FromSource(string vertexSource, string fragmentSource) {
             Shader shader = new Shader();
             int success;
@@ -51,16 +57,30 @@ namespace BulletHell {
             return shader;
         }
 
+        /// <summary>
+        /// Create a shader from shader files.
+        /// </summary>
+        /// <param name="vertexFilepath">Path to vertex shader.</param>
+        /// <param name="fragmentFilepath">Path to fragment shader.</param>
+        /// <returns>Shader.</returns>
         public static Shader FromFile(string vertexFilepath, string fragmentFilepath) {
             string vertexSource = File.ReadAllText(vertexFilepath);
             string fragmentSource = File.ReadAllText(fragmentFilepath);
             return Shader.FromSource(vertexSource, fragmentSource);
         }
 
+        /// <summary>
+        /// Bind this shader for drawing.
+        /// </summary>
         public void Use() {
             GL.UseProgram(program);
         }
 
+        /// <summary>
+        /// Send a 4x4 matrix as a uniform to the shader. 
+        /// </summary>
+        /// <param name="name">Uniform location name.</param>
+        /// <param name="matrix">Matix value.</param>
         public void UniformMatrix4(string name, Matrix4 matrix) {
             int loc = GL.GetUniformLocation(program, name);
             TKMatrix4 tkMatrix = new TKMatrix4(
@@ -84,11 +104,21 @@ namespace BulletHell {
             GL.UniformMatrix4f(loc, 1, false, ref tkMatrix);
         }
 
+        /// <summary>
+        /// Send an integer as a uniform to the shader.
+        /// </summary>
+        /// <param name="name">Uniform location name.</param>
+        /// <param name="value">Integer value.</param>
         public void UniformInt(string name, int value) {
             int loc = GL.GetUniformLocation(program, name);
             GL.Uniform1i(loc, value);
         }
 
+        /// <summary>
+        /// Send an integer array as a uniform to the shader.
+        /// </summary>
+        /// <param name="name">Uniform location name.</param>
+        /// <param name="array">Integer array.</param>
         public void UniformInt(string name, int[] array) {
             int loc = GL.GetUniformLocation(program, name);
             GL.Uniform1i(loc, array.Length, array);

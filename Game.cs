@@ -11,7 +11,7 @@ namespace BulletHell {
             this.window = window;
             this.renderer = renderer;
 
-            world.Camera.SetZoom(50.0f);
+            world.Camera.Zoom = 50.0f;
             player = world.SpawnEntity<Player>();
         }
 
@@ -21,8 +21,7 @@ namespace BulletHell {
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             world.Update(deltaTime);
-            world.CollisionDetection();
-            world.Camera.SetScreenSize(window.Size);
+            world.Camera.ScreenSize = window.Size;
             renderer.BeginFrame(world.Camera);
             world.OperateOnEntities((entity) => {
                 renderer.Draw(

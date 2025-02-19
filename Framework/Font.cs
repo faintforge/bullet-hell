@@ -23,7 +23,14 @@ namespace BulletHell {
         const byte ASCII_END = 126;
 
         private Glyph[] glyphs = new Glyph[ASCII_END - ASCII_START + 1];
-
+        
+        /// <summary>
+        /// Creates a static font from a file containing only ASCII characters.
+        /// </summary>
+        /// <param name="filepath">Path to font file.</param>
+        /// <param name="size">Size of font.</param>
+        /// <param name="atlasSize">Size of font atlas.</param>
+        /// <exception cref="Exception">If the font atlas is too small to contain all ASCII characters.</exception>
         public Font(string filepath, int size, Vector2 atlasSize) {
             sdlFont = SDL_ttf.TTF_OpenFont(filepath, size);
             if (sdlFont == IntPtr.Zero) {
@@ -48,8 +55,7 @@ namespace BulletHell {
                     rowHeight = 0;
 
                     if (atlasPos.Y + glyphSurface.h > atlasSize.Y) {
-                        Console.WriteLine($"Font atlas size provided for font {filepath} is too small!");
-                        Environment.Exit(1);
+                        throw new Exception($"Font atlas size provided for font {filepath} is too small!");
                     }
                 }
 
@@ -90,10 +96,19 @@ namespace BulletHell {
             SDL_ttf.TTF_CloseFont(sdlFont);
         }
 
+        /// <summary>
+        /// Get the glyph info corresponding to an ASCII character.
+        /// </summary>
+        /// <param name="c">ASCII character.</param>
+        /// <returns>Glyph information.</returns>
         public Glyph GetGlyph(char c) {
             return glyphs[c - ASCII_START];
         }
 
+        /// <summary>
+        /// Get font metrics.
+        /// </summary>
+        /// <returns>Font metrics.</returns>
         public FontMetrics GetMetrics() {
             return new FontMetrics() {
                 Ascent = SDL_ttf.TTF_FontAscent(sdlFont),
@@ -102,6 +117,11 @@ namespace BulletHell {
             };
         }
 
+        /// <summary>
+        /// Measure the size occupied by a string. This function doesn't handle new line characters or tabs.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns>The size occupied by text on screen.</returns>
         public Vector2 MeasureText(string text) {
             FontMetrics metrics = GetMetrics();
             Vector2 size = new Vector2(0.0f, metrics.Ascent - metrics.Descent);
