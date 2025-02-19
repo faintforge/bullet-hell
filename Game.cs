@@ -10,11 +10,11 @@ namespace BulletHell {
             this.window = window;
             this.renderer = renderer;
 
-            world.Camera.Zoom = 50.0f;
+            world.Camera.Zoom = 360.0f;
             world.SpawnEntity<Player>();
 
             Goblin enemy = world.SpawnEntity<Goblin>();
-            enemy.Transform.Pos = new Vector2(10.0f);
+            enemy.Transform.Pos = new Vector2(128.0f);
         }
 
         public void Run(float deltaTime) {

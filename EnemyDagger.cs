@@ -1,7 +1,8 @@
 namespace BulletHell {
     public class EnemyDagger : Projectile {
         public EnemyDagger(World world) : base (world) {
-            Transform.Size = new Vector2(1.0f, 0.1f);
+            Texture = AssetManager.Instance.GetTexture("enemy_dagger");
+            Transform.Size = Texture.Size;
             Friendly = false;
             Damage = 5;
             lifespan = 1.0f;

@@ -75,7 +75,6 @@ namespace BulletHell {
             EmptyEntityQueues();
 
             spatialStructure.Clear();
-            Console.WriteLine($"Inserting {entities.Count} entities");
             foreach (Entity entity in entities) {
                 spatialStructure.Insert(entity);
             }
@@ -101,7 +100,6 @@ namespace BulletHell {
         private void CollisionDetection() {
             foreach (Entity entity in entities) {
                 List<Entity> colliding = SpatialQuery(entity.Transform);
-                Console.WriteLine($"Collision count {colliding.Count}");
                 foreach (Entity other in colliding) {
                     if (entity == other) {
                         continue;

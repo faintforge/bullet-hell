@@ -24,12 +24,22 @@ namespace BulletHell {
 
             Game game = new Game(window, renderer);
 
+            int fps = 0;
+            uint lastFps = SDL.SDL_GetTicks();
+
             uint last = SDL.SDL_GetTicks();
             float dt = 0.0f;
             while (window.Open) {
                 uint curr = SDL.SDL_GetTicks();
                 dt = (float) (curr - last) / 1000.0f;
                 last = curr;
+
+                fps++;
+                if (SDL.SDL_GetTicks() - lastFps >= 1000) {
+                    Console.WriteLine($"FPS: {fps}");
+                    fps = 0;
+                    lastFps = SDL.SDL_GetTicks();
+                }
 
                 switch (scene) {
                     case Scene.MainMenu:
@@ -51,9 +61,13 @@ namespace BulletHell {
         }
 
         private static void LoadAssets() {
-            AssetManager.Instance.LoadFont("lato48", "/usr/share/fonts/TTF/Lato-Regular.ttf", 48);
-            AssetManager.Instance.LoadFont("lato32", "/usr/share/fonts/TTF/Lato-Regular.ttf", 32);
+            AssetManager.Instance.LoadFont("lato48", "assets/fonts/Lato-Regular.ttf", 48);
+            AssetManager.Instance.LoadFont("lato32", "assets/fonts/Lato-Regular.ttf", 32);
+
             AssetManager.Instance.LoadTexture("player", "assets/textures/player.png");
+            AssetManager.Instance.LoadTexture("firebolt", "assets/textures/firebolt.png");
+            AssetManager.Instance.LoadTexture("enemy_dagger", "assets/textures/enemy_dagger.png");
+            AssetManager.Instance.LoadTexture("goblin", "assets/textures/goblin.png");
         }
 
         private static Vector2 quitPos = new Vector2();

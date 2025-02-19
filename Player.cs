@@ -2,7 +2,7 @@ using SDL2;
 
 namespace BulletHell {
     public class Player : Entity {
-        private float speed = 25.0f;
+        private float speed = 100.0f;
         private float shootTimer = 0.0f;
         private float shootDelay = 0.1f;
         public int MaxHealth { get; set; } = 100;
@@ -11,7 +11,7 @@ namespace BulletHell {
         public Player(World world) : base(world) {
             Texture = AssetManager.Instance.GetTexture("player");
             float asepctRatio = Texture.Size.X / Texture.Size.Y;
-            Transform.Size = new Vector2(asepctRatio, 1.0f) * 2.0f;
+            Transform.Size = Texture.Size;
         }
 
         public override void OnSpawn() {
@@ -42,8 +42,8 @@ namespace BulletHell {
                 proj.Transform.Pos = Transform.Pos;
                 Vector2 mousePos = world.Camera.ScreenToWorldSpace(Input.Instance.MousePosition);
                 Vector2 direction = (mousePos - Transform.Pos).Normalized();
-                proj.Velocity = direction * 25.0f;
-                proj.Transform.Rot = (float) Math.Atan2(direction.Y, direction.X);
+                proj.Velocity = direction * 200.0f;
+                proj.Transform.Rot = (float) Math.Atan2(direction.Y, direction.X) - (float) Math.PI / 2.0f;
             }
         }
     }

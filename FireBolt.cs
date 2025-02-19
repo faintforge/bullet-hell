@@ -1,11 +1,9 @@
 namespace BulletHell {
     public class FireBolt : Projectile {
         public FireBolt(World world) : base (world) {
-            Transform = new Box() {
-                Size = new Vector2(0.5f),
-            };
+            Texture = AssetManager.Instance.GetTexture("firebolt");
+            Transform.Size = Texture.Size;
             Friendly = true;
-            Color = Color.HexRGB(0xda863e);
             Damage = 5;
             lifespan = 1.0f;
             pierce = 1;
