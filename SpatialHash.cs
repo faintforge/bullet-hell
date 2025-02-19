@@ -59,7 +59,40 @@ namespace BulletHell {
                     }
 
                     foreach (Entity entity in buckets[index]) {
-                        if ((entity.Transform.Pos - position).MagnitudeSquared() <= radius * radius) {
+                        if (entity.Transform.IntersectsCircle(position, radius)) {
+                            result.Add(entity);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        public List<Entity> Query(Box box) {
+            Box boundingBox = box.GetBoundingBox();
+
+            Vector2 min = (boundingBox.Pos - boundingBox.Size / 2.0f) / cellSize;
+            Vector2 max = (boundingBox.Pos + boundingBox.Size / 2.0f) / cellSize;
+            int minX = (int) Math.Round(min.X);
+            int minY = (int) Math.Round(min.Y);
+            int maxX = (int) Math.Round(max.X);
+            int maxY = (int) Math.Round(max.Y);
+
+            List<Entity> result = new List<Entity>();
+            for (int y = minY; y <= maxY; y++) {
+                for (int x = minX; x <= maxX; x++) {
+                    long hash = HashPosition(x, y);
+                    int index = (int) hash % bucketCount;
+                    if (index < 0) {
+                        index += bucketCount;
+                    }
+
+                    if (buckets[index] == null) {
+                        continue;
+                    }
+
+                    foreach (Entity entity in buckets[index]) {
+                        if (entity.Transform.IntersectsBox(box)) {
                             result.Add(entity);
                         }
                     }

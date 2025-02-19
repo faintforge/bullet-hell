@@ -9,14 +9,16 @@
 - Spatial Partitioning
 - Scene Switching
 - Mouse Input
-
-**Doing**
 - Player Entity / Controller
-
-**Needed**
-- Enemy Entity
 - Projectiles
 - Collision detection
+
+**Doing**
+- Code Restructure
+
+**Needed**
+- Documentation
+- Enemy Entity
 - Texture Loading
 
 *Optional*

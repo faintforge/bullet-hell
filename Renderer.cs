@@ -90,7 +90,7 @@ namespace BulletHell {
                 indices[i * 6 + 2] = j + 2;
                 indices[i * 6 + 3] = j + 2;
                 indices[i * 6 + 4] = j + 3;
-                indices[i * 6 + 5] = j + 1;
+                indices[i * 6 + 5] = j + 0;
                 j += 4;
             }
             GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsage.StaticDraw);
@@ -177,8 +177,8 @@ namespace BulletHell {
             Vector2[] vertUV = [
                 new Vector2(left,  top),
                 new Vector2(right, top),
-                new Vector2(left,  bottom),
                 new Vector2(right, bottom),
+                new Vector2(left,  bottom),
             ];
 
             for (int i = 0; i < 4; i++) {

@@ -17,7 +17,8 @@ namespace BulletHell {
                     fullscreen: false
                 );
             Renderer renderer = new Renderer();
-            Scene scene = Scene.MainMenu;
+            // Scene scene = Scene.MainMenu;
+            Scene scene = Scene.Game;
 
             Game game = new Game(window, renderer);
 
@@ -77,7 +78,7 @@ namespace BulletHell {
                 Pos = pos,
                 Size = font.MeasureText("Play") + 16.0f,
             };
-            if (playBox.ContainsPoint(Input.Instance.MousePosition)) {
+            if (playBox.IntersectsPoint(Input.Instance.MousePosition)) {
                 if (Input.Instance.GetButtonOnDown(MouseButton.Left)) {
                     scene = Scene.Game;
                 }
@@ -100,7 +101,7 @@ namespace BulletHell {
                 Pos = quitPos,
                 Size = font.MeasureText("Quit") + 16.0f,
             };
-            if (quitBox.ContainsPoint(Input.Instance.MousePosition)) {
+            if (quitBox.IntersectsPoint(Input.Instance.MousePosition)) {
                 if (Input.Instance.GetButtonOnDown(MouseButton.Left)) {
                     Random rng = new Random();
                     quitPos = new Vector2((float) rng.NextDouble(), (float) rng.NextDouble()) * (window.Size - quitBox.Size);

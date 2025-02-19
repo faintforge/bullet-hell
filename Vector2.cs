@@ -61,5 +61,9 @@ namespace BulletHell {
         public void Rotate(float angle) {
             this = Rotated(angle);
         }
+
+        public float Dot(Vector2 other) {
+            return X * other.X + Y * other.Y;
+        }
     }
 }

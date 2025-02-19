@@ -5,6 +5,13 @@ using OpenTK.Graphics.OpenGL;
 
 namespace BulletHell {
     public class Window {
+        private class SDLGLLoader : IBindingsContext {
+            public IntPtr GetProcAddress(string procName)
+            {
+                return SDL.SDL_GL_GetProcAddress(procName);
+            }
+        }
+
         private IntPtr sdlWindow;
         private IntPtr sdlGLContext;
         private bool fullscreen;
@@ -155,13 +162,6 @@ namespace BulletHell {
 
         public void Close() {
             Open = false;
-        }
-    }
-
-    internal class SDLGLLoader : IBindingsContext {
-        public IntPtr GetProcAddress(string procName)
-        {
-            return SDL.SDL_GL_GetProcAddress(procName);
         }
     }
 }

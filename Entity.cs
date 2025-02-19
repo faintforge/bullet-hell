@@ -8,14 +8,18 @@ namespace BulletHell {
         };
         public Texture? Texture = null;
         public Color Color = Color.WHITE;
-        public World World { get; private set; }
+        protected World world;
 
         public Entity(World world) {
-            World = world;
+            this.world = world;
+        }
+
+        public void Kill() {
+            world.KillEntity(this);
         }
 
         public virtual void OnSpawn() {}
-        public virtual void OnDeath() {}
+        public virtual void OnKill() {}
         public virtual void OnCollision(Entity other) {}
         public virtual void Update(float deltaTime) {}
     }

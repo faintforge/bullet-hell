@@ -3,9 +3,22 @@ using SDL2;
 namespace BulletHell {
     public class Player : Entity {
         private float speed = 25.0f;
+        private float shootTimer = 0.0f;
+        private float shootDelay = 0.1f;
 
-        public Player(World world)
-            : base(world) {}
+        public Player(World world) : base(world) {
+            Color = Color.HexRGB(0xa53030);
+        }
+
+        public override void OnSpawn() {
+            // for (int y = 0; y < 64; y++) {
+            //     for (int x = 0; x < 64; x++) {
+            //         FireBolt bolt = world.SpawnEntity<FireBolt>();
+            //         bolt.Transform.Pos = new Vector2(x, y);
+            //         bolt.Transform.Rot = (float) (x + y) / 10.0f;
+            //     }
+            // }
+        }
 
         public override void Update(float deltaTime) {
             Vector2 vel = new Vector2();
@@ -20,9 +33,20 @@ namespace BulletHell {
             Transform.Pos += vel * deltaTime;
 
             // Lerp camera to player position
-            World.Camera.Position = new Vector2(
-                    World.Camera.Position.X + (Transform.Pos.X - World.Camera.Position.X) * deltaTime * 5.0f,
-                    World.Camera.Position.Y + (Transform.Pos.Y - World.Camera.Position.Y) * deltaTime * 5.0f);
+            world.Camera.Position = new Vector2(
+                    world.Camera.Position.X + (Transform.Pos.X - world.Camera.Position.X) * deltaTime * 5.0f,
+                    world.Camera.Position.Y + (Transform.Pos.Y - world.Camera.Position.Y) * deltaTime * 5.0f);
+
+            shootTimer += deltaTime;
+            if (Input.Instance.GetButton(MouseButton.Left) && shootTimer >= shootDelay) {
+                shootTimer = 0.0f;
+                Projectile proj = world.SpawnEntity<FireBolt>();
+                proj.Transform.Pos = Transform.Pos;
+                Vector2 mousePos = world.Camera.ScreenToWorldSpace(Input.Instance.MousePosition);
+                Vector2 direction = (mousePos - Transform.Pos).Normalized();
+                proj.Velocity = direction * 25.0f;
+                proj.Transform.Rot = (float) -Math.Atan2(direction.Y, direction.X);
+            }
         }
     }
 }

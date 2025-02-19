@@ -5,7 +5,6 @@ namespace BulletHell {
         private Window window;
         private Renderer renderer;
         private World world = new World();
-
         private Player player;
 
         public Game(Window window, Renderer renderer) {
@@ -14,7 +13,6 @@ namespace BulletHell {
 
             world.Camera.SetZoom(50.0f);
             player = world.SpawnEntity<Player>();
-            player.Color = Color.HexRGB(0xfcba03);
         }
 
         public void Run(float deltaTime) {
@@ -23,6 +21,7 @@ namespace BulletHell {
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             world.Update(deltaTime);
+            world.CollisionDetection();
             world.Camera.SetScreenSize(window.Size);
             renderer.BeginFrame(world.Camera);
             world.OperateOnEntities((entity) => {
@@ -33,11 +32,11 @@ namespace BulletHell {
             });
             renderer.EndFrame();
 
-            Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);
-            renderer.BeginFrame(uiCam);
-            Font font = AssetManager.Instance.GetFont("lato32");
-            renderer.DrawText($"{player.Transform.Pos.X}, {player.Transform.Pos.Y}", font, new Vector2(8.0f), Color.WHITE);
-            renderer.EndFrame();
+            // Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);
+            // renderer.BeginFrame(uiCam);
+            // Font font = AssetManager.Instance.GetFont("lato32");
+            // renderer.DrawText($"{player.Transform.Pos.X}, {player.Transform.Pos.Y}", font, new Vector2(8.0f), Color.WHITE);
+            // renderer.EndFrame();
         }
     }
 }
