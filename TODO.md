@@ -12,12 +12,12 @@
 - Player Entity / Controller
 - Projectiles
 - Collision detection
-
-**Doing**
 - Code Restructure
 
-**Needed**
+**Doing**
 - Documentation
+
+**Needed**
 - Enemy Entity
 - Texture Loading
 
