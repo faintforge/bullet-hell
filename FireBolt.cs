@@ -6,8 +6,9 @@ namespace BulletHell {
             };
             Friendly = true;
             Color = Color.HexRGB(0xda863e);
+            Damage = 5;
             lifespan = 1.0f;
-            pierce = 2;
+            pierce = 1;
         }
     }
 }

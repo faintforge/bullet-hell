@@ -68,6 +68,21 @@ namespace BulletHell {
         /// </summary>
         /// <param name="deltaTime">Time between frames.</param>
         public void Update(float deltaTime) {
+            EmptyEntityQueues();
+            foreach (Entity entity in entities) {
+                entity.Update(deltaTime);
+            }
+            EmptyEntityQueues();
+
+            spatialStructure.Clear();
+            Console.WriteLine($"Inserting {entities.Count} entities");
+            foreach (Entity entity in entities) {
+                spatialStructure.Insert(entity);
+            }
+            CollisionDetection();
+        }
+
+        private void EmptyEntityQueues() {
             List<Entity> spawnQueueCopy = new List<Entity>(spawnQueue);
             spawnQueue.Clear();
             foreach (Entity entity in spawnQueueCopy) {
@@ -81,21 +96,12 @@ namespace BulletHell {
                 entity.OnKill();
                 entities.Remove(entity);
             }
-
-            foreach (Entity entity in entities) {
-                entity.Update(deltaTime);
-            }
-
-            spatialStructure.Clear();
-            foreach (Entity entity in entities) {
-                spatialStructure.Insert(entity);
-            }
-            CollisionDetection();
         }
 
         private void CollisionDetection() {
             foreach (Entity entity in entities) {
                 List<Entity> colliding = SpatialQuery(entity.Transform);
+                Console.WriteLine($"Collision count {colliding.Count}");
                 foreach (Entity other in colliding) {
                     if (entity == other) {
                         continue;

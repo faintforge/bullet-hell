@@ -14,12 +14,13 @@
 - Collision detection
 - Code Restructure
 - Documentation
+- Enemy Entity
+- Health UI
 
 **Doing**
-- Enemy Entity
+- Texture Loading
 
 **Needed**
-- Texture Loading
 
 *Optional*
 - Particles

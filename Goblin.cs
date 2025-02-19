@@ -6,7 +6,7 @@ namespace BulletHell {
 
         public Goblin(World world) : base(world) {
             Color = Color.HexRGB(0x75a743);
-            Health = 100;
+            MaxHealth = 100;
         }
 
         public override void AI(float deltaTime) {
@@ -37,6 +37,10 @@ namespace BulletHell {
                 dagger.Transform.Rot = (float) Math.Atan2(dir.Y, dir.X);
                 dagger.Velocity = dir * 30.0f;
             }
+        }
+
+        public override void OnHit(Projectile projectile, int damage) {
+            Console.WriteLine($"Ouch {damage}");
         }
     }
 }

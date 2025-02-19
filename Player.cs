@@ -5,10 +5,15 @@ namespace BulletHell {
         private float speed = 25.0f;
         private float shootTimer = 0.0f;
         private float shootDelay = 0.1f;
+        public int MaxHealth { get; set; } = 100;
         public int Health { get; set; }
 
         public Player(World world) : base(world) {
             Color = Color.HexRGB(0xa53030);
+        }
+
+        public override void OnSpawn() {
+            Health = MaxHealth;
         }
 
         public override void Update(float deltaTime) {

@@ -60,7 +60,8 @@ namespace BulletHell {
             int maxX = (int) Math.Round(max.X);
             int maxY = (int) Math.Round(max.Y);
 
-            List<Entity> result = new List<Entity>();
+            // List<Entity> result = new List<Entity>();
+            HashSet<Entity> result = new HashSet<Entity>();
             for (int y = minY; y <= maxY; y++) {
                 for (int x = minX; x <= maxX; x++) {
                     long hash = HashPosition(x, y);
@@ -80,7 +81,7 @@ namespace BulletHell {
                     }
                 }
             }
-            return result;
+            return result.ToList();
         }
 
         /// <summary>
@@ -98,7 +99,7 @@ namespace BulletHell {
             int maxX = (int) Math.Round(max.X);
             int maxY = (int) Math.Round(max.Y);
 
-            List<Entity> result = new List<Entity>();
+            HashSet<Entity> result = new HashSet<Entity>();
             for (int y = minY; y <= maxY; y++) {
                 for (int x = minX; x <= maxX; x++) {
                     long hash = HashPosition(x, y);
@@ -118,7 +119,7 @@ namespace BulletHell {
                     }
                 }
             }
-            return result;
+            return result.ToList();
         }
 
         /// <summary>
