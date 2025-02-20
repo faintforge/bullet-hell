@@ -40,5 +40,13 @@ namespace BulletHell {
                 dagger.Velocity = dir * 150.0f;
             }
         }
+
+        public override void OnKill() {
+            Goblin goblin = world.SpawnEntity<Goblin>();
+            goblin.Transform.Pos = Transform.Pos + new Vector2(1.0f) * -8.0f;
+
+            goblin = world.SpawnEntity<Goblin>();
+            goblin.Transform.Pos = Transform.Pos + new Vector2(1.0f) * 8.0f;
+        }
     }
 }
