@@ -5,7 +5,7 @@ namespace BulletHell {
             Transform.Size = Texture.Size;
             Friendly = false;
             Damage = 5;
-            lifespan = 1.0f;
+            lifespan = 2.5f;
         }
     }
 }

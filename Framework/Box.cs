@@ -37,7 +37,7 @@ namespace BulletHell {
         public Box GetBoundingBox() {
             Vector2[] verts = GetVertices();
             Vector2 min = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
-            Vector2 max = new Vector2();
+            Vector2 max = new Vector2(float.NegativeInfinity, float.NegativeInfinity);
             foreach (Vector2 vert in verts) {
                 min.X = Math.Min(min.X, vert.X);
                 min.Y = Math.Min(min.Y, vert.Y);

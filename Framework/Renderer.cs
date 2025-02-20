@@ -230,7 +230,8 @@ namespace BulletHell {
         /// <param name="font">Font to use.</param>
         /// <param name="position">Top left position of text.</param>
         /// <param name="color">Color of text.</param>
-        public void DrawText(string text, Font font, Vector2 position, Color color) {
+        /// <returns>Size of drawn width.</returns>
+        public Vector2 DrawText(string text, Font font, Vector2 position, Color color) {
             Vector2 glyphPos = position;
             foreach (char c in text) {
                 Glyph g = font.GetGlyph(c);
@@ -242,6 +243,8 @@ namespace BulletHell {
                         }, color, font.Atlas, g.UVs[0], g.UVs[1]);
                 glyphPos.X += g.Advance;
             }
+            float width = glyphPos.X - position.X;
+            return new Vector2(width, font.GetMetrics().Ascent - font.GetMetrics().Descent);
         }
     }
 }

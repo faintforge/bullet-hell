@@ -13,8 +13,9 @@ namespace BulletHell {
             world.Camera.Zoom = 360.0f;
             world.SpawnEntity<Player>();
 
-            Goblin enemy = world.SpawnEntity<Goblin>();
-            enemy.Transform.Pos = new Vector2(128.0f);
+            world.SpawnEntity<GoblinSpawner>();
+            // Goblin enemy = world.SpawnEntity<Goblin>();
+            // enemy.Transform.Pos = new Vector2(128.0f);
         }
 
         public void Run(float deltaTime) {
@@ -26,11 +27,11 @@ namespace BulletHell {
             world.Camera.ScreenSize = window.Size;
             renderer.BeginFrame(world.Camera);
             world.OperateOnEntities((entity) => {
-                renderer.Draw(
-                        entity.Transform,
-                        entity.Color,
-                        entity.Texture);
-            });
+                    renderer.Draw(
+                            entity.Transform,
+                            entity.Color,
+                            entity.Texture);
+                    });
             renderer.EndFrame();
 
             Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);
@@ -39,8 +40,8 @@ namespace BulletHell {
 
             // Health bars
             world.OperateOnEntities((entity) => {
-                Vector2 barSize = new Vector2(32.0f, 4.0f);
-                if (entity is Player) {
+                    Vector2 barSize = new Vector2(32.0f, 4.0f);
+                    if (entity is Player) {
                     Player player = (Player) entity;
                     Vector2 screenPos = world.Camera.WorldToScreenSpace(player.Transform.Pos + new Vector2(0.0f, player.Transform.Size.Y / 2.0f));
                     screenPos.Y -= 8.0f;
@@ -51,7 +52,7 @@ namespace BulletHell {
                             Origin = new Vector2(-1.0f, 1.0f),
                             Pos = screenPos,
                             Size = barSize,
-                        }, Color.HexRGB(0x241527));
+                            }, Color.HexRGB(0x241527));
                     // Foreground
                     Vector2 healthLeft = barSize;
                     healthLeft.X *= (float) player.Health / player.MaxHealth;
@@ -59,33 +60,48 @@ namespace BulletHell {
                             Origin = new Vector2(-1.0f, 1.0f),
                             Pos = screenPos,
                             Size = healthLeft,
-                        }, Color.HexRGB(0xcf573c));
-                }
+                            }, Color.HexRGB(0xcf573c));
+                    }
 
-                if (entity is Enemy) {
-                    Enemy enemy = (Enemy) entity;
-                    Vector2 screenPos = world.Camera.WorldToScreenSpace(enemy.Transform.Pos + new Vector2(0.0f, enemy.Transform.Size.Y / 2.0f));
-                    screenPos.Y -= 8.0f;
-                    screenPos.X -= barSize.X / 2.0f;
+                    if (entity is Enemy) {
+                        Enemy enemy = (Enemy) entity;
+                        Vector2 screenPos = world.Camera.WorldToScreenSpace(enemy.Transform.Pos + new Vector2(0.0f, enemy.Transform.Size.Y / 2.0f));
+                        screenPos.Y -= 8.0f;
+                        screenPos.X -= barSize.X / 2.0f;
 
-                    // Background
-                    renderer.Draw(new Box() {
-                            Origin = new Vector2(-1.0f, 1.0f),
-                            Pos = screenPos,
-                            Size = barSize,
-                        }, Color.HexRGB(0x241527));
-                    // Foreground
-                    Vector2 healthLeft = barSize;
-                    healthLeft.X *= (float) enemy.Health / enemy.MaxHealth;
-                    renderer.Draw(new Box() {
-                            Origin = new Vector2(-1.0f, 1.0f),
-                            Pos = screenPos,
-                            Size = healthLeft,
-                        }, Color.HexRGB(0xcf573c));
-                }
+                        // Background
+                        renderer.Draw(new Box() {
+                                Origin = new Vector2(-1.0f, 1.0f),
+                                Pos = screenPos,
+                                Size = barSize,
+                                }, Color.HexRGB(0x241527));
+                        // Foreground
+                        Vector2 healthLeft = barSize;
+                        healthLeft.X *= (float) enemy.Health / enemy.MaxHealth;
+                        renderer.Draw(new Box() {
+                                Origin = new Vector2(-1.0f, 1.0f),
+                                Pos = screenPos,
+                                Size = healthLeft,
+                                }, Color.HexRGB(0xcf573c));
+                    }
             });
 
             renderer.EndFrame();
+
+            // font = AssetManager.Instance.GetFont("roboto_mono");
+            // FontMetrics metrics = font.GetMetrics();
+            // Vector2 pos = new Vector2(8.0f);
+            // renderer.BeginFrame(uiCam);
+            // renderer.DrawText("Frame Profile", font, pos, Color.WHITE);
+            // pos.Y += metrics.LineGap;
+            // foreach (ProfileData profile in Profiler.Instance.Profiles) {
+            //     renderer.DrawText($"{profile.Duration:0.00}ms {profile.Name}", font, pos, Color.WHITE);
+            //     pos.Y += metrics.LineGap;
+            // }
+            // renderer.EndFrame();
+
+            // Profiler.Instance.WriteJson("frameProfile.json");
+            Profiler.Instance.Reset();
         }
     }
 }

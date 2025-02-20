@@ -68,17 +68,21 @@ namespace BulletHell {
         /// </summary>
         /// <param name="deltaTime">Time between frames.</param>
         public void Update(float deltaTime) {
+            Profiler.Instance.Start("Entity Update");
             EmptyEntityQueues();
             foreach (Entity entity in entities) {
                 entity.Update(deltaTime);
             }
             EmptyEntityQueues();
+            Profiler.Instance.End();
 
+            Profiler.Instance.Start("Collision Detection");
             spatialStructure.Clear();
             foreach (Entity entity in entities) {
                 spatialStructure.Insert(entity);
             }
             CollisionDetection();
+            Profiler.Instance.End();
         }
 
         private void EmptyEntityQueues() {
