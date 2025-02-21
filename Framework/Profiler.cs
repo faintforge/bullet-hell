@@ -1,15 +1,30 @@
 using System.Diagnostics;
 
 namespace BulletHell {
-    public struct ProfileData {
+    public class Profile {
         public string Name { get; }
-        public double Start { get; }
-        public double Duration { get; }
+        public double AverageDuration { get; private set; }
+        public double TotalDuration { get; private set; }
+        public int CallCount { get; private set; }
+        public Profile? Parent { get; }
+        private Stopwatch stopwatch = new Stopwatch();
 
-        public ProfileData(string name, double start, double duration) {
+        public Dictionary<string, Profile> ChildProfiles = new Dictionary<string, Profile>();
+
+        public Profile(Profile? parent, string name) {
+            Parent = parent;
             Name = name;
-            Start = start;
-            Duration = duration;
+        }
+
+        public void Start() {
+            CallCount++;
+            stopwatch = Stopwatch.StartNew();
+        }
+
+        public void End() {
+            stopwatch.Stop();
+            TotalDuration += stopwatch.Elapsed.TotalMilliseconds;
+            AverageDuration = TotalDuration / CallCount;
         }
     }
 
@@ -24,59 +39,39 @@ namespace BulletHell {
             }
         }
 
-        private Stack<(string, double, Stopwatch)> timerStack = new Stack<(string, double, Stopwatch)>();
-        public List<ProfileData> Profiles { get; private set; } = new List<ProfileData>();
-        private Stopwatch stopwatch = Stopwatch.StartNew();
+        public Dictionary<string, Profile> Profiles { get; private set; } = new Dictionary<string, Profile>();
+        private Profile? currentProfile = null;
 
         private Profiler() {}
 
-        // [Conditional("DEBUG")]
+        [Conditional("DEBUG")]
         public void Start(string name) {
-            stopwatch.Stop();
-            timerStack.Push((name, stopwatch.Elapsed.TotalMicroseconds, Stopwatch.StartNew()));
-            stopwatch.Start();
-        }
-
-        // [Conditional("DEBUG")]
-        public void End() {
-            (string name, double start, Stopwatch timer) = timerStack.Pop();
-            timer.Stop();
-            double duration = timer.Elapsed.TotalMicroseconds;
-            Profiles.Add(new ProfileData(name, start, duration));
-        }
-
-        // [Conditional("DEBUG")]
-        public void Reset() {
-            Profiles = new List<ProfileData>();
-        }
-
-        // [Conditional("DEBUG")]
-        public void WriteJson(string filepath) {
-            StreamWriter stream = new StreamWriter(filepath);
-
-            // Header
-            stream.Write("{\"otherData\": {},\"traceEvents\": [");
-
-            int profilesLeft = Profiles.Count;
-            foreach (ProfileData profile in Profiles) {
-                stream.Write("{");
-                stream.Write($"\"cat\": \"function\",");
-                stream.Write($"\"dur\": {profile.Duration},");
-                stream.Write($"\"name\": \"{profile.Name}\",");
-                stream.Write($"\"ph\": \"X\",");
-                stream.Write($"\"ts\": {profile.Start},");
-                stream.Write($"\"pid\": 0");
-                stream.Write("}");
-                if (profilesLeft > 1) {
-                    stream.Write(",");
+            Profile? profile;
+            if (currentProfile == null) {
+                if (!Profiles.TryGetValue(name, out profile)) {
+                    profile = new Profile(currentProfile, name);
+                    Profiles.Add(name, profile);
                 }
-                profilesLeft--;
+            } else {
+                if (!currentProfile.ChildProfiles.TryGetValue(name, out profile)) {
+                    profile = new Profile(currentProfile, name);
+                    currentProfile.ChildProfiles.Add(name, profile);
+                }
             }
+            profile.Start();
+            currentProfile = profile;
+        }
 
-            // Footer
-            stream.Write("]}");
+        [Conditional("DEBUG")]
+        public void End() {
+            System.Diagnostics.Debug.Assert(currentProfile != null);
+            currentProfile.End();
+            currentProfile = currentProfile.Parent;
+        }
 
-            stream.Close();
+        [Conditional("DEBUG")]
+        public void Reset() {
+            Profiles = new Dictionary<string, Profile>();
         }
     }
 }

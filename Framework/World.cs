@@ -76,11 +76,14 @@ namespace BulletHell {
             EmptyEntityQueues();
             Profiler.Instance.End();
 
-            Profiler.Instance.Start("Collision Detection");
+            Profiler.Instance.Start("Build Spatial Structure");
             spatialStructure.Clear();
             foreach (Entity entity in entities) {
                 spatialStructure.Insert(entity);
             }
+            Profiler.Instance.End();
+
+            Profiler.Instance.Start("Collision Detection");
             CollisionDetection();
             Profiler.Instance.End();
         }
@@ -103,7 +106,9 @@ namespace BulletHell {
 
         private void CollisionDetection() {
             foreach (Entity entity in entities) {
+                Profiler.Instance.Start("Entity Spatial Query");
                 List<Entity> colliding = SpatialQuery(entity.Transform);
+                Profiler.Instance.End();
                 foreach (Entity other in colliding) {
                     if (entity == other) {
                         continue;

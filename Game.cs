@@ -24,6 +24,15 @@ namespace BulletHell {
         }
 
         public void Run(float deltaTime) {
+            Profiler.Instance.Start("One");
+            Profiler.Instance.Start("Two");
+            Profiler.Instance.Start("Three");
+            Profiler.Instance.End();
+            Profiler.Instance.End();
+            Profiler.Instance.Start("Four");
+            Profiler.Instance.End();
+            Profiler.Instance.End();
+
             GL.Viewport(0, 0, (int) window.Size.X, (int) window.Size.Y);
             GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
@@ -93,20 +102,33 @@ namespace BulletHell {
 
             renderer.EndFrame();
 
-            font = AssetManager.Instance.GetFont("roboto_mono");
+            PrintProfiles();
+            Profiler.Instance.Reset();
+        }
+
+        private float PrintProfilesHelper(Profile profile, Vector2 pos) {
+            Font font = AssetManager.Instance.GetFont("roboto_mono");
             FontMetrics metrics = font.GetMetrics();
+
+            string text = $"{profile.TotalDuration:0.00}ms {profile.AverageDuration:0.00}ms {profile.CallCount} call(s) - {profile.Name}";
+            renderer.DrawText(text, font, pos, Color.WHITE);
+
+            pos.Y += metrics.LineGap;
+            pos.X += 16.0f;
+            foreach (Profile prof in profile.ChildProfiles.Values) {
+                pos.Y = PrintProfilesHelper(prof, pos);
+            }
+            return pos.Y;
+        }
+
+        private void PrintProfiles() {
+            Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);
             Vector2 pos = new Vector2(8.0f);
             renderer.BeginFrame(uiCam);
-            renderer.DrawText("Frame Profile", font, pos, Color.WHITE);
-            pos.Y += metrics.LineGap;
-            foreach (ProfileData profile in Profiler.Instance.Profiles) {
-                renderer.DrawText($"{profile.Duration*0.001f:0.00}ms {profile.Name}", font, pos, Color.WHITE);
-                pos.Y += metrics.LineGap;
+            foreach (Profile prof in Profiler.Instance.Profiles.Values) {
+                pos.Y = PrintProfilesHelper(prof, pos);
             }
             renderer.EndFrame();
-
-            // Profiler.Instance.WriteJson("frameProfile.json");
-            Profiler.Instance.Reset();
         }
     }
 }

@@ -8,7 +8,38 @@ namespace BulletHell {
             Game,
         }
 
+        private static void PrintProfilesHelper(Profile profile, int depth) {
+            string spaces = "";
+            for (int i = 0; i < depth * 4; i++) {
+                spaces += ' ';
+            }
+            Console.WriteLine($"{spaces}{profile.TotalDuration:0.00}ms {profile.AverageDuration:0.00}ms {profile.CallCount} call(s) - {profile.Name}");
+
+            foreach (Profile prof in profile.ChildProfiles.Values) {
+                PrintProfilesHelper(prof, depth + 1);
+            }
+        }
+
+        private static void PrintProfiles() {
+            foreach (Profile prof in Profiler.Instance.Profiles.Values) {
+                PrintProfilesHelper(prof, 0);
+            }
+        }
+
         private static void Main(string[] args) {
+            // Profiler.Instance.Start("One");
+            // Profiler.Instance.Start("Two");
+            // Profiler.Instance.Start("Three");
+            // Profiler.Instance.End();
+            // Profiler.Instance.End();
+            // Profiler.Instance.Start("Four");
+            // Profiler.Instance.End();
+            // Profiler.Instance.End();
+            //
+            // PrintProfiles();
+            //
+            // Environment.Exit(0);
+
             Window window = new Window(
                     "Window",
                     800, 600,
@@ -17,8 +48,8 @@ namespace BulletHell {
                     fullscreen: false
                 );
             Renderer renderer = new Renderer();
-            Scene scene = Scene.MainMenu;
-            // Scene scene = Scene.Game;
+            // Scene scene = Scene.MainMenu;
+            Scene scene = Scene.Game;
 
             LoadAssets();
 
