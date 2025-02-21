@@ -98,6 +98,9 @@ namespace BulletHell {
         public static Vector2 operator +(Vector2 vec, float scaler) => vec.Add(scaler);
         public static Vector2 operator -(Vector2 vec, float scaler) => vec.Sub(scaler);
 
+        public static bool operator ==(Vector2 a, Vector2 b) { return a.X == b.X && a.Y == b.Y; }
+        public static bool operator !=(Vector2 a, Vector2 b) { return a.X != b.X || a.Y != b.Y; }
+
         /// <summary>
         /// Get squared magnitude (length) of vector.
         /// </summary>

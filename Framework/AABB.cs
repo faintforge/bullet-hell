@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace BulletHell {
     public struct AABB {
         public Vector2 Pos { get; set; }
@@ -20,5 +22,8 @@ namespace BulletHell {
                 Size = aabb.Size,
             };
         }
+
+        public static bool operator ==(AABB a, AABB b) { return a.Pos == b.Pos && a.Size == b.Size; }
+        public static bool operator !=(AABB a, AABB b) { return a.Pos != b.Pos || a.Size != b.Size; }
     }
 }

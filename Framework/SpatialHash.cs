@@ -120,6 +120,13 @@ namespace BulletHell {
                     }
 
                     foreach (Bucket bucket in buckets[index]) {
+                        Profiler.Instance.Start("Check bounding boxes");
+                        if (bucket.BoundingBox == boundingBox) {
+                            Profiler.Instance.End();
+                            continue;
+                        }
+                        Profiler.Instance.End();
+
                         Profiler.Instance.Start("Intersect AABB Test");
                         if (!bucket.BoundingBox.IntersectsAABB(boundingBox)) {
                             Profiler.Instance.End();
