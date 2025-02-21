@@ -25,5 +25,12 @@ namespace BulletHell {
 
         public static bool operator ==(AABB a, AABB b) { return a.Pos == b.Pos && a.Size == b.Size; }
         public static bool operator !=(AABB a, AABB b) { return a.Pos != b.Pos || a.Size != b.Size; }
+        public override bool Equals([NotNullWhen(true)] object? obj) {
+            if (obj == null) {
+                return false;
+            }
+            return this == (AABB) obj;
+        }
+        public override int GetHashCode() { return base.GetHashCode(); }
     }
 }

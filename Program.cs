@@ -27,19 +27,6 @@ namespace BulletHell {
         }
 
         private static void Main(string[] args) {
-            // Profiler.Instance.Start("One");
-            // Profiler.Instance.Start("Two");
-            // Profiler.Instance.Start("Three");
-            // Profiler.Instance.End();
-            // Profiler.Instance.End();
-            // Profiler.Instance.Start("Four");
-            // Profiler.Instance.End();
-            // Profiler.Instance.End();
-            //
-            // PrintProfiles();
-            //
-            // Environment.Exit(0);
-
             Window window = new Window(
                     "Window",
                     800, 600,

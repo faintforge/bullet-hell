@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace BulletHell {
@@ -100,6 +101,13 @@ namespace BulletHell {
 
         public static bool operator ==(Vector2 a, Vector2 b) { return a.X == b.X && a.Y == b.Y; }
         public static bool operator !=(Vector2 a, Vector2 b) { return a.X != b.X || a.Y != b.Y; }
+        public override bool Equals([NotNullWhen(true)] object? obj) {
+            if (obj == null) {
+                return false;
+            }
+            return this == (Vector2) obj;
+        }
+        public override int GetHashCode() { return base.GetHashCode(); }
 
         /// <summary>
         /// Get squared magnitude (length) of vector.

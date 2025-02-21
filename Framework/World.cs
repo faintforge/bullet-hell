@@ -13,6 +13,10 @@ namespace BulletHell {
         /// </summary>
         public World() {
             spatialStructure = new SpatialHash(new Vector2(16.0f), 1024);
+            // spatialStructure = new Quadtree(new AABB() {
+            //         Pos = new Vector2(1024.0f) / 2.0f,
+            //         Size = new Vector2(1024.0f),
+            //     }, 8, 2);
         }
 
         /// <summary>
@@ -86,6 +90,10 @@ namespace BulletHell {
             Profiler.Instance.Start("Collision Detection");
             CollisionDetection();
             Profiler.Instance.End();
+
+            if (spatialStructure is Quadtree) {
+                ((Quadtree) spatialStructure).DebugDraw();
+            }
         }
 
         private void EmptyEntityQueues() {
