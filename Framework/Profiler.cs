@@ -30,14 +30,14 @@ namespace BulletHell {
 
         private Profiler() {}
 
-        [Conditional("DEBUG")]
+        // [Conditional("DEBUG")]
         public void Start(string name) {
             stopwatch.Stop();
             timerStack.Push((name, stopwatch.Elapsed.TotalMicroseconds, Stopwatch.StartNew()));
             stopwatch.Start();
         }
 
-        [Conditional("DEBUG")]
+        // [Conditional("DEBUG")]
         public void End() {
             (string name, double start, Stopwatch timer) = timerStack.Pop();
             timer.Stop();
@@ -45,12 +45,12 @@ namespace BulletHell {
             Profiles.Add(new ProfileData(name, start, duration));
         }
 
-        [Conditional("DEBUG")]
+        // [Conditional("DEBUG")]
         public void Reset() {
             Profiles = new List<ProfileData>();
         }
 
-        [Conditional("DEBUG")]
+        // [Conditional("DEBUG")]
         public void WriteJson(string filepath) {
             StreamWriter stream = new StreamWriter(filepath);
 

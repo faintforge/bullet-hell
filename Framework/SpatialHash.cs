@@ -1,7 +1,12 @@
 namespace BulletHell {
     public class SpatialHash : ISpatialPartitioner {
+        private struct Bucket {
+            public AABB BoundingBox { get; set; }
+            public Entity Entity { get; set; }
+        }
+
         private Vector2 cellSize;
-        private List<Entity>[] buckets;
+        private List<Bucket>[] buckets;
         private int bucketCount;
 
         /// <summary>
@@ -10,7 +15,7 @@ namespace BulletHell {
         /// <param name="cellSize">Size of a single cell containing entities.</param>
         /// <param name="bucketCount">Amount of buckets in the internal map. A higher number means fewer collisions.</param>
         public SpatialHash(Vector2 cellSize, int bucketCount) {
-            buckets = new List<Entity>[bucketCount];
+            buckets = new List<Bucket>[bucketCount];
             this.bucketCount = bucketCount;
             this.cellSize = cellSize;
         }
@@ -20,9 +25,9 @@ namespace BulletHell {
         /// </summary>
         /// <param name="entity">Entity to insert.</param>
         public void Insert(Entity entity) {
-            Box boundingBox = entity.Transform.GetBoundingBox();
-            Vector2 min = (boundingBox.Pos - boundingBox.Size / 2.0f) / cellSize;
-            Vector2 max = (boundingBox.Pos + boundingBox.Size / 2.0f) / cellSize;
+            AABB boundingBox = entity.Transform.GetBoundingAABB();
+            Vector2 min = boundingBox.Min / cellSize;
+            Vector2 max = boundingBox.Max / cellSize;
             int minX = (int) MathF.Round(min.X);
             int minY = (int) MathF.Round(min.Y);
             int maxX = (int) MathF.Round(max.X);
@@ -39,9 +44,12 @@ namespace BulletHell {
                     }
 
                     if (buckets[index] == null) {
-                        buckets[index] = new List<Entity>();
+                        buckets[index] = new List<Bucket>();
                     }
-                    buckets[index].Add(entity);
+                    buckets[index].Add(new Bucket() {
+                            BoundingBox = boundingBox,
+                            Entity = entity,
+                        });
                 }
             }
         }
@@ -74,9 +82,9 @@ namespace BulletHell {
                         continue;
                     }
 
-                    foreach (Entity entity in buckets[index]) {
-                        if (entity.Transform.IntersectsCircle(position, radius)) {
-                            result.Add(entity);
+                    foreach (Bucket bucket in buckets[index]) {
+                        if (bucket.Entity.Transform.IntersectsCircle(position, radius)) {
+                            result.Add(bucket.Entity);
                         }
                     }
                 }
@@ -90,10 +98,9 @@ namespace BulletHell {
         /// <param name="box">Query region.</param>
         /// <returns>List of entities within the specified box region.</returns>
         public List<Entity> Query(Box box) {
-            Box boundingBox = box.GetBoundingBox();
-
-            Vector2 min = (boundingBox.Pos - boundingBox.Size / 2.0f) / cellSize;
-            Vector2 max = (boundingBox.Pos + boundingBox.Size / 2.0f) / cellSize;
+            AABB boundingBox = box.GetBoundingAABB();
+            Vector2 min = boundingBox.Min / cellSize;
+            Vector2 max = boundingBox.Max / cellSize;
             int minX = (int) MathF.Round(min.X);
             int minY = (int) MathF.Round(min.Y);
             int maxX = (int) MathF.Round(max.X);
@@ -112,9 +119,13 @@ namespace BulletHell {
                         continue;
                     }
 
-                    foreach (Entity entity in buckets[index]) {
-                        if (entity.Transform.IntersectsBox(box)) {
-                            result.Add(entity);
+                    foreach (Bucket bucket in buckets[index]) {
+                        if (!bucket.BoundingBox.IntersectsAABB(boundingBox)) {
+                            continue;
+                        }
+
+                        if (bucket.Entity.Transform.IntersectsBox(box)) {
+                            result.Add(bucket.Entity);
                         }
                     }
                 }
@@ -126,7 +137,7 @@ namespace BulletHell {
         /// Clear the spatial structure of entities.
         /// </summary>
         public void Clear() {
-            buckets = new List<Entity>[bucketCount];
+            buckets = new List<Bucket>[bucketCount];
         }
 
         private long HashPosition(int x, int y) {

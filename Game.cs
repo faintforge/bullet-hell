@@ -15,8 +15,8 @@ namespace BulletHell {
 
             // world.SpawnEntity<GoblinSpawner>();
 
-            for (int y = 0; y < 6; y++) {
-                for (int x = 0; x < 6; x++) {
+            for (int y = 0; y < 16; y++) {
+                for (int x = 0; x < 16; x++) {
                     Goblin enemy = world.SpawnEntity<Goblin>();
                     enemy.Transform.Pos = new Vector2(x, y) * 16.0f;
                 }

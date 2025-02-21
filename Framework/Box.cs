@@ -31,10 +31,9 @@ namespace BulletHell {
 
         /// <summary>
         /// Gets an axis aligned bounding box from a potentially unaligned box.
-        /// The origin of this box will always be (0, 0) and have no rotation.
         /// </summary>
         /// <returns>Axis aligned bounding box.</returns>
-        public Box GetBoundingBox() {
+        public AABB GetBoundingAABB() {
             Vector2[] verts = GetVertices();
             Vector2 min = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
             Vector2 max = new Vector2(float.NegativeInfinity, float.NegativeInfinity);
@@ -46,8 +45,7 @@ namespace BulletHell {
             }
             Vector2 size = max - min;
             Vector2 pos = min + size / 2.0f;
-            return new Box() {
-                Origin = new Vector2(),
+            return new AABB() {
                 Pos = pos,
                 Size = size,
             };
