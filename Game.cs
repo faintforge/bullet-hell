@@ -15,8 +15,8 @@ namespace BulletHell {
 
             // world.SpawnEntity<GoblinSpawner>();
 
-            for (int y = 0; y < 16; y++) {
-                for (int x = 0; x < 16; x++) {
+            for (int y = 0; y < 32; y++) {
+                for (int x = 0; x < 32; x++) {
                     Goblin enemy = world.SpawnEntity<Goblin>();
                     enemy.Transform.Pos = new Vector2(x, y) * 16.0f;
                 }
@@ -24,14 +24,7 @@ namespace BulletHell {
         }
 
         public void Run(float deltaTime) {
-            Profiler.Instance.Start("One");
-            Profiler.Instance.Start("Two");
-            Profiler.Instance.Start("Three");
-            Profiler.Instance.End();
-            Profiler.Instance.End();
-            Profiler.Instance.Start("Four");
-            Profiler.Instance.End();
-            Profiler.Instance.End();
+            Debug.Instance.Camera = world.Camera;
 
             GL.Viewport(0, 0, (int) window.Size.X, (int) window.Size.Y);
             GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);

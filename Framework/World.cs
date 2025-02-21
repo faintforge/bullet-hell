@@ -12,7 +12,7 @@ namespace BulletHell {
         /// Create a world containing entities.
         /// </summary>
         public World() {
-            spatialStructure = new SpatialHash(new Vector2(32.0f), 1024);
+            spatialStructure = new SpatialHash(new Vector2(16.0f), 1024);
         }
 
         /// <summary>

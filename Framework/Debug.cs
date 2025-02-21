@@ -9,13 +9,17 @@ namespace BulletHell {
                 return instance;
             }
         }
+        public Camera? Camera { get; set; }
 
-        private Renderer renderer = new Renderer(1);
+        private Renderer renderer = new Renderer(64);
 
         private Debug() {}
 
-        public void DrawBox(Box box, Color color, Camera camera) {
-            renderer.BeginFrame(camera);
+        public void DrawBox(Box box, Color color) {
+            if (Camera == null) {
+                throw new Exception("Camera must be set before doing debug rendering.");
+            }
+            renderer.BeginFrame(Camera);
             renderer.Draw(box, color);
             renderer.EndFrame();
         }
