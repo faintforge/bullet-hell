@@ -22,8 +22,8 @@ namespace BulletHell {
                 spawnTimer = 0.0f;
 
                 Random rng = new Random();
-                double angle = rng.NextDouble() * Math.PI * 2.0f;
-                Vector2 pos = new Vector2((float) Math.Cos(angle), (float) Math.Sin(angle)) * 360.0f;;
+                float angle = (float) rng.NextDouble() * MathF.PI * 2.0f;
+                Vector2 pos = new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * 360.0f;;
 
                 Goblin goblin = world.SpawnEntity<Goblin>();
                 goblin.Target = player;

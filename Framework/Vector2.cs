@@ -111,7 +111,7 @@ namespace BulletHell {
         /// </summary>
         /// <returns>Magnitude.</returns>
         public float Magnitude() {
-            return (float) Math.Sqrt(MagnitudeSquared());
+            return MathF.Sqrt(MagnitudeSquared());
         }
 
         /// <summary>
@@ -135,9 +135,10 @@ namespace BulletHell {
         /// <param name="angle">Angle in radians.</param>
         /// <returns>Rotated vector.</returns>
         public Vector2 Rotated(float angle) {
+            (float sin, float cos) = MathF.SinCos(angle);
             return new Vector2(
-                    X * (float) Math.Cos(angle) - Y * (float) Math.Sin(angle),
-                    X * (float) Math.Sin(angle) + Y * (float) Math.Cos(angle)
+                    X * cos - Y * sin,
+                    X * sin + Y * cos
                 );
         }
 

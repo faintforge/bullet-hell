@@ -87,9 +87,9 @@ namespace BulletHell {
         public static Color HSL(float hue, float saturation, float lightness) {
             // https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB
             Color color = new Color();
-            float chroma = (1 - Math.Abs(2 * lightness - 1)) * saturation;
-            float hue_prime = Math.Abs(hue % 360.0f) / 60.0f;
-            float x = chroma * (1.0f - Math.Abs((hue_prime % 2.0f) - 1.0f));
+            float chroma = (1 - MathF.Abs(2 * lightness - 1)) * saturation;
+            float hue_prime = MathF.Abs(hue % 360.0f) / 60.0f;
+            float x = chroma * (1.0f - MathF.Abs((hue_prime % 2.0f) - 1.0f));
             if (hue_prime < 1.0f) { color = Color.RGB(chroma, x, 0.0f); }
             else if (hue_prime < 2.0f) { color = Color.RGB(x, chroma, 0.0f); }
             else if (hue_prime < 3.0f) { color = Color.RGB(0.0f, chroma, x); }
@@ -114,8 +114,8 @@ namespace BulletHell {
             // https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB
             Color color = new Color();
             float chroma = value * saturation;
-            float hue_prime = Math.Abs(hue % 360.0f) / 60.0f;
-            float x = chroma * (1.0f - Math.Abs((hue_prime % 2.0f) - 1.0f));
+            float hue_prime = MathF.Abs(hue % 360.0f) / 60.0f;
+            float x = chroma * (1.0f - MathF.Abs((hue_prime % 2.0f) - 1.0f));
             if (hue_prime < 1.0f) { color = Color.RGB(chroma, x, 0.0f); }
             else if (hue_prime < 2.0f) { color = Color.RGB(x, chroma, 0.0f); }
             else if (hue_prime < 3.0f) { color = Color.RGB(0.0f, chroma, x); }

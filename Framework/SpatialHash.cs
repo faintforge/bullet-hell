@@ -23,10 +23,10 @@ namespace BulletHell {
             Box boundingBox = entity.Transform.GetBoundingBox();
             Vector2 min = (boundingBox.Pos - boundingBox.Size / 2.0f) / cellSize;
             Vector2 max = (boundingBox.Pos + boundingBox.Size / 2.0f) / cellSize;
-            int minX = (int) Math.Round(min.X);
-            int minY = (int) Math.Round(min.Y);
-            int maxX = (int) Math.Round(max.X);
-            int maxY = (int) Math.Round(max.Y);
+            int minX = (int) MathF.Round(min.X);
+            int minY = (int) MathF.Round(min.Y);
+            int maxX = (int) MathF.Round(max.X);
+            int maxY = (int) MathF.Round(max.Y);
 
             for (int y = minY; y <= maxY; y++) {
                 for (int x = minX; x <= maxX; x++) {
@@ -55,10 +55,10 @@ namespace BulletHell {
         public List<Entity> Query(Vector2 position, float radius) {
             Vector2 min = (position - radius) / cellSize;
             Vector2 max = (position + radius) / cellSize;
-            int minX = (int) Math.Round(min.X);
-            int minY = (int) Math.Round(min.Y);
-            int maxX = (int) Math.Round(max.X);
-            int maxY = (int) Math.Round(max.Y);
+            int minX = (int) MathF.Round(min.X);
+            int minY = (int) MathF.Round(min.Y);
+            int maxX = (int) MathF.Round(max.X);
+            int maxY = (int) MathF.Round(max.Y);
 
             // List<Entity> result = new List<Entity>();
             HashSet<Entity> result = new HashSet<Entity>();
@@ -94,10 +94,10 @@ namespace BulletHell {
 
             Vector2 min = (boundingBox.Pos - boundingBox.Size / 2.0f) / cellSize;
             Vector2 max = (boundingBox.Pos + boundingBox.Size / 2.0f) / cellSize;
-            int minX = (int) Math.Round(min.X);
-            int minY = (int) Math.Round(min.Y);
-            int maxX = (int) Math.Round(max.X);
-            int maxY = (int) Math.Round(max.Y);
+            int minX = (int) MathF.Round(min.X);
+            int minY = (int) MathF.Round(min.Y);
+            int maxX = (int) MathF.Round(max.X);
+            int maxY = (int) MathF.Round(max.Y);
 
             HashSet<Entity> result = new HashSet<Entity>();
             for (int y = minY; y <= maxY; y++) {

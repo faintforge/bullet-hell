@@ -71,7 +71,7 @@ namespace BulletHell {
                 Vector2 glyphSize = new Vector2(glyphSurface.w, glyphSurface.h);
 
                 atlasPos.X += glyphSurface.w;
-                rowHeight = Math.Max(rowHeight, glyphSurface.h);
+                rowHeight = MathF.Max(rowHeight, glyphSurface.h);
 
                 int x0, y0;
                 int x1, y1;

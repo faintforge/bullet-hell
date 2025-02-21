@@ -39,10 +39,10 @@ namespace BulletHell {
             Vector2 min = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
             Vector2 max = new Vector2(float.NegativeInfinity, float.NegativeInfinity);
             foreach (Vector2 vert in verts) {
-                min.X = Math.Min(min.X, vert.X);
-                min.Y = Math.Min(min.Y, vert.Y);
-                max.X = Math.Max(max.X, vert.X);
-                max.Y = Math.Max(max.Y, vert.Y);
+                min.X = MathF.Min(min.X, vert.X);
+                min.Y = MathF.Min(min.Y, vert.Y);
+                max.X = MathF.Max(max.X, vert.X);
+                max.Y = MathF.Max(max.Y, vert.Y);
             }
             Vector2 size = max - min;
             Vector2 pos = min + size / 2.0f;
@@ -117,12 +117,12 @@ namespace BulletHell {
 
             // Find normals / axes to check against.
             List<Vector2> normals = new List<Vector2>();
-            for (int i = 0; i < aVertices.Length; i++) {
+            for (int i = 0; i < 2; i++) {
                 Vector2 edge = aVertices[(i + 1) % aVertices.Length] - aVertices[i];
                 Vector2 normal = new Vector2(-edge.Y, edge.X);
                 normals.Add(normal);
             }
-            for (int i = 0; i < bVertices.Length; i++) {
+            for (int i = 0; i < 2; i++) {
                 Vector2 edge = bVertices[(i + 1) % bVertices.Length] - bVertices[i];
                 Vector2 normal = new Vector2(-edge.Y, edge.X);
                 normals.Add(normal);
@@ -134,16 +134,16 @@ namespace BulletHell {
                 float aMax = float.NegativeInfinity;
                 foreach (Vector2 vertex in aVertices) {
                     float dot = normal.Dot(vertex);
-                    aMin = Math.Min(aMin, dot);
-                    aMax = Math.Max(aMax, dot);
+                    aMin = MathF.Min(aMin, dot);
+                    aMax = MathF.Max(aMax, dot);
                 }
 
                 float bMin = float.PositiveInfinity;
                 float bMax = float.NegativeInfinity;
                 foreach (Vector2 vertex in bVertices) {
                     float dot = normal.Dot(vertex);
-                    bMin = Math.Min(bMin, dot);
-                    bMax = Math.Max(bMax, dot);
+                    bMin = MathF.Min(bMin, dot);
+                    bMax = MathF.Max(bMax, dot);
                 }
 
                 if (!((aMin < bMax && aMin > bMin) ||

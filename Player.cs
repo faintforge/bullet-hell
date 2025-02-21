@@ -43,7 +43,7 @@ namespace BulletHell {
                 Vector2 mousePos = world.Camera.ScreenToWorldSpace(Input.Instance.MousePosition);
                 Vector2 direction = (mousePos - Transform.Pos).Normalized();
                 proj.Velocity = direction * 200.0f;
-                proj.Transform.Rot = (float) Math.Atan2(direction.Y, direction.X) - (float) Math.PI / 2.0f;
+                proj.Transform.Rot = MathF.Atan2(direction.Y, direction.X) - MathF.PI / 2.0f;
             }
         }
     }

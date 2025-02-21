@@ -12,15 +12,19 @@ namespace BulletHell {
         }
 
         public override void AI(float deltaTime) {
+            // if (Target == null) {
+            //     world.OperateOnEntities((entity) => {
+            //         if (entity is Player) {
+            //             Target = (Player) entity;
+            //         }
+            //     });
+            //     if (Target == null) {
+            //         return;
+            //     }
+            // }
+
             if (Target == null) {
-                world.OperateOnEntities((entity) => {
-                    if (entity is Player) {
-                        Target = (Player) entity;
-                    }
-                });
-                if (Target == null) {
-                    return;
-                }
+                return;
             }
 
             Vector2 dir = Target.Transform.Pos - Transform.Pos;
@@ -34,7 +38,7 @@ namespace BulletHell {
 
                 EnemyDagger dagger = world.SpawnEntity<EnemyDagger>();
                 dagger.Transform.Pos = Transform.Pos;
-                dagger.Transform.Rot = (float) Math.Atan2(dir.Y, dir.X) - (float) Math.PI / 2.0f;
+                dagger.Transform.Rot = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2.0f;
                 dagger.Velocity = dir * 150.0f;
             }
         }

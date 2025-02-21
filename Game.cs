@@ -13,9 +13,14 @@ namespace BulletHell {
             world.Camera.Zoom = 360.0f;
             world.SpawnEntity<Player>();
 
-            world.SpawnEntity<GoblinSpawner>();
-            // Goblin enemy = world.SpawnEntity<Goblin>();
-            // enemy.Transform.Pos = new Vector2(128.0f);
+            // world.SpawnEntity<GoblinSpawner>();
+
+            for (int y = 0; y < 6; y++) {
+                for (int x = 0; x < 6; x++) {
+                    Goblin enemy = world.SpawnEntity<Goblin>();
+                    enemy.Transform.Pos = new Vector2(x, y) * 16.0f;
+                }
+            }
         }
 
         public void Run(float deltaTime) {
@@ -88,17 +93,17 @@ namespace BulletHell {
 
             renderer.EndFrame();
 
-            // font = AssetManager.Instance.GetFont("roboto_mono");
-            // FontMetrics metrics = font.GetMetrics();
-            // Vector2 pos = new Vector2(8.0f);
-            // renderer.BeginFrame(uiCam);
-            // renderer.DrawText("Frame Profile", font, pos, Color.WHITE);
-            // pos.Y += metrics.LineGap;
-            // foreach (ProfileData profile in Profiler.Instance.Profiles) {
-            //     renderer.DrawText($"{profile.Duration:0.00}ms {profile.Name}", font, pos, Color.WHITE);
-            //     pos.Y += metrics.LineGap;
-            // }
-            // renderer.EndFrame();
+            font = AssetManager.Instance.GetFont("roboto_mono");
+            FontMetrics metrics = font.GetMetrics();
+            Vector2 pos = new Vector2(8.0f);
+            renderer.BeginFrame(uiCam);
+            renderer.DrawText("Frame Profile", font, pos, Color.WHITE);
+            pos.Y += metrics.LineGap;
+            foreach (ProfileData profile in Profiler.Instance.Profiles) {
+                renderer.DrawText($"{profile.Duration*0.001f:0.00}ms {profile.Name}", font, pos, Color.WHITE);
+                pos.Y += metrics.LineGap;
+            }
+            renderer.EndFrame();
 
             // Profiler.Instance.WriteJson("frameProfile.json");
             Profiler.Instance.Reset();
