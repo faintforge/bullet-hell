@@ -12,4 +12,10 @@
     <PackageReference Include="ppy.SDL2-CS" Version="1.0.741-alpha" />
   </ItemGroup>
 
+	<ItemGroup>
+		<Content Include="assets/**" CopyToOutputDirectory="Always" />
+		<Content Include="SDL2_image.dll" CopyToOutputDirectory="Always" />
+		<Content Include="SDL2_ttf.dll" CopyToOutputDirectory="Always" />
+	</ItemGroup>
+	
 </Project>
