@@ -9,6 +9,7 @@ namespace BulletHell {
         public int Health { get; set; }
 
         public Player(World world) : base(world) {
+            Render = true;
             Texture = AssetManager.Instance.GetTexture("player");
             float asepctRatio = Texture.Size.X / Texture.Size.Y;
             Transform.Size = Texture.Size;

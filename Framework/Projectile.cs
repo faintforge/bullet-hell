@@ -8,8 +8,9 @@ namespace BulletHell {
         private Entity[] alreadyHit = new Entity[8];
         private int alreadyHitIndex = 0;
 
-        public Projectile(World world)
-            : base(world) {}
+        public Projectile(World world) : base(world) {
+            Render = true;
+        }
 
         public override void Update(float deltaTime) {
             Transform.Pos += Velocity * deltaTime;

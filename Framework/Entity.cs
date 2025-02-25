@@ -8,6 +8,7 @@ namespace BulletHell {
         };
         public Texture? Texture = null;
         public Color Color = Color.WHITE;
+        public bool Render = false;
         protected World world;
 
         /// <summary>

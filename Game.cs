@@ -34,11 +34,14 @@ namespace BulletHell {
             world.Camera.ScreenSize = window.Size;
             renderer.BeginFrame(world.Camera);
             world.OperateOnEntities((entity) => {
+                    if (!entity.Render) {
+                        return;
+                    }
                     renderer.Draw(
                             entity.Transform,
                             entity.Color,
                             entity.Texture);
-                    });
+                });
             renderer.EndFrame();
 
             Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);

@@ -3,8 +3,9 @@ namespace BulletHell {
         public int MaxHealth { get; set; }
         public int Health { get; set; }
 
-        public Enemy(World world)
-            : base (world) {}
+        public Enemy(World world) : base (world) {
+            Render = true;
+        }
 
         public override void OnSpawn() {
             Health = MaxHealth;
