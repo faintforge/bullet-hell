@@ -1,6 +1,5 @@
 using SDL2;
 using OpenTK;
-using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 
 namespace BulletHell {
@@ -44,7 +43,6 @@ namespace BulletHell {
                 Environment.Exit(1);
             }
 
-            GLLoader.LoadBindings(new SDLGLLoader());
             SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_MULTISAMPLESAMPLES, 4);
             SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_MAJOR_VERSION, 4);
             SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_MINOR_VERSION, 6);
@@ -76,6 +74,8 @@ namespace BulletHell {
                 Console.WriteLine("SDL failed to create GL context!");
                 Environment.Exit(1);
             }
+
+            GL.LoadBindings(new SDLGLLoader());
             GL.Enable(EnableCap.Multisample);
             GL.Enable(EnableCap.Blend);
             // GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);

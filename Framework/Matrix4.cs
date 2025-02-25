@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 namespace BulletHell {
     [StructLayout(LayoutKind.Sequential)]
     public struct Matrix4 {
-        public Vector4 I;
-        public Vector4 J;
-        public Vector4 K;
-        public Vector4 L;
+        public Vector4 I = new Vector4();
+        public Vector4 J = new Vector4();
+        public Vector4 K = new Vector4();
+        public Vector4 L = new Vector4();
 
         public Matrix4() {}
 

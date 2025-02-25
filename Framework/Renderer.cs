@@ -33,12 +33,12 @@ namespace BulletHell {
             this.maxQuadCount = maxQuadCount;
             vertices = new Vertex[maxQuadCount * 6];
 
-            vertexArray = GL.CreateVertexArray();
+            GL.CreateVertexArrays(1, out vertexArray);
             GL.BindVertexArray(vertexArray);
 
-            vertexBuffer = GL.CreateBuffer();
+            GL.CreateBuffers(1, out vertexBuffer);
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer);
-            GL.BufferData(BufferTarget.ArrayBuffer, maxQuadCount * 6 * Marshal.SizeOf<Vertex>(), IntPtr.Zero, BufferUsage.DynamicDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, maxQuadCount * 6 * Marshal.SizeOf<Vertex>(), IntPtr.Zero, BufferUsageHint.DynamicDraw);
 
             // Position
             GL.VertexAttribPointer(
@@ -84,7 +84,7 @@ namespace BulletHell {
                 );
             GL.EnableVertexAttribArray(3);
 
-            indexBuffer = GL.CreateBuffer();
+            GL.CreateBuffers(1, out indexBuffer);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
             uint[] indices = new uint[maxQuadCount * 6];
             uint j = 0;
@@ -97,7 +97,7 @@ namespace BulletHell {
                 indices[i * 6 + 5] = j + 0;
                 j += 4;
             }
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsage.StaticDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
 
             shader = Shader.FromFile("assets/batch.vert.glsl", "assets/batch.frag.glsl");
             int[] samplers = new int[32];
@@ -134,7 +134,7 @@ namespace BulletHell {
         /// </summary>
         public void EndFrame() {
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer);
-            GL.BufferSubData<Vertex>(BufferTarget.ArrayBuffer, 0, Marshal.SizeOf<Vertex>() * currentQuad * 4, vertices);
+            GL.BufferSubData<Vertex>(BufferTarget.ArrayBuffer, (IntPtr) 0, Marshal.SizeOf<Vertex>() * currentQuad * 4, vertices);
 
             shader.Use();
             shader.UniformMatrix4("projection", cam.Projection);
@@ -193,12 +193,12 @@ namespace BulletHell {
             float top = uvTopLeft.Y;
             float right = uvBottomRight.X;
             float bottom = uvBottomRight.Y;
-            Vector2[] vertUV = [
+            Vector2[] vertUV = {
                 new Vector2(left,  top),
                 new Vector2(right, top),
                 new Vector2(right, bottom),
                 new Vector2(left,  bottom),
-            ];
+            };
 
             for (int i = 0; i < 4; i++) {
                 ref Vertex vert = ref vertices[currentQuad * 4 + i];

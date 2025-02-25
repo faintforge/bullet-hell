@@ -29,17 +29,17 @@ namespace BulletHell {
         public static Texture Create<T>(Vector2 size, TextureFormat format, T[] data)
             where T : unmanaged
         {
-            InternalFormat internalFormat = InternalFormat.Rgba8;;
+            PixelInternalFormat internalFormat = PixelInternalFormat.Rgba8;;
             PixelFormat pixelFormat = PixelFormat.Rgba;
             PixelType pixelType = PixelType.UnsignedByte;
             switch (format) {
                 case TextureFormat.RgbU8:
-                    internalFormat = InternalFormat.Rgb8;
+                    internalFormat = PixelInternalFormat.Rgb8;
                     pixelFormat = PixelFormat.Rgb;
                     pixelType = PixelType.UnsignedByte;
                     break;
                 case TextureFormat.RgbaU8:
-                    internalFormat = InternalFormat.Rgba8;
+                    internalFormat = PixelInternalFormat.Rgba8;
                     pixelFormat = PixelFormat.Rgba;
                     pixelType = PixelType.UnsignedByte;
                     break;
@@ -47,13 +47,13 @@ namespace BulletHell {
 
             Texture tex = new Texture();
             tex.handle = GL.GenTexture();
-            GL.BindTexture(TextureTarget.Texture2d, tex.handle);
-            GL.TexImage2D<T>(TextureTarget.Texture2d, 0, internalFormat, (int) size.X, (int) size.Y, 0, pixelFormat, pixelType, data);
+            GL.BindTexture(TextureTarget.Texture2D, tex.handle);
+            GL.TexImage2D<T>(TextureTarget.Texture2D, 0, internalFormat, (int) size.X, (int) size.Y, 0, pixelFormat, pixelType, data);
 
-            GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-            GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-            GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureWrapS, (int) TextureWrapMode.ClampToEdge);
-            GL.TexParameteri(TextureTarget.Texture2d, TextureParameterName.TextureWrapT, (int) TextureWrapMode.ClampToEdge);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) TextureWrapMode.ClampToEdge);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.ClampToEdge);
 
             tex.Size = size;
 
@@ -91,8 +91,8 @@ namespace BulletHell {
         /// </summary>
         /// <param name="slot">Slot to bind to.</param>
         public void Bind(uint slot) {
-            GL.ActiveTexture(TextureUnit.Texture0 + slot);
-            GL.BindTexture(TextureTarget.Texture2d, handle);
+            GL.ActiveTexture((TextureUnit) ((uint) TextureUnit.Texture0 + slot));
+            GL.BindTexture(TextureTarget.Texture2D, handle);
         }
     }
 }

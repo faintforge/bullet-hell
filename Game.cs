@@ -13,14 +13,14 @@ namespace BulletHell {
             world.Camera.Zoom = 360.0f;
             world.SpawnEntity<Player>();
 
-            // world.SpawnEntity<GoblinSpawner>();
+            world.SpawnEntity<GoblinSpawner>();
 
-            for (int y = 0; y < 32; y++) {
-                for (int x = 0; x < 32; x++) {
-                    Goblin enemy = world.SpawnEntity<Goblin>();
-                    enemy.Transform.Pos = new Vector2(x, y) * 24;
-                }
-            }
+            // for (int y = 0; y < 32; y++) {
+            //     for (int x = 0; x < 32; x++) {
+            //         Goblin enemy = world.SpawnEntity<Goblin>();
+            //         enemy.Transform.Pos = new Vector2(x, y) * 24;
+            //     }
+            // }
         }
 
         public void Run(float deltaTime) {
