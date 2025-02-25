@@ -39,7 +39,7 @@ namespace BulletHell {
                 EnemyDagger dagger = world.SpawnEntity<EnemyDagger>();
                 dagger.Transform.Pos = Transform.Pos;
                 dagger.Transform.Rot = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2.0f;
-                dagger.Velocity = dir * 150.0f;
+                dagger.Velocity = dir * 300.0f;
             }
         }
     }
