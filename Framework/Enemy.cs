@@ -19,7 +19,7 @@ namespace BulletHell {
             AI(deltaTime);
         }
 
-        public virtual void AI(float detlaTime) {}
+        public virtual void AI(float deltaTime) {}
         public virtual void OnHit(Projectile projectile, int damage) {}
     }
 }

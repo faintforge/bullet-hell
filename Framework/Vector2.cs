@@ -31,6 +31,11 @@ namespace BulletHell {
             Y = y;
         }
 
+        public static Vector2 FromAngle(float radians) {
+            (float sin, float cos) = MathF.SinCos(radians);
+            return new Vector2(cos, sin);
+        }
+
         /// <summary>
         /// Element wise multiply two vectors together.
         /// </summary>
