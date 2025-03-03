@@ -12,7 +12,7 @@ namespace BulletHell {
         /// Create a world containing entities.
         /// </summary>
         public World() {
-            spatialStructure = new SpatialHash(new Vector2(16.0f), 1024);
+            spatialStructure = new SpatialHash(new Vector2(32.0f), 8192);
             // spatialStructure = new Quadtree(new AABB() {
             //         Size = new Vector2(1024.0f),
             //     }, 8, 2);
@@ -82,6 +82,9 @@ namespace BulletHell {
             Profiler.Instance.Start("Build Spatial Structure");
             spatialStructure.Clear();
             foreach (Entity entity in entities) {
+                if (!entity.Collider) {
+                    continue;
+                }
                 spatialStructure.Insert(entity);
             }
             Profiler.Instance.End();
@@ -113,6 +116,10 @@ namespace BulletHell {
 
         private void CollisionDetection() {
             foreach (Entity entity in entities) {
+                if (!entity.Collider) {
+                    continue;
+                }
+
                 Profiler.Instance.Start("Entity Spatial Query");
                 List<Entity> colliding = SpatialQuery(entity.Transform);
                 Profiler.Instance.End();
@@ -120,6 +127,11 @@ namespace BulletHell {
                     if (entity == other) {
                         continue;
                     }
+
+                    if (entity is Projectile && other is Projectile) {
+                        continue;
+                    }
+
                     entity.OnCollision(other);
                 }
             }

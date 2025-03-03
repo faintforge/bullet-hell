@@ -14,7 +14,7 @@ namespace BulletHell {
             this.window = window;
             this.renderer = renderer;
 
-            world.Camera.Zoom = 360.0f * 2.0f;
+            world.Camera.Zoom = 360.0f;
             world.SpawnEntity<Player>();
 
             // world.SpawnEntity<GoblinSpawner>();
@@ -152,7 +152,7 @@ namespace BulletHell {
                 paused = !paused;
             }
 
-            // PrintProfiles();
+            PrintProfiles();
             Profiler.Instance.Reset();
         }
 

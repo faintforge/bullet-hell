@@ -6,7 +6,7 @@ namespace BulletHell {
             Friendly = false;
             lifespan = 5.0f;
             pierce = -1;
-            Damage = 10;
+            Damage = 2;
         }
     }
 }

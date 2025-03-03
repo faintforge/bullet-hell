@@ -12,16 +12,14 @@
 // |   |   |   |   |
 // |   |   |   |   |
 // +---+---+---+---+
-// Then it does the same with diagonal lines so the player has to stay in the
-// little squares.
 // -----------------------------------------------------------------------------
 
 namespace BulletHell {
     public class Boss : Enemy {
         private enum Phase {
-            Idle,
             CrystalCluster,
             Vortex,
+            Grid,
         }
 
         private Phase phase = Phase.CrystalCluster;
@@ -30,7 +28,7 @@ namespace BulletHell {
 
         private float attackTimer = 0.0f;
 
-        private int clusterSpawnCounter = 0;
+        private int attackCounter = 0;
 
         private float vortexAngle = 0.0f;
         private int vortexPoints = 2;
@@ -81,7 +79,7 @@ namespace BulletHell {
                             Vector2 dir = Vector2.FromAngle(currentAngle) * ((float) rng.NextDouble() / 2.0f + 0.5f);
                             SpawnCrystalCluster(target.Transform.Pos + dir * 256.0f, 8, 16.0f);
                         }
-                        clusterSpawnCounter++;
+                        attackCounter++;
                     }
 
                     // Follow player.
@@ -92,8 +90,8 @@ namespace BulletHell {
                     Transform.Pos += targetDir * 50.0f * deltaTime;
 
                     // Go to next phase.
-                    if (clusterSpawnCounter == 4) {
-                        clusterSpawnCounter = 0;
+                    if (attackCounter == 4) {
+                        attackCounter = 0;
                         phase = Phase.Vortex;
                     }
                 } break;
@@ -131,9 +129,63 @@ namespace BulletHell {
                     // Go to next phase.
                     if (vortexPoints == 5) {
                         vortexPoints = 2;
-                        phase = Phase.Idle;
+                        phase = Phase.Grid;
+                        attackTimer = 0.0f;
                     }
                 } break;
+                case Phase.Grid:
+                {
+                    attackTimer += deltaTime;
+                    if (attackTimer >= 1.25f) {
+                        attackTimer = 0.0f;
+                        Vector2 gapSize = new Vector2(target.Transform.Size.Y) * 1.5f;
+                        Vector2 offset = (new Vector2((float) rng.NextDouble(), (float) rng.NextDouble()) - 0.5f) * gapSize;
+                        SpawnGrid(target.Transform.Pos + offset, gapSize);
+                        attackCounter++;
+                    }
+
+                    if (attackCounter == 8) {
+                        phase = Phase.CrystalCluster;
+                        attackCounter = 0;
+                        attackTimer = 0.0f;
+                    }
+                } break;
+            }
+        }
+
+        private void SpawnGrid(Vector2 center, Vector2 gapSize) {
+            if (target == null) {
+                return;
+            }
+
+            Vector2 screenTL = world.Camera.ScreenToWorldSpace(new Vector2());
+            Vector2 screenBR = world.Camera.ScreenToWorldSpace(world.Camera.ScreenSize);
+
+            Vector2 screenSize = screenBR - screenTL;
+            screenSize.Y = MathF.Abs(screenSize.Y);
+
+            Vector2 segmentPerScreen = screenSize / 16.0f;
+            Vector2 gridCount = screenSize / gapSize + 4.0f;
+            gridCount /= 2.0f;
+            Vector2 gridMin = -new Vector2(MathF.Floor(gridCount.X), MathF.Floor(gridCount.Y));
+            Vector2 gridMax = new Vector2(MathF.Ceiling(gridCount.X), MathF.Ceiling(gridCount.Y));
+            gridCount *= 2.0f;
+
+            // Horizontal indicators
+            for (float gridY = gridMin.Y; gridY < gridMax.Y; gridY++) {
+                for (float x = MathF.Floor(gridMin.X * gapSize.X / 16.0f); x < MathF.Ceiling(gridMax.X * gapSize.X / 16.0f); x++) {
+                    BeamIndicator indicatorSegment = world.SpawnEntity<BeamIndicator>();
+                    indicatorSegment.Transform.Pos = center + new Vector2(x, 0.0f) * 16.0f + new Vector2(0.0f, gridY) * gapSize;;
+                    indicatorSegment.Transform.Rot = MathF.PI / 2.0f;
+                }
+            }
+
+            // Vertical indicators
+            for (float gridX = gridMin.X; gridX < gridMax.X; gridX++) {
+                for (float y = MathF.Floor(gridMin.Y * gapSize.Y / 16.0f); y < MathF.Ceiling(gridMax.Y * gapSize.Y / 16.0f); y++) {
+                    BeamIndicator indicatorSegment = world.SpawnEntity<BeamIndicator>();
+                    indicatorSegment.Transform.Pos = center + new Vector2(0.0f, y) * 16.0f + new Vector2(gridX, 0.0f) * gapSize;
+                }
             }
         }
     }

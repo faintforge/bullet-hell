@@ -114,16 +114,16 @@ namespace BulletHell {
             Vector2[] bVertices = other.GetVertices();
 
             // Find normals / axes to check against.
-            List<Vector2> normals = new List<Vector2>();
+            Vector2[] normals = new Vector2[4];
             for (int i = 0; i < 2; i++) {
                 Vector2 edge = aVertices[(i + 1) % aVertices.Length] - aVertices[i];
                 Vector2 normal = new Vector2(-edge.Y, edge.X);
-                normals.Add(normal);
+                normals[i] = normal;
             }
             for (int i = 0; i < 2; i++) {
                 Vector2 edge = bVertices[(i + 1) % bVertices.Length] - bVertices[i];
                 Vector2 normal = new Vector2(-edge.Y, edge.X);
-                normals.Add(normal);
+                normals[2 + i] = normal;
             }
 
             // https://programmerart.weebly.com/separating-axis-theorem.html

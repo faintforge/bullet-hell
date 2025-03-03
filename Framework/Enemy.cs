@@ -5,6 +5,7 @@ namespace BulletHell {
 
         public Enemy(World world) : base (world) {
             Render = true;
+            Collider = true;
         }
 
         public override void OnSpawn() {

@@ -10,6 +10,7 @@ namespace BulletHell {
 
         public Projectile(World world) : base(world) {
             Render = true;
+            Collider = true;
         }
 
         public override void Update(float deltaTime) {

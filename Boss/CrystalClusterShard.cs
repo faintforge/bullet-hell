@@ -8,7 +8,7 @@ namespace BulletHell {
             Friendly = false;
             lifespan = 10.0f;
             pierce = -1;
-            Damage = 10;
+            Damage = 2;
         }
 
         public override void Update(float deltaTime) {

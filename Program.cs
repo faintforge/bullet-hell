@@ -89,6 +89,7 @@ namespace BulletHell {
             AssetManager.Instance.LoadTexture("goblin", "assets/textures/goblin.png");
             AssetManager.Instance.LoadTexture("boss", "assets/textures/boss.png");
             AssetManager.Instance.LoadTexture("crystal_shard", "assets/textures/crystal_shard.png");
+            AssetManager.Instance.LoadTexture("beam_projectile", "assets/textures/beam_projectile.png");
         }
 
         private static Vector2 quitPos = new Vector2();
