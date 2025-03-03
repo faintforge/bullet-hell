@@ -36,7 +36,7 @@ namespace BulletHell {
         public Boss(World world) : base(world) {
             Texture = AssetManager.Instance.GetTexture("boss");
             Transform.Size = Texture.Size;
-            MaxHealth = 100;
+            MaxHealth = 1000;
         }
 
         public void SpawnCrystalCluster(Vector2 position, int count, float space) {
@@ -97,7 +97,7 @@ namespace BulletHell {
                 } break;
                 case Phase.Vortex: {
                     // Suck player
-                    const float suchStrength = 75.0f;
+                    const float suchStrength = 50.0f;
                     Vector2 dir = target.Transform.Pos - Transform.Pos;
                     if (dir.MagnitudeSquared() != 0.0f) {
                         dir.Normalize();
@@ -105,6 +105,7 @@ namespace BulletHell {
                     target.Transform.Pos -= dir * suchStrength * deltaTime;
 
                     // Shoot spiral projectiles
+                    const float rotationSpeed = 2.0f * MathF.PI / 36.0f;
                     attackTimer += deltaTime;
                     if (attackTimer >= 0.10f) {
                         attackTimer = 0.0f;
@@ -116,9 +117,9 @@ namespace BulletHell {
                             shard.Transform.Rot = angle + MathF.PI / 2.0f;
                         }
                         if (vortexPoints % 2 == 0) {
-                            vortexAngle += 2.0f * MathF.PI / 36.0f;
+                            vortexAngle += rotationSpeed;
                         } else {
-                            vortexAngle -= 2.0f * MathF.PI / 36.0f;
+                            vortexAngle -= rotationSpeed;
                         }
                     }
                     if (MathF.Abs(vortexAngle) >= MathF.PI * 2.0f) {
@@ -126,9 +127,18 @@ namespace BulletHell {
                         vortexPoints++;
                     }
 
+                    float nextAngle;
+                    if (vortexPoints % 2 == 0) {
+                        nextAngle = vortexAngle + rotationSpeed;
+                    } else {
+                        nextAngle = vortexAngle - rotationSpeed;
+                    }
+                    Transform.Rot = vortexAngle + (nextAngle - vortexAngle) * attackTimer * 10.0f;
+
                     // Go to next phase.
                     if (vortexPoints == 5) {
                         vortexPoints = 2;
+                        Transform.Rot = 0.0f;
                         phase = Phase.Grid;
                         attackTimer = 0.0f;
                     }

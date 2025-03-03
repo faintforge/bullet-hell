@@ -4,7 +4,7 @@ namespace BulletHell {
             Color = Color.HexRGB(0xe8c170);
             Collider = true;
             Friendly = false;
-            Damage = 2;
+            Damage = 5;
             pierce = -1;
             lifespan = 0.25f;
         }

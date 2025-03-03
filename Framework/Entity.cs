@@ -11,7 +11,6 @@ namespace BulletHell {
         public bool Render = false;
         protected World world;
         public bool Collider = false;
-        public bool Static { get; private set; } = false;
 
         /// <summary>
         /// Create an entity beloning to a world.
