@@ -163,6 +163,9 @@ namespace BulletHell {
             foreach (Profile prof in Profiler.Instance.Profiles.Values) {
                 pos.Y = PrintProfilesHelper(prof, pos);
             }
+
+            Font font = AssetManager.Instance.GetFont("roboto_mono");
+            renderer.DrawText($"Entities alive: {world.Entities.Count}", font, pos, Color.WHITE);
             renderer.EndFrame();
         }
 

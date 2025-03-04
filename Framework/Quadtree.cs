@@ -10,7 +10,7 @@ namespace BulletHell {
         private class Node {
             private Quadtree quadtree { get; }
             private List<Bucket> buckets = new List<Bucket>();
-            public AABB Area { get; }
+            public AABB Area { get; set; }
 
             Node? nw; // North West
             Node? ne; // North East
@@ -41,19 +41,19 @@ namespace BulletHell {
                 }
 
                 if (buckets.Count >= quadtree.MaxCapacity) {
-                    nw = new Node(quadtree, new AABB() {
+                    nw = quadtree.GetNode(new AABB() {
                             Pos = Area.Pos + Area.Size / new Vector2(-4.0f, 4.0f),
                             Size = Area.Size / 2.0f,
                         });
-                    ne = new Node(quadtree, new AABB() {
+                    ne = quadtree.GetNode(new AABB() {
                             Pos = Area.Pos + Area.Size / new Vector2(4.0f, 4.0f),
                             Size = Area.Size / 2.0f,
                         });
-                    sw = new Node(quadtree, new AABB() {
+                    sw = quadtree.GetNode(new AABB() {
                             Pos = Area.Pos + Area.Size / new Vector2(-4.0f, -4.0f),
                             Size = Area.Size / 2.0f,
                         });
-                    se = new Node(quadtree, new AABB() {
+                    se = quadtree.GetNode(new AABB() {
                             Pos = Area.Pos + Area.Size / new Vector2(4.0f, -4.0f),
                             Size = Area.Size / 2.0f,
                         });
@@ -73,45 +73,45 @@ namespace BulletHell {
                 buckets.Add(bucket);
             }
 
-            public List<Entity> Query(Vector2 position, float radius) {
+            public HashSet<Entity> Query(Vector2 position, float radius) {
                 throw new NotImplementedException();
             }
 
-            public List<Entity> Query(AABB boundingBox, Box box) {
+            public HashSet<Entity> Query(AABB boundingBox, Box box) {
                 if (!boundingBox.IntersectsAABB(Area)) {
-                    return new List<Entity>();
+                    return new HashSet<Entity>();
                 }
                 if (nw != null && ne != null && sw != null && se != null) {
-                    List<Entity> result = new List<Entity>();
-                    result.AddRange(nw.Query(boundingBox, box));
-                    result.AddRange(ne.Query(boundingBox, box));
-                    result.AddRange(sw.Query(boundingBox, box));
-                    result.AddRange(se.Query(boundingBox, box));
+                    HashSet<Entity> result = new HashSet<Entity>();
+                    result.UnionWith(nw.Query(boundingBox, box));
+                    result.UnionWith(ne.Query(boundingBox, box));
+                    result.UnionWith(sw.Query(boundingBox, box));
+                    result.UnionWith(se.Query(boundingBox, box));
                     return result;
                 } else {
-                HashSet<Entity> result = new HashSet<Entity>();
-                foreach (Bucket bucket in buckets) {
-                    Profiler.Instance.Start("Check bounding boxes");
-                    if (bucket.BoundingBox == boundingBox) {
+                    HashSet<Entity> result = new HashSet<Entity>();
+                    foreach (Bucket bucket in buckets) {
+                        Profiler.Instance.Start("Check bounding boxes");
+                        if (bucket.BoundingBox == boundingBox) {
+                            Profiler.Instance.End();
+                            continue;
+                        }
                         Profiler.Instance.End();
-                        continue;
-                    }
-                    Profiler.Instance.End();
 
-                    Profiler.Instance.Start("Intersect AABB Test");
-                    if (!bucket.BoundingBox.IntersectsAABB(boundingBox)) {
+                        Profiler.Instance.Start("Intersect AABB Test");
+                        if (!bucket.BoundingBox.IntersectsAABB(boundingBox)) {
+                            Profiler.Instance.End();
+                            continue;
+                        }
                         Profiler.Instance.End();
-                        continue;
-                    }
-                    Profiler.Instance.End();
 
-                    Profiler.Instance.Start("Intersect Box Test");
-                    if (bucket.Entity.Transform.IntersectsBox(box)) {
-                        result.Add(bucket.Entity);
+                        Profiler.Instance.Start("Intersect Box Test");
+                        if (bucket.Entity.Transform.IntersectsBox(box)) {
+                            result.Add(bucket.Entity);
+                        }
+                        Profiler.Instance.End();
                     }
-                    Profiler.Instance.End();
-                }
-                return result.ToList();
+                    return result;
                 }
             }
 
@@ -130,6 +130,8 @@ namespace BulletHell {
         public int MaxDepth { get; }
         public int MaxCapacity { get; }
         private Node root;
+        private List<Node> nodePool = new List<Node>();
+        private Stack<Node> freeNodes = new Stack<Node>();
 
         public Quadtree(AABB area, int maxDepth, int maxCapacity) {
             MaxDepth = maxDepth;
@@ -144,11 +146,11 @@ namespace BulletHell {
                 }, 0);
         }
 
-        public List<Entity> Query(Vector2 position, float radius) {
+        public HashSet<Entity> Query(Vector2 position, float radius) {
             return root.Query(position, radius);
         }
 
-        public List<Entity> Query(Box box) {
+        public HashSet<Entity> Query(Box box) {
             return root.Query(box.GetBoundingAABB(), box);
         }
 
@@ -159,6 +161,17 @@ namespace BulletHell {
         [Conditional("DEBUG")]
         public void DebugDraw() {
             root.DebugDraw();
+        }
+
+        private Node GetNode(AABB aabb) {
+            Node? node;
+            if (!freeNodes.TryPop(out node)) {
+                node = new Node(this, aabb);
+                nodePool.Add(node);
+                return node;
+            }
+            node.Area = aabb;
+            return node;
         }
     }
 }

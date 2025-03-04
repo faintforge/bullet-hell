@@ -11,15 +11,15 @@ namespace BulletHell {
         /// </summary>
         /// <param name="position">Center point of query.</param>
         /// <param name="radius">Radius of query.</param>
-        /// <returns>List of entities within the specified query circle.</returns>
-        public List<Entity> Query(Vector2 position, float radius);
+        /// <returns>Hash set of unique entities within the specified query circle.</returns>
+        public HashSet<Entity> Query(Vector2 position, float radius);
 
         /// <summary>
         /// Qeury for entities lying within a certain box region.
         /// </summary>
         /// <param name="box">Query region.</param>
-        /// <returns>List of entities within the specified box region.</returns>
-        public List<Entity> Query(Box box);
+        /// <returns>Hash set of unique entities within the specified box region.</returns>
+        public HashSet<Entity> Query(Box box);
 
         /// <summary>
         /// Clear the spatial structure of entities.

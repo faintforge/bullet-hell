@@ -1,6 +1,6 @@
 namespace BulletHell {
     public class World {
-        private List<Entity> entities = new List<Entity>();
+        public List<Entity> Entities { get; } = new List<Entity>();
         private ISpatialPartitioner spatialStructure;
 
         private List<Entity> spawnQueue = new List<Entity>();
@@ -12,10 +12,11 @@ namespace BulletHell {
         /// Create a world containing entities.
         /// </summary>
         public World() {
-            spatialStructure = new SpatialHash(new Vector2(32.0f), 8192);
-            // spatialStructure = new Quadtree(new AABB() {
-            //         Size = new Vector2(1024.0f),
-            //     }, 8, 2);
+            // spatialStructure = new SpatialHash(new Vector2(16.0f), 1024);
+            // Depth of 9 means 8192 / 2^9 = 16
+            spatialStructure = new Quadtree(new AABB() {
+                    Size = new Vector2(8192.0f),
+                }, 9, 4);
         }
 
         /// <summary>
@@ -47,9 +48,9 @@ namespace BulletHell {
         /// <param name="position">Circle position.</param>
         /// <param name="radius">Circle radius.</param>
         /// <returns>List of entities within the circle.</returns>
-        public List<Entity> SpatialQuery(Vector2 position, float radius) {
+        public HashSet<Entity> SpatialQuery(Vector2 position, float radius) {
             if (spatialStructure == null) {
-                return new List<Entity>();
+                return new HashSet<Entity>();
             }
             return spatialStructure.Query(position, radius);
         }
@@ -59,9 +60,9 @@ namespace BulletHell {
         /// </summary>
         /// <param name="box">Box region.</param>
         /// <returns>List of entities within box.</returns>
-        public List<Entity> SpatialQuery(Box box) {
+        public HashSet<Entity> SpatialQuery(Box box) {
             if (spatialStructure == null) {
-                return new List<Entity>();
+                return new HashSet<Entity>();
             }
             return spatialStructure.Query(box);
         }
@@ -73,7 +74,7 @@ namespace BulletHell {
         public void Update(float deltaTime) {
             Profiler.Instance.Start("Entity Update");
             EmptyEntityQueues();
-            foreach (Entity entity in entities) {
+            foreach (Entity entity in Entities) {
                 entity.Update(deltaTime);
             }
             EmptyEntityQueues();
@@ -81,7 +82,7 @@ namespace BulletHell {
 
             Profiler.Instance.Start("Build Spatial Structure");
             spatialStructure.Clear();
-            foreach (Entity entity in entities) {
+            foreach (Entity entity in Entities) {
                 if (!entity.Collider) {
                     continue;
                 }
@@ -93,9 +94,11 @@ namespace BulletHell {
             CollisionDetection();
             Profiler.Instance.End();
 
+            Profiler.Instance.Start("Quadtree Debug Draw");
             if (spatialStructure is Quadtree) {
                 ((Quadtree) spatialStructure).DebugDraw();
             }
+            Profiler.Instance.End();
         }
 
         private void EmptyEntityQueues() {
@@ -103,25 +106,25 @@ namespace BulletHell {
             spawnQueue.Clear();
             foreach (Entity entity in spawnQueueCopy) {
                 entity.OnSpawn();
-                entities.Add(entity);
+                Entities.Add(entity);
             }
 
             List<Entity> killQueueCopy = new List<Entity>(killQueue);
             killQueue.Clear();
             foreach (Entity entity in killQueueCopy) {
                 entity.OnKill();
-                entities.Remove(entity);
+                Entities.Remove(entity);
             }
         }
 
         private void CollisionDetection() {
-            foreach (Entity entity in entities) {
+            foreach (Entity entity in Entities) {
                 if (!entity.Collider) {
                     continue;
                 }
 
                 Profiler.Instance.Start("Entity Spatial Query");
-                List<Entity> colliding = SpatialQuery(entity.Transform);
+                HashSet<Entity> colliding = SpatialQuery(entity.Transform);
                 Profiler.Instance.End();
                 foreach (Entity other in colliding) {
                     if (entity == other) {
@@ -142,7 +145,7 @@ namespace BulletHell {
         /// </summary>
         /// <param name="system">Operation to perform on every entity.</param>
         public void OperateOnEntities(Action<Entity> system) {
-            foreach (Entity entity in entities) {
+            foreach (Entity entity in Entities) {
                 system(entity);
             }
         }

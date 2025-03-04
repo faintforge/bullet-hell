@@ -6,7 +6,7 @@ namespace BulletHell {
             Texture = AssetManager.Instance.GetTexture("crystal_shard");
             Transform.Size = Texture.Size;
             Friendly = false;
-            lifespan = 10.0f;
+            lifespan = 3.0f;
             pierce = -1;
             Damage = 2;
         }
@@ -17,7 +17,8 @@ namespace BulletHell {
                 return;
             }
 
-            Transform.Pos += Velocity * deltaTime;
+            base.Update(deltaTime);
+
         }
     }
 }
