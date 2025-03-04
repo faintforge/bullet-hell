@@ -32,7 +32,7 @@ namespace BulletHell {
                     800, 600,
                     resizable: false,
                     vsync: true,
-                    fullscreen: true
+                    fullscreen: false
                 );
             Renderer renderer = new Renderer();
             // Scene scene = Scene.MainMenu;

@@ -9,8 +9,8 @@ namespace BulletHell {
 
         private struct Node {
             private Quadtree quadtree { get; }
-            private List<Bucket> buckets = new List<Bucket>();
-            public AABB Area { get; set; }
+            public List<Bucket> buckets = new List<Bucket>();
+            public AABB Area { get; }
 
             public int[] Children { get; set; } = new int[4]{-1, -1, -1, -1};
 
@@ -57,7 +57,7 @@ namespace BulletHell {
                     buckets.Add(bucket);
                     foreach (Bucket _bucket in buckets) {
                         for (int i = 0; i < Children.Length; i++) {
-                            quadtree.GetNodeIndex(Children[i]).Insert(bucket, depth + 1);
+                            quadtree.GetNodeIndex(Children[i]).Insert(_bucket, depth + 1);
                         }
                     }
                     buckets.Clear();
@@ -76,14 +76,13 @@ namespace BulletHell {
                 if (!boundingBox.IntersectsAABB(Area)) {
                     return new HashSet<Entity>();
                 }
+
+                HashSet<Entity> result = new HashSet<Entity>();
                 if (Children[0] != -1) {
-                    HashSet<Entity> result = new HashSet<Entity>();
                     for (int i = 0; i < Children.Length; i++) {
                         result.UnionWith(quadtree.GetNodeIndex(Children[i]).Query(boundingBox, box));
                     }
-                    return result;
                 } else {
-                    HashSet<Entity> result = new HashSet<Entity>();
                     foreach (Bucket bucket in buckets) {
                         Profiler.Instance.Start("Check bounding boxes");
                         if (bucket.BoundingBox == boundingBox) {
@@ -105,8 +104,8 @@ namespace BulletHell {
                         }
                         Profiler.Instance.End();
                     }
-                    return result;
                 }
+                return result;
             }
 
             [Conditional("DEBUG")]
@@ -160,13 +159,8 @@ namespace BulletHell {
         private int GetNewNode(AABB aabb) {
             if (currentNode == nodePool.Count) {
                 nodePool.Add(new Node(this, aabb));
-                Console.WriteLine("New node. Current index: " + currentNode);
             }
-            Node node = new Node(this, aabb) {
-                Children = new int[4] {-1, -1, -1, -1},
-                Area = aabb,
-            };
-            nodePool[currentNode] = node;
+            nodePool[currentNode] = new Node(this, aabb);
             return currentNode++;
         }
 
