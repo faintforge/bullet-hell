@@ -7,15 +7,12 @@ namespace BulletHell {
             public Entity Entity { get; set; }
         }
 
-        private class Node {
+        private struct Node {
             private Quadtree quadtree { get; }
             private List<Bucket> buckets = new List<Bucket>();
             public AABB Area { get; set; }
 
-            Node? nw; // North West
-            Node? ne; // North East
-            Node? sw; // South West
-            Node? se; // South East
+            public int[] Children { get; set; } = new int[4]{-1, -1, -1, -1};
 
             public Node(Quadtree quadtree, AABB area) {
                 this.quadtree = quadtree;
@@ -32,38 +29,36 @@ namespace BulletHell {
                     return;
                 }
 
-                if (nw != null && ne != null && sw != null && se != null) {
-                    nw.Insert(bucket, depth + 1);
-                    ne.Insert(bucket, depth + 1);
-                    sw.Insert(bucket, depth + 1);
-                    se.Insert(bucket, depth + 1);
+                if (Children[0] != -1) {
+                    for (int i = 0; i < Children.Length; i++) {
+                        quadtree.GetNodeIndex(Children[i]).Insert(bucket, depth + 1);
+                    }
                     return;
                 }
 
                 if (buckets.Count >= quadtree.MaxCapacity) {
-                    nw = quadtree.GetNode(new AABB() {
+                    Children[0] = quadtree.GetNewNode(new AABB() {
                             Pos = Area.Pos + Area.Size / new Vector2(-4.0f, 4.0f),
                             Size = Area.Size / 2.0f,
                         });
-                    ne = quadtree.GetNode(new AABB() {
+                    Children[1] = quadtree.GetNewNode(new AABB() {
                             Pos = Area.Pos + Area.Size / new Vector2(4.0f, 4.0f),
                             Size = Area.Size / 2.0f,
                         });
-                    sw = quadtree.GetNode(new AABB() {
+                    Children[2] = quadtree.GetNewNode(new AABB() {
                             Pos = Area.Pos + Area.Size / new Vector2(-4.0f, -4.0f),
                             Size = Area.Size / 2.0f,
                         });
-                    se = quadtree.GetNode(new AABB() {
+                    Children[3] = quadtree.GetNewNode(new AABB() {
                             Pos = Area.Pos + Area.Size / new Vector2(4.0f, -4.0f),
                             Size = Area.Size / 2.0f,
                         });
 
                     buckets.Add(bucket);
                     foreach (Bucket _bucket in buckets) {
-                        nw.Insert(_bucket, depth + 1);
-                        ne.Insert(_bucket, depth + 1);
-                        sw.Insert(_bucket, depth + 1);
-                        se.Insert(_bucket, depth + 1);
+                        for (int i = 0; i < Children.Length; i++) {
+                            quadtree.GetNodeIndex(Children[i]).Insert(bucket, depth + 1);
+                        }
                     }
                     buckets.Clear();
 
@@ -81,12 +76,11 @@ namespace BulletHell {
                 if (!boundingBox.IntersectsAABB(Area)) {
                     return new HashSet<Entity>();
                 }
-                if (nw != null && ne != null && sw != null && se != null) {
+                if (Children[0] != -1) {
                     HashSet<Entity> result = new HashSet<Entity>();
-                    result.UnionWith(nw.Query(boundingBox, box));
-                    result.UnionWith(ne.Query(boundingBox, box));
-                    result.UnionWith(sw.Query(boundingBox, box));
-                    result.UnionWith(se.Query(boundingBox, box));
+                    for (int i = 0; i < Children.Length; i++) {
+                        result.UnionWith(quadtree.GetNodeIndex(Children[i]).Query(boundingBox, box));
+                    }
                     return result;
                 } else {
                     HashSet<Entity> result = new HashSet<Entity>();
@@ -118,60 +112,66 @@ namespace BulletHell {
             [Conditional("DEBUG")]
             public void DebugDraw() {
                 Debug.Instance.DrawBoxOutline((Box) Area, Color.HexRGBA(0xffffff80));
-                if (nw != null && ne != null && sw != null && se != null) {
-                    nw.DebugDraw();
-                    ne.DebugDraw();
-                    sw.DebugDraw();
-                    se.DebugDraw();
+                if (Children[0] != -1) {
+                    for (int i = 0; i < Children.Length; i++) {
+                        quadtree.GetNodeIndex(Children[i]).DebugDraw();
+                    }
                 }
             }
         }
 
         public int MaxDepth { get; }
         public int MaxCapacity { get; }
-        private Node root;
+        private int root;
         private List<Node> nodePool = new List<Node>();
-        private Stack<Node> freeNodes = new Stack<Node>();
+        private int currentNode = 0;
 
         public Quadtree(AABB area, int maxDepth, int maxCapacity) {
             MaxDepth = maxDepth;
             MaxCapacity = maxCapacity;
-            root = new Node(this, area);
+            root = GetNewNode(area);
         }
 
         public void Insert(Entity entity) {
-            root.Insert(new Bucket() {
+            nodePool[root].Insert(new Bucket() {
                     Entity = entity,
                     BoundingBox = entity.Transform.GetBoundingAABB(),
                 }, 0);
         }
 
         public HashSet<Entity> Query(Vector2 position, float radius) {
-            return root.Query(position, radius);
+            return nodePool[root].Query(position, radius);
         }
 
         public HashSet<Entity> Query(Box box) {
-            return root.Query(box.GetBoundingAABB(), box);
+            return nodePool[root].Query(box.GetBoundingAABB(), box);
         }
 
         public void Clear() {
-            root = new Node(this, root.Area);
+            currentNode = 0;
+            root = GetNewNode(nodePool[root].Area);
         }
 
         [Conditional("DEBUG")]
         public void DebugDraw() {
-            root.DebugDraw();
+            nodePool[root].DebugDraw();
         }
 
-        private Node GetNode(AABB aabb) {
-            Node? node;
-            if (!freeNodes.TryPop(out node)) {
-                node = new Node(this, aabb);
-                nodePool.Add(node);
-                return node;
+        private int GetNewNode(AABB aabb) {
+            if (currentNode == nodePool.Count) {
+                nodePool.Add(new Node(this, aabb));
+                Console.WriteLine("New node. Current index: " + currentNode);
             }
-            node.Area = aabb;
-            return node;
+            Node node = new Node(this, aabb) {
+                Children = new int[4] {-1, -1, -1, -1},
+                Area = aabb,
+            };
+            nodePool[currentNode] = node;
+            return currentNode++;
+        }
+
+        private Node GetNodeIndex(int index) {
+            return nodePool[index];
         }
     }
 }
