@@ -18,7 +18,6 @@ namespace BulletHell {
             }
 
             base.Update(deltaTime);
-
         }
     }
 }

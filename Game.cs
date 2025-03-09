@@ -6,7 +6,7 @@ namespace BulletHell {
         private Window window;
         private Renderer renderer;
         private World world = new World();
-        private Boss boss;
+        private Boss? boss;
 
         private bool paused = false;
 
@@ -15,11 +15,18 @@ namespace BulletHell {
             this.renderer = renderer;
 
             world.Camera.Zoom = 360.0f;
-            world.SpawnEntity<Player>();
+            Player player = world.SpawnEntity<Player>();
 
-            // world.SpawnEntity<GoblinSpawner>();
-            boss = world.SpawnEntity<Boss>();
-            boss.Transform.Pos = new Vector2();
+            // ParticleEmitter emitter = world.SpawnEntity<ParticleEmitter>();
+            // emitter.Cfg = new ParticleEmitter.Config() {
+            //     Parent = player,
+            //     Count = 10,
+            //     Continuous = true,
+            //     Time = 1.0f,
+            // };
+
+            // boss = world.SpawnEntity<Boss>();
+            // boss.Transform.Pos = new Vector2();
         }
 
         public void Run(float deltaTime) {
