@@ -73,11 +73,25 @@ namespace BulletHell {
         /// <param name="deltaTime">Time between frames.</param>
         public void Update(float deltaTime) {
             Profiler.Instance.Start("Entity Update");
-            EmptyEntityQueues();
+
+            List<Entity> spawnQueueCopy = new List<Entity>(spawnQueue);
+            spawnQueue.Clear();
+            foreach (Entity entity in spawnQueueCopy) {
+                entity.OnSpawn();
+                Entities.Add(entity);
+            }
+
             foreach (Entity entity in Entities) {
                 entity.Update(deltaTime);
             }
-            EmptyEntityQueues();
+
+            List<Entity> killQueueCopy = new List<Entity>(killQueue);
+            killQueue.Clear();
+            foreach (Entity entity in killQueueCopy) {
+                entity.OnKill();
+                Entities.Remove(entity);
+            }
+
             Profiler.Instance.End();
 
             Profiler.Instance.Start("Build Spatial Structure");
@@ -94,27 +108,11 @@ namespace BulletHell {
             CollisionDetection();
             Profiler.Instance.End();
 
-            Profiler.Instance.Start("Quadtree Debug Draw");
-            if (spatialStructure is Quadtree) {
-                ((Quadtree) spatialStructure).DebugDraw();
-            }
-            Profiler.Instance.End();
-        }
-
-        private void EmptyEntityQueues() {
-            List<Entity> spawnQueueCopy = new List<Entity>(spawnQueue);
-            spawnQueue.Clear();
-            foreach (Entity entity in spawnQueueCopy) {
-                entity.OnSpawn();
-                Entities.Add(entity);
-            }
-
-            List<Entity> killQueueCopy = new List<Entity>(killQueue);
-            killQueue.Clear();
-            foreach (Entity entity in killQueueCopy) {
-                entity.OnKill();
-                Entities.Remove(entity);
-            }
+            // Profiler.Instance.Start("Quadtree Debug Draw");
+            // if (spatialStructure is Quadtree) {
+            //     ((Quadtree) spatialStructure).DebugDraw();
+            // }
+            // Profiler.Instance.End();
         }
 
         private void CollisionDetection() {

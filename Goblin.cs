@@ -42,5 +42,24 @@ namespace BulletHell {
                 dagger.Velocity = dir * 300.0f;
             }
         }
+
+        public override void OnKill() {
+            ParticleEmitter emitter = world.SpawnEntity<ParticleEmitter>();
+            emitter.Cfg = new ParticleEmitter.Config() {
+                Parent = this,
+                SpawnRadius = 8.0f,
+                SpawnAngle = 2.0f * MathF.PI,
+                Color = Color.RED,
+                Size = new Vector2(2.0f),
+                Count = 100,
+                Time = 0.0f,
+                FinalSize = 0.5f,
+                FinalOpacity = 0.0f,
+                MinLifespan = 0.0f,
+                MaxLifespan = 1.0f,
+                VelocitySpeedMax = 5.0f,
+            };
+            emitter.Kill();
+        }
     }
 }

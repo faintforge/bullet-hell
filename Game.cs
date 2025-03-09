@@ -17,13 +17,23 @@ namespace BulletHell {
             world.Camera.Zoom = 360.0f;
             Player player = world.SpawnEntity<Player>();
 
+            world.SpawnEntity<GoblinSpawner>();
+
             // ParticleEmitter emitter = world.SpawnEntity<ParticleEmitter>();
             // emitter.Cfg = new ParticleEmitter.Config() {
             //     Parent = player,
-            //     Count = 10,
+            //     Count = 1000,
             //     Continuous = true,
             //     Time = 1.0f,
+            //     Color = Color.WHITE,
+            //     Size = new Vector2(2.0f),
+            //     ShrinkTime = 1.0f,
+            //     SpawnRadius = 128.0f,
+            //     VelocitySpeedMax = 200.0f,
+            //     VelocitySpeedMin = 100.0f,
+            //     SpawnAngle = MathF.PI / 4.0f,
             // };
+            // emitter.Transform.Rot = MathF.PI / 4.0f;
 
             // boss = world.SpawnEntity<Boss>();
             // boss.Transform.Pos = new Vector2();
@@ -38,6 +48,12 @@ namespace BulletHell {
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             if (!paused) {
+                if (Input.Instance.GetKeyOnDown(SDL.SDL_Keycode.SDLK_SPACE)) {
+                    Vector2 pos = world.Camera.ScreenToWorldSpace(Input.Instance.MousePosition);
+                    Goblin goblin = world.SpawnEntity<Goblin>();
+                    goblin.Transform.Pos = pos;
+                }
+
                 world.Update(deltaTime);
             }
 
