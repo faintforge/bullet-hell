@@ -1,35 +1,32 @@
 namespace BulletHell {
     public class Particle : Entity {
         public Vector2 Velocity { get; set; }
-        public float ShrinkTime { get; set; }
-        public float FadeTime { get; set; }
-        private Vector2 originalSize;
+        public float Lifespan { get; set; }
+        public float FinalSize { get; set; }
+        public float FinalOpacity { get; set; }
+        private Vector2 startSize;
         private float timer = 0.0f;
+        private float startOpacity;
 
         public Particle(World world) : base(world) {
             Render = true;
         }
 
         public override void OnSpawn() {
-            originalSize = Transform.Size;
+            startSize = Transform.Size;
+            startOpacity = Color.A;
         }
 
         public override void Update(float deltaTime) {
             Transform.Pos += Velocity * deltaTime;
 
             timer += deltaTime;
-            if (ShrinkTime != 0.0f) {
-                Transform.Size = originalSize * (1.0f - timer / ShrinkTime);
-                if (timer >= ShrinkTime) {
-                    Kill();
-                }
-            }
+            float t = timer / Lifespan;
+            Color.A = Utils.Lerp(startOpacity, FinalOpacity, t);
+            Transform.Size = Utils.Lerp(startSize, startSize * FinalSize, t);
 
-            if (FadeTime != 0.0f) {
-                Color.A = 1.0f - timer / FadeTime;
-                if (timer >= FadeTime) {
-                    Kill();
-                }
+            if (timer >= Lifespan) {
+                Kill();
             }
         }
     }
