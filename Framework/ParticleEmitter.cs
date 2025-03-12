@@ -36,8 +36,8 @@ namespace BulletHell {
                 // Transform.Rot = Cfg.Parent.Transform.Rot;
             }
 
-            Debug.Instance.DrawLine(Transform.Pos, Cfg.SpawnRadius, Transform.Rot - Cfg.SpawnAngle * 0.5f, Color.WHITE);
-            Debug.Instance.DrawLine(Transform.Pos, Cfg.SpawnRadius, Transform.Rot + Cfg.SpawnAngle * 0.5f, Color.WHITE);
+            // Debug.Instance.DrawLine(Transform.Pos, Cfg.SpawnRadius, Transform.Rot - Cfg.SpawnAngle * 0.5f, Color.WHITE);
+            // Debug.Instance.DrawLine(Transform.Pos, Cfg.SpawnRadius, Transform.Rot + Cfg.SpawnAngle * 0.5f, Color.WHITE);
 
             if (!emitting) {
                 return;

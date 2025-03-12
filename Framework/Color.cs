@@ -8,6 +8,7 @@ namespace BulletHell {
         public readonly static Color RED = Color.HexRGB(0xff0000);
         public readonly static Color GREEN = Color.HexRGB(0x00ff00);
         public readonly static Color BLUE = Color.HexRGB(0x0000ff);
+        public readonly static Color TRASNPARENT = Color.HexRGBA(0x00000000);
 
         public float R { get; set; }
         public float G { get; set; }

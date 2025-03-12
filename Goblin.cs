@@ -47,7 +47,7 @@ namespace BulletHell {
             ParticleEmitter emitter = world.SpawnEntity<ParticleEmitter>();
             emitter.Cfg = new ParticleEmitter.Config() {
                 Parent = this,
-                SpawnRadius = 8.0f,
+                SpawnRadius = 2.0f,
                 SpawnAngle = 2.0f * MathF.PI,
                 Color = Color.RED,
                 Size = new Vector2(2.0f),
@@ -56,8 +56,8 @@ namespace BulletHell {
                 FinalSize = 0.5f,
                 FinalOpacity = 0.0f,
                 MinLifespan = 0.0f,
-                MaxLifespan = 1.0f,
-                VelocitySpeedMax = 5.0f,
+                MaxLifespan = 0.5f,
+                VelocitySpeedMax = 100.0f,
             };
             emitter.Kill();
         }
