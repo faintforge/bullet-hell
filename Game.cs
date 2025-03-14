@@ -9,6 +9,7 @@ namespace BulletHell {
         private Boss? boss;
 
         private bool paused = false;
+        private UI debugUI = new UI();
 
         public Game(Window window, Renderer renderer) {
             this.window = window;
@@ -17,7 +18,7 @@ namespace BulletHell {
             world.Camera.Zoom = 360.0f;
             Player player = world.SpawnEntity<Player>();
 
-            world.SpawnEntity<GoblinSpawner>();
+            //world.SpawnEntity<GoblinSpawner>();
 
             // ParticleEmitter emitter = world.SpawnEntity<ParticleEmitter>();
             // emitter.Cfg = new ParticleEmitter.Config() {
@@ -35,8 +36,8 @@ namespace BulletHell {
             // };
             // emitter.Transform.Rot = MathF.PI / 4.0f;
 
-            // boss = world.SpawnEntity<Boss>();
-            // boss.Transform.Pos = new Vector2();
+            boss = world.SpawnEntity<Boss>();
+            boss.Transform.Pos = new Vector2();
         }
 
         public void Run(float deltaTime) {
@@ -175,8 +176,44 @@ namespace BulletHell {
                 paused = !paused;
             }
 
-            PrintProfiles();
+            BuildDebugUI();
+            debugUI.Begin();
+            debugUI.Draw(renderer, window.Size);
+            debugUI.End();
+            //PrintProfiles();
             Profiler.Instance.Reset();
+        }
+
+        private void BuildDebugUI()
+        {
+            Widget root = debugUI.MakeWidget("root");
+            foreach (Profile profile in Profiler.Instance.Profiles.Values)
+            {
+                BuildDebugUIHelper(profile, root, 0);
+            }
+            Font font = AssetManager.Instance.GetFont("roboto_mono");
+            root.MakeWidget($"Entities alive: {world.Entities.Count}")
+                .ShowText(font, Color.WHITE)
+                .FitText();
+        }
+
+        private void BuildDebugUIHelper(Profile profile, Widget parent, int depth)
+        {
+            Font font = AssetManager.Instance.GetFont("roboto_mono");
+            string text = $"{profile.TotalDuration:0.00}ms {profile.AverageDuration:0.00}ms {profile.CallCount} call(s) - {profile.Name}";
+            Widget container = parent.MakeWidget("")
+                .FitChildren()
+                .FlowHorizontal();
+            container.MakeWidget("")
+                .FixedSize(new Vector2(depth * 25.0f, 0.0f));
+            container.MakeWidget(text)
+                .ShowText(font, Color.WHITE)
+                .FitText();
+
+            foreach (Profile prof in profile.ChildProfiles.Values)
+            {
+                BuildDebugUIHelper(prof, parent, depth + 1);
+            }
         }
 
         private void PrintProfiles() {
@@ -206,6 +243,5 @@ namespace BulletHell {
             }
             return pos.Y;
         }
-
     }
 }

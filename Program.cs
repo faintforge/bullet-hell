@@ -35,8 +35,8 @@ namespace BulletHell {
                     fullscreen: false
                 );
             Renderer renderer = new Renderer();
-            Scene scene = Scene.MainMenu;
-            // Scene scene = Scene.Game;
+            //Scene scene = Scene.MainMenu;
+            Scene scene = Scene.Game;
 
             LoadAssets();
 
@@ -102,7 +102,7 @@ namespace BulletHell {
 
             Widget panel = ui.MakeWidget("panel")
                 .Floating(new Vector2(32))
-                .FixedSize(new Vector2(128))
+                .FitChildren()
                 .Background(Color.RED);
 
             panel.MakeWidget("Hello, UI!")
@@ -110,14 +110,23 @@ namespace BulletHell {
                 .Background(Color.TRASNPARENT)
                 .FitText();
 
+            Widget textIndent = panel.MakeWidget("")
+                .FitChildren()
+                .FlowHorizontal()
+                .Background(Color.BLUE);
+            textIndent.MakeWidget("padding")
+                .FixedSize(new Vector2(100.0f, 0.0f));
+            textIndent.MakeWidget("Indented Text")
+                .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE)
+                .FitText();
+            textIndent.MakeWidget("Lorem Ipsum")
+                .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE)
+                .FitText();
+
             panel.MakeWidget("More text")
                 .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE)
                 .Background(Color.TRASNPARENT)
                 .FitText();
-
-            // panel.MakeWidget("otherPanel")
-            //     .FixedSize(new Vector2(64))
-            //     .Background(Color.BLUE);
 
             ui.Begin();
             ui.Draw(renderer, window.Size);

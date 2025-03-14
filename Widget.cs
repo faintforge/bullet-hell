@@ -11,6 +11,12 @@ namespace BulletHell {
         SumOfChildren,
     }
 
+    public enum WidgetFlow
+    {
+        Horizontal,
+        Vertical,
+    }
+
     public struct WidgetSize {
         public WidgetSizeType Type { get; set; }
         public float Value { get; set; }
@@ -20,7 +26,8 @@ namespace BulletHell {
         public Widget? Parent { get; private set; }
         private string id;
         public string Text { get; private set; }
-        public Vector2 ComputedPosition { get; set; }
+        public Vector2 ComputedRelativePosition { get; set; }
+        public Vector2 ComputedAbsolutePosition { get; set; }
         public Vector2 ComputedSize { get; set; }
         public WidgetFlags Flags { get; private set; }
         public List<Widget> Children { get; private set; } = new List<Widget>();
@@ -31,6 +38,7 @@ namespace BulletHell {
 
         public Color Bg { get; private set; } = Color.TRASNPARENT;
         public Color Fg = Color.WHITE;
+        public WidgetFlow Flow { get; private set; } = WidgetFlow.Vertical;
 
         internal Widget(string text, Widget? parent) {
             Parent = parent;
@@ -77,7 +85,7 @@ namespace BulletHell {
         }
 
         public Widget Floating(Vector2 position) {
-            ComputedPosition = position;
+            ComputedAbsolutePosition = position;
             Flags |= WidgetFlags.Floating;
             return this;
         }
@@ -106,9 +114,47 @@ namespace BulletHell {
             return this;
         }
 
-        public Widget FitText() {
+        public Widget FitTextWidth()
+        {
             Sizes[0] = new WidgetSize() { Type = WidgetSizeType.TextContent};
-            Sizes[1] = new WidgetSize() { Type = WidgetSizeType.TextContent};
+            return this;
+        }
+
+        public Widget FitTextHeight()
+        {
+            Sizes[1] = new WidgetSize() { Type = WidgetSizeType.TextContent };
+            return this;
+        }
+
+        public Widget FitText() {
+            return this.FitTextWidth().FitTextHeight();
+        }
+
+        public Widget FitChildrenWidth()
+        {
+            Sizes[0] = new WidgetSize() { Type = WidgetSizeType.SumOfChildren };
+            return this;
+        }
+
+        public Widget FitChildrenHeight()
+        {
+            Sizes[1] = new WidgetSize() { Type = WidgetSizeType.SumOfChildren };
+            return this;
+        }
+
+        public Widget FitChildren()
+        {
+            return this.FitChildrenWidth().FitChildrenHeight();
+        }
+
+        public Widget FlowHorizontal()
+        {
+            Flow = WidgetFlow.Horizontal;
+            return this;
+        }
+        public Widget FlowVertical()
+        {
+            Flow = WidgetFlow.Vertical;
             return this;
         }
     }
