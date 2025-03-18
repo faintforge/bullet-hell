@@ -1,10 +1,10 @@
 namespace BulletHell {
     [Flags]
     public enum WidgetFlags {
-        None,
-        FloatingX,
-        FloatingY,
-        ShowText,
+        None      = 0,
+        FloatingX = 1 << 0,
+        FloatingY = 1 << 1,
+        ShowText  = 1 << 2,
     }
 
     public enum WidgetSizeType {

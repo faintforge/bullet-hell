@@ -89,39 +89,21 @@ namespace BulletHell {
 
             // X
             if (!widget.Flags.HasFlag(WidgetFlags.FloatingX) && widget.Parent != null) {
-                Console.WriteLine($"{widget.Text}");
-                Console.WriteLine($"{widget.Flags}, {widget.Parent}");
-
                 Vector2 pos = widget.ComputedAbsolutePosition;
                 pos.X = widget.Parent.ComputedAbsolutePosition.X + relPosition.X;
-                Console.WriteLine(widget.Parent.ComputedAbsolutePosition);
                 widget.ComputedAbsolutePosition = pos;
-                switch (widget.Parent.Flow)
-                {
-                    case WidgetFlow.Horizontal:
-                        nextPosition.X += widget.ComputedSize.X;
-                        break;
-                    case WidgetFlow.Vertical:
-                        nextPosition.Y += widget.ComputedSize.Y;
-                        break;
+                if (widget.Parent.Flow == WidgetFlow.Horizontal) {
+                    nextPosition.X += widget.ComputedSize.X;
                 }
             }
 
             // Y
-            Console.WriteLine($"{widget.Text}: {widget.Flags.ToString()}, {widget.Parent}");
             if (!widget.Flags.HasFlag(WidgetFlags.FloatingY) && widget.Parent != null) {
-
                 Vector2 pos = widget.ComputedAbsolutePosition;
                 pos.Y = widget.Parent.ComputedAbsolutePosition.Y + relPosition.Y;
                 widget.ComputedAbsolutePosition = pos;
-                switch (widget.Parent.Flow)
-                {
-                    case WidgetFlow.Horizontal:
-                        nextPosition.X += widget.ComputedSize.X;
-                        break;
-                    case WidgetFlow.Vertical:
-                        nextPosition.Y += widget.ComputedSize.Y;
-                        break;
+                if (widget.Parent.Flow == WidgetFlow.Vertical) {
+                    nextPosition.Y += widget.ComputedSize.Y;
                 }
             }
 
