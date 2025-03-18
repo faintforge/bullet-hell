@@ -1,7 +1,9 @@
 namespace BulletHell {
+    [Flags]
     public enum WidgetFlags {
         None,
-        Floating,
+        FloatingX,
+        FloatingY,
         ShowText,
     }
 
@@ -84,10 +86,24 @@ namespace BulletHell {
             return child;
         }
 
-        public Widget Floating(Vector2 position) {
-            ComputedAbsolutePosition = position;
-            Flags |= WidgetFlags.Floating;
+        public Widget FloatX(float x) {
+            Vector2 newPos = ComputedAbsolutePosition;
+            newPos.X = x;
+            ComputedAbsolutePosition = newPos;
+            Flags |= WidgetFlags.FloatingX;
             return this;
+        }
+
+        public Widget FloatY(float y) {
+            Vector2 newPos = ComputedAbsolutePosition;
+            newPos.Y = y;
+            ComputedAbsolutePosition = newPos;
+            Flags |= WidgetFlags.FloatingY;
+            return this;
+        }
+
+        public Widget Floating(Vector2 position) {
+            return this.FloatX(position.X).FloatY(position.Y);
         }
 
         public Widget FixedSize(Vector2 size) {
@@ -114,14 +130,12 @@ namespace BulletHell {
             return this;
         }
 
-        public Widget FitTextWidth()
-        {
+        public Widget FitTextWidth() {
             Sizes[0] = new WidgetSize() { Type = WidgetSizeType.TextContent};
             return this;
         }
 
-        public Widget FitTextHeight()
-        {
+        public Widget FitTextHeight() {
             Sizes[1] = new WidgetSize() { Type = WidgetSizeType.TextContent };
             return this;
         }
@@ -130,30 +144,25 @@ namespace BulletHell {
             return this.FitTextWidth().FitTextHeight();
         }
 
-        public Widget FitChildrenWidth()
-        {
+        public Widget FitChildrenWidth() {
             Sizes[0] = new WidgetSize() { Type = WidgetSizeType.SumOfChildren };
             return this;
         }
 
-        public Widget FitChildrenHeight()
-        {
+        public Widget FitChildrenHeight() {
             Sizes[1] = new WidgetSize() { Type = WidgetSizeType.SumOfChildren };
             return this;
         }
 
-        public Widget FitChildren()
-        {
+        public Widget FitChildren() {
             return this.FitChildrenWidth().FitChildrenHeight();
         }
 
-        public Widget FlowHorizontal()
-        {
+        public Widget FlowHorizontal() {
             Flow = WidgetFlow.Horizontal;
             return this;
         }
-        public Widget FlowVertical()
-        {
+        public Widget FlowVertical() {
             Flow = WidgetFlow.Vertical;
             return this;
         }

@@ -50,35 +50,31 @@ namespace BulletHell {
             }
         }
 
-        private void BuildSumOfChildrenSizes(Widget widget)
-        {
-            foreach (Widget child in widget.Children)
-            {
+        private void BuildSumOfChildrenSizes(Widget widget) {
+            foreach (Widget child in widget.Children) {
                 BuildSumOfChildrenSizes(child);
             }
 
             Vector2 childSize = widget.ComputedSize;
-            foreach (Widget child in widget.Children)
-            {
-                switch (child.Parent.Flow)
-                {
+            foreach (Widget child in widget.Children) {
+                if (child.Parent == null) {
+                    continue;
+                }
+
+                switch (child.Parent.Flow) {
                     case WidgetFlow.Horizontal:
-                        if (widget.Sizes[0].Type == WidgetSizeType.SumOfChildren)
-                        {
+                        if (widget.Sizes[0].Type == WidgetSizeType.SumOfChildren) {
                             childSize.X += child.ComputedSize.X;
                         }
-                        if (widget.Sizes[1].Type == WidgetSizeType.SumOfChildren)
-                        {
+                        if (widget.Sizes[1].Type == WidgetSizeType.SumOfChildren) {
                             childSize.Y = MathF.Max(childSize.Y, child.ComputedSize.Y);
                         }
                         break;
                     case WidgetFlow.Vertical:
-                        if (widget.Sizes[0].Type == WidgetSizeType.SumOfChildren)
-                        {
+                        if (widget.Sizes[0].Type == WidgetSizeType.SumOfChildren) {
                             childSize.X = MathF.Max(childSize.X, child.ComputedSize.X);
                         }
-                        if (widget.Sizes[1].Type == WidgetSizeType.SumOfChildren)
-                        {
+                        if (widget.Sizes[1].Type == WidgetSizeType.SumOfChildren) {
                             childSize.Y += child.ComputedSize.Y;
                         }
                         break;
@@ -89,9 +85,35 @@ namespace BulletHell {
 
         private Vector2 BuildPositions(Widget widget, Vector2 relPosition) {
             Vector2 nextPosition = relPosition;
-            if (!widget.Flags.HasFlag(WidgetFlags.Floating) && widget.Parent != null) {
-                widget.ComputedAbsolutePosition = widget.Parent.ComputedAbsolutePosition + relPosition;
-                widget.ComputedRelativePosition = relPosition;
+            widget.ComputedRelativePosition = relPosition;
+
+            // X
+            if (!widget.Flags.HasFlag(WidgetFlags.FloatingX) && widget.Parent != null) {
+                Console.WriteLine($"{widget.Text}");
+                Console.WriteLine($"{widget.Flags}, {widget.Parent}");
+
+                Vector2 pos = widget.ComputedAbsolutePosition;
+                pos.X = widget.Parent.ComputedAbsolutePosition.X + relPosition.X;
+                Console.WriteLine(widget.Parent.ComputedAbsolutePosition);
+                widget.ComputedAbsolutePosition = pos;
+                switch (widget.Parent.Flow)
+                {
+                    case WidgetFlow.Horizontal:
+                        nextPosition.X += widget.ComputedSize.X;
+                        break;
+                    case WidgetFlow.Vertical:
+                        nextPosition.Y += widget.ComputedSize.Y;
+                        break;
+                }
+            }
+
+            // Y
+            Console.WriteLine($"{widget.Text}: {widget.Flags.ToString()}, {widget.Parent}");
+            if (!widget.Flags.HasFlag(WidgetFlags.FloatingY) && widget.Parent != null) {
+
+                Vector2 pos = widget.ComputedAbsolutePosition;
+                pos.Y = widget.Parent.ComputedAbsolutePosition.Y + relPosition.Y;
+                widget.ComputedAbsolutePosition = pos;
                 switch (widget.Parent.Flow)
                 {
                     case WidgetFlow.Horizontal:

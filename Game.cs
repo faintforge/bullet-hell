@@ -10,6 +10,7 @@ namespace BulletHell {
 
         private bool paused = false;
         private UI debugUI = new UI();
+        private UI hud = new UI();
 
         public Game(Window window, Renderer renderer) {
             this.window = window;
@@ -73,55 +74,49 @@ namespace BulletHell {
 
             Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);
             Font font = AssetManager.Instance.GetFont("lato32");
-            renderer.BeginFrame(uiCam);
+            // renderer.BeginFrame(uiCam);
 
             // Health bars
-            world.OperateOnEntities((entity) => {
-                    Vector2 barSize = new Vector2(32.0f, 4.0f);
-                    if (entity is Player) {
-                        Player player = (Player) entity;
-                        Vector2 screenPos = world.Camera.WorldToScreenSpace(player.Transform.Pos + new Vector2(0.0f, player.Transform.Size.Y / 2.0f));
-                        screenPos.Y -= 8.0f;
-                        screenPos.X -= barSize.X / 2.0f;
+            // world.OperateOnEntities((entity) => {
+            //         Vector2 barSize = new Vector2(32.0f, 4.0f);
+            //         if (entity is Player) {
+            //             Player player = (Player) entity;
+            //             Vector2 screenPos = world.Camera.WorldToScreenSpace(player.Transform.Pos + new Vector2(0.0f, player.Transform.Size.Y / 2.0f));
+            //             screenPos.Y -= 8.0f;
+            //             screenPos.X -= barSize.X / 2.0f;
 
-                        // Background
-                        renderer.Draw(new Box() {
-                                Origin = new Vector2(-1.0f, 1.0f),
-                                Pos = screenPos,
-                                Size = barSize,
-                            }, Color.HexRGB(0x241527));
-                        // Foreground
-                        Vector2 healthLeft = barSize;
-                        healthLeft.X *= (float) player.Health / player.MaxHealth;
-                        renderer.Draw(new Box() {
-                                Origin = new Vector2(-1.0f, 1.0f),
-                                Pos = screenPos,
-                                Size = healthLeft,
-                            }, Color.HexRGB(0xcf573c));
-                    }
+            //             Widget bar = hud.MakeWidget("bar")
+            //                 .FixedSize(barSize)
+            //                 .Floating(screenPos)
+            //                 .Background(Color.HexRGB(0x241527));
 
-                    if (entity is Enemy) {
-                        Enemy enemy = (Enemy) entity;
-                        Vector2 screenPos = world.Camera.WorldToScreenSpace(enemy.Transform.Pos + new Vector2(0.0f, enemy.Transform.Size.Y / 2.0f));
-                        screenPos.Y -= 8.0f;
-                        screenPos.X -= barSize.X / 2.0f;
+            //             Vector2 healthLeft = barSize;
+            //             healthLeft.X *= (float) player.Health / player.MaxHealth;
+            //             bar.MakeWidget("foreground")
+            //                 .FixedSize(healthLeft)
+            //                 .Floating(screenPos)
+            //                 .Background(Color.HexRGB(0xcf573c));
+            //         }
 
-                        // Background
-                        renderer.Draw(new Box() {
-                                Origin = new Vector2(-1.0f, 1.0f),
-                                Pos = screenPos,
-                                Size = barSize,
-                            }, Color.HexRGB(0x241527));
-                        // Foreground
-                        Vector2 healthLeft = barSize;
-                        healthLeft.X *= (float) enemy.Health / enemy.MaxHealth;
-                        renderer.Draw(new Box() {
-                                Origin = new Vector2(-1.0f, 1.0f),
-                                Pos = screenPos,
-                                Size = healthLeft,
-                            }, Color.HexRGB(0xcf573c));
-                    }
-            });
+            //         if (entity is Enemy) {
+            //             Enemy enemy = (Enemy) entity;
+            //             Vector2 screenPos = world.Camera.WorldToScreenSpace(enemy.Transform.Pos + new Vector2(0.0f, enemy.Transform.Size.Y / 2.0f));
+            //             screenPos.Y -= 8.0f;
+            //             screenPos.X -= barSize.X / 2.0f;
+
+            //             Widget bar = hud.MakeWidget("bar")
+            //                 .FixedSize(barSize)
+            //                 .Floating(screenPos)
+            //                 .Background(Color.HexRGB(0x241527));
+
+            //             Vector2 healthLeft = barSize;
+            //             healthLeft.X *= (float) enemy.Health / enemy.MaxHealth;
+            //             bar.MakeWidget("foreground")
+            //                 .FixedSize(healthLeft)
+            //                 .Floating(screenPos)
+            //                 .Background(Color.HexRGB(0xcf573c));
+            //         }
+            // });
 
             // Boss bar
             if (boss != null) {
@@ -137,29 +132,26 @@ namespace BulletHell {
                 Vector2 screenPos = new Vector2(0.0f, window.Size.Y - barSize.Y);
                 screenPos += margin;
 
-                // Background
-                renderer.Draw(new Box() {
-                        Origin = new Vector2(-1.0f),
-                        Pos = screenPos,
-                        Size = barSize,
-                    }, Color.HexRGB(0x241527));
-                // Foreground
-                Vector2 healthLeft = barSize;
-                healthLeft.X *= (float) boss.Health / boss.MaxHealth;
-                renderer.Draw(new Box() {
-                        Origin = new Vector2(-1.0f),
-                        Pos = screenPos,
-                        Size = healthLeft,
-                    }, Color.HexRGB(0xcf573c));
+                Widget bar = hud.MakeWidget("bossBar")
+                    .Floating(screenPos)
+                    .FixedSize(barSize)
+                    .Background(Color.HexRGB(0x241527));
 
-                screenPos.Y += padding.Y;
-                screenPos.X += barSize.X / 2.0f;
-                string hpText = $"{boss.Health} / {boss.MaxHealth}";
-                screenPos.X -= font.MeasureText(hpText).X / 2.0f;
-                renderer.DrawText(hpText, font, screenPos, Color.WHITE);
+                // Vector2 healthLeft = barSize;
+                // healthLeft.X *= (float) boss.Health / boss.MaxHealth;
+                // bar.MakeWidget($"{boss.Health} / {boss.MaxHealth}")
+                //     .FixedSize(healthLeft)
+                //     .Background(Color.HexRGB(0xcf573c))
+                //     .ShowText(font, Color.WHITE);
+
+                // screenPos.Y += padding.Y;
+                // screenPos.X += barSize.X / 2.0f;
+                // string hpText = $"{boss.Health} / {boss.MaxHealth}";
+                // screenPos.X -= font.MeasureText(hpText).X / 2.0f;
+                // renderer.DrawText(hpText, font, screenPos, Color.WHITE);
             }
 
-            renderer.EndFrame();
+            // renderer.EndFrame();
 
             if (paused) {
                 renderer.BeginFrame(uiCam);
@@ -176,19 +168,21 @@ namespace BulletHell {
                 paused = !paused;
             }
 
-            BuildDebugUI();
-            debugUI.Begin();
-            debugUI.Draw(renderer, window.Size);
-            debugUI.End();
+            hud.Begin();
+            hud.Draw(renderer, window.Size);
+            hud.End();
+
+            // BuildDebugUI();
+            // debugUI.Begin();
+            // debugUI.Draw(renderer, window.Size);
+            // debugUI.End();
             //PrintProfiles();
             Profiler.Instance.Reset();
         }
 
-        private void BuildDebugUI()
-        {
+        private void BuildDebugUI() {
             Widget root = debugUI.MakeWidget("root");
-            foreach (Profile profile in Profiler.Instance.Profiles.Values)
-            {
+            foreach (Profile profile in Profiler.Instance.Profiles.Values) {
                 BuildDebugUIHelper(profile, root, 0);
             }
             Font font = AssetManager.Instance.GetFont("roboto_mono");
@@ -197,8 +191,7 @@ namespace BulletHell {
                 .FitText();
         }
 
-        private void BuildDebugUIHelper(Profile profile, Widget parent, int depth)
-        {
+        private void BuildDebugUIHelper(Profile profile, Widget parent, int depth) {
             Font font = AssetManager.Instance.GetFont("roboto_mono");
             string text = $"{profile.TotalDuration:0.00}ms {profile.AverageDuration:0.00}ms {profile.CallCount} call(s) - {profile.Name}";
             Widget container = parent.MakeWidget("")
@@ -210,8 +203,7 @@ namespace BulletHell {
                 .ShowText(font, Color.WHITE)
                 .FitText();
 
-            foreach (Profile prof in profile.ChildProfiles.Values)
-            {
+            foreach (Profile prof in profile.ChildProfiles.Values) {
                 BuildDebugUIHelper(prof, parent, depth + 1);
             }
         }
