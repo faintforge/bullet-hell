@@ -13,10 +13,17 @@ namespace BulletHell {
         SumOfChildren,
     }
 
-    public enum WidgetFlow
-    {
+    public enum WidgetFlow {
         Horizontal,
         Vertical,
+    }
+
+    public enum WidgetAlignment {
+        Left,
+        Top = Left,
+        Center,
+        Right,
+        Bottom = Right,
     }
 
     public struct WidgetSize {
@@ -41,6 +48,9 @@ namespace BulletHell {
         public Color Bg { get; private set; } = Color.TRASNPARENT;
         public Color Fg = Color.WHITE;
         public WidgetFlow Flow { get; private set; } = WidgetFlow.Vertical;
+
+        public WidgetAlignment VerticalAlign { get; private set; }
+        public WidgetAlignment HorizontalAlign { get; private set; }
 
         internal Widget(string text, Widget? parent) {
             Parent = parent;
@@ -164,6 +174,12 @@ namespace BulletHell {
         }
         public Widget FlowVertical() {
             Flow = WidgetFlow.Vertical;
+            return this;
+        }
+
+        public Widget AlignChildren(WidgetAlignment vertical, WidgetAlignment horizontal) {
+            VerticalAlign = vertical;
+            HorizontalAlign = horizontal;
             return this;
         }
     }

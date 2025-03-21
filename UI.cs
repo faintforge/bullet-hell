@@ -50,12 +50,9 @@ namespace BulletHell {
             }
         }
 
-        private void BuildSumOfChildrenSizes(Widget widget) {
-            foreach (Widget child in widget.Children) {
-                BuildSumOfChildrenSizes(child);
-            }
-
-            Vector2 childSize = widget.ComputedSize;
+        private Vector2 SumSizeOfChildren(Widget widget) {
+            Vector2 childSize = new Vector2();
+            // Vector2 childSize = widget.ComputedSize;
             foreach (Widget child in widget.Children) {
                 if (child.Parent == null) {
                     continue;
@@ -63,24 +60,41 @@ namespace BulletHell {
 
                 switch (child.Parent.Flow) {
                     case WidgetFlow.Horizontal:
-                        if (widget.Sizes[0].Type == WidgetSizeType.SumOfChildren) {
+                        if (!child.Flags.HasFlag(WidgetFlags.FloatingX)) {
                             childSize.X += child.ComputedSize.X;
                         }
-                        if (widget.Sizes[1].Type == WidgetSizeType.SumOfChildren) {
+                        if (!child.Flags.HasFlag(WidgetFlags.FloatingY)) {
                             childSize.Y = MathF.Max(childSize.Y, child.ComputedSize.Y);
                         }
                         break;
                     case WidgetFlow.Vertical:
-                        if (widget.Sizes[0].Type == WidgetSizeType.SumOfChildren) {
+                        if (!child.Flags.HasFlag(WidgetFlags.FloatingX)) {
                             childSize.X = MathF.Max(childSize.X, child.ComputedSize.X);
                         }
-                        if (widget.Sizes[1].Type == WidgetSizeType.SumOfChildren) {
+                        if (!child.Flags.HasFlag(WidgetFlags.FloatingY)) {
                             childSize.Y += child.ComputedSize.Y;
                         }
                         break;
                 }
             }
-            widget.ComputedSize = childSize;
+            return childSize;
+        }
+
+        private void BuildSumOfChildrenSizes(Widget widget) {
+            foreach (Widget child in widget.Children) {
+                BuildSumOfChildrenSizes(child);
+            }
+            Vector2 sum = SumSizeOfChildren(widget);
+            if (widget.Sizes[0].Type == WidgetSizeType.SumOfChildren) {
+                Vector2 newSize = widget.ComputedSize;
+                newSize.X = sum.X;
+                widget.ComputedSize = newSize;
+            }
+            if (widget.Sizes[1].Type == WidgetSizeType.SumOfChildren) {
+                Vector2 newSize = widget.ComputedSize;
+                newSize.Y = sum.Y;
+                widget.ComputedSize = newSize;
+            }
         }
 
         private Vector2 BuildPositions(Widget widget, Vector2 relPosition) {
@@ -108,7 +122,30 @@ namespace BulletHell {
             }
 
             Vector2 siblingPosition = nextPosition;
-            nextPosition = new Vector2();
+
+            Vector2 childSum = SumSizeOfChildren(widget);
+            switch (widget.HorizontalAlign) {
+                case WidgetAlignment.Left:
+                    nextPosition.X = 0.0f;
+                    break;
+                case WidgetAlignment.Center:
+                    nextPosition.X = (widget.ComputedSize.X - childSum.X) / 2.0f;
+                    break;
+                case WidgetAlignment.Right:
+                    nextPosition.X = widget.ComputedSize.X - childSum.X;
+                    break;
+            }
+            switch (widget.VerticalAlign) {
+                case WidgetAlignment.Left:
+                    nextPosition.Y = 0.0f;
+                    break;
+                case WidgetAlignment.Center:
+                    nextPosition.Y = (widget.ComputedSize.Y - childSum.Y) / 2.0f;
+                    break;
+                case WidgetAlignment.Right:
+                    nextPosition.Y = widget.ComputedSize.Y - childSum.Y;
+                    break;
+            }
             foreach (Widget child in widget.Children) {
                 nextPosition = BuildPositions(child, nextPosition);
             }

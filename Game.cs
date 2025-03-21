@@ -132,23 +132,22 @@ namespace BulletHell {
                 Vector2 screenPos = new Vector2(0.0f, window.Size.Y - barSize.Y);
                 screenPos += margin;
 
-                Widget bar = hud.MakeWidget("bossBar")
+                Widget bar = hud.MakeWidget("")
                     .Floating(screenPos)
                     .FixedSize(barSize)
+                    .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center)
                     .Background(Color.HexRGB(0x241527));
 
                 Vector2 healthLeft = barSize;
                 healthLeft.X *= (float) boss.Health / boss.MaxHealth;
-                bar.MakeWidget($"{boss.Health} / {boss.MaxHealth}")
+                bar.MakeWidget("")
                     .FixedSize(healthLeft)
-                    .Background(Color.HexRGB(0xcf573c))
-                    .ShowText(font, Color.WHITE);
+                    .Floating(screenPos)
+                    .Background(Color.HexRGB(0xcf573c));
 
-                // screenPos.Y += padding.Y;
-                // screenPos.X += barSize.X / 2.0f;
-                // string hpText = $"{boss.Health} / {boss.MaxHealth}";
-                // screenPos.X -= font.MeasureText(hpText).X / 2.0f;
-                // renderer.DrawText(hpText, font, screenPos, Color.WHITE);
+                bar.MakeWidget($"{boss.Health} / {boss.MaxHealth}")
+                    .FitText()
+                    .ShowText(font, Color.WHITE);
             }
 
             // renderer.EndFrame();
