@@ -76,46 +76,49 @@ namespace BulletHell {
             Font font = AssetManager.Instance.GetFont("lato32");
             // renderer.BeginFrame(uiCam);
 
+            hud.Begin(Input.Instance.MousePosition);
             // Health bars
+            int id = 0;
             world.OperateOnEntities((entity) => {
-                    Vector2 barSize = new Vector2(32.0f, 4.0f);
-                    if (entity is Player) {
-                        Player player = (Player) entity;
-                        Vector2 screenPos = world.Camera.WorldToScreenSpace(player.Transform.Pos + new Vector2(0.0f, player.Transform.Size.Y / 2.0f));
-                        screenPos.Y -= 8.0f;
-                        screenPos.X -= barSize.X / 2.0f;
+                Vector2 barSize = new Vector2(32.0f, 4.0f);
+                if (entity is Player) {
+                    Player player = (Player) entity;
+                    Vector2 screenPos = world.Camera.WorldToScreenSpace(player.Transform.Pos + new Vector2(0.0f, player.Transform.Size.Y / 2.0f));
+                    screenPos.Y -= 8.0f;
+                    screenPos.X -= barSize.X / 2.0f;
 
-                        Widget bar = hud.MakeWidget("bar")
-                            .FixedSize(barSize)
-                            .Floating(screenPos)
-                            .Background(Color.HexRGB(0x241527));
+                    Widget bar = hud.MakeWidget($"##bar{id}")
+                        .FixedSize(barSize)
+                        .Floating(screenPos)
+                        .Background(Color.HexRGB(0x241527));
 
-                        Vector2 healthLeft = barSize;
-                        healthLeft.X *= (float) player.Health / player.MaxHealth;
-                        bar.MakeWidget("foreground")
-                            .FixedSize(healthLeft)
-                            .Floating(screenPos)
-                            .Background(Color.HexRGB(0xcf573c));
-                    }
+                    Vector2 healthLeft = barSize;
+                    healthLeft.X *= (float) player.Health / player.MaxHealth;
+                    bar.MakeWidget($"##bar_fg{id}")
+                        .FixedSize(healthLeft)
+                        .Floating(screenPos)
+                        .Background(Color.HexRGB(0xcf573c));
+                }
 
-                    if (entity is Enemy) {
-                        Enemy enemy = (Enemy) entity;
-                        Vector2 screenPos = world.Camera.WorldToScreenSpace(enemy.Transform.Pos + new Vector2(0.0f, enemy.Transform.Size.Y / 2.0f));
-                        screenPos.Y -= 8.0f;
-                        screenPos.X -= barSize.X / 2.0f;
+                if (entity is Enemy) {
+                    Enemy enemy = (Enemy) entity;
+                    Vector2 screenPos = world.Camera.WorldToScreenSpace(enemy.Transform.Pos + new Vector2(0.0f, enemy.Transform.Size.Y / 2.0f));
+                    screenPos.Y -= 8.0f;
+                    screenPos.X -= barSize.X / 2.0f;
 
-                        Widget bar = hud.MakeWidget("bar")
-                            .FixedSize(barSize)
-                            .Floating(screenPos)
-                            .Background(Color.HexRGB(0x241527));
+                    Widget bar = hud.MakeWidget($"##bar{id}")
+                        .FixedSize(barSize)
+                        .Floating(screenPos)
+                        .Background(Color.HexRGB(0x241527));
 
-                        Vector2 healthLeft = barSize;
-                        healthLeft.X *= (float) enemy.Health / enemy.MaxHealth;
-                        bar.MakeWidget("foreground")
-                            .FixedSize(healthLeft)
-                            .Floating(screenPos)
-                            .Background(Color.HexRGB(0xcf573c));
-                    }
+                    Vector2 healthLeft = barSize;
+                    healthLeft.X *= (float) enemy.Health / enemy.MaxHealth;
+                    bar.MakeWidget($"##bar_fg{id}")
+                        .FixedSize(healthLeft)
+                        .Floating(screenPos)
+                        .Background(Color.HexRGB(0xcf573c));
+                }
+                id++;
             });
 
             // Boss bar
@@ -132,7 +135,7 @@ namespace BulletHell {
                 Vector2 screenPos = new Vector2(0.0f, window.Size.Y - barSize.Y);
                 screenPos += margin;
 
-                Widget bar = hud.MakeWidget("")
+                Widget bar = hud.MakeWidget("##boss_bar")
                     .Floating(screenPos)
                     .FixedSize(barSize)
                     .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center)
@@ -140,7 +143,7 @@ namespace BulletHell {
 
                 Vector2 healthLeft = barSize;
                 healthLeft.X *= (float) boss.Health / boss.MaxHealth;
-                bar.MakeWidget("")
+                bar.MakeWidget("##boss_bar_fg")
                     .FixedSize(healthLeft)
                     .Floating(screenPos)
                     .Background(Color.HexRGB(0xcf573c));
@@ -167,19 +170,17 @@ namespace BulletHell {
                 paused = !paused;
             }
 
-            hud.Begin();
-            hud.Draw(renderer, window.Size);
             hud.End();
+            hud.Draw(renderer, window.Size);
 
             BuildDebugUI();
-            debugUI.Begin();
             debugUI.Draw(renderer, window.Size);
-            debugUI.End();
             //PrintProfiles();
             Profiler.Instance.Reset();
         }
 
         private void BuildDebugUI() {
+            debugUI.Begin(Input.Instance.MousePosition);
             Widget root = debugUI.MakeWidget("root");
             foreach (Profile profile in Profiler.Instance.Profiles.Values) {
                 BuildDebugUIHelper(profile, root, 0);
@@ -188,15 +189,16 @@ namespace BulletHell {
             root.MakeWidget($"Entities alive: {world.Entities.Count}")
                 .ShowText(font, Color.WHITE)
                 .FitText();
+            debugUI.End();
         }
 
         private void BuildDebugUIHelper(Profile profile, Widget parent, int depth) {
             Font font = AssetManager.Instance.GetFont("roboto_mono");
             string text = $"{profile.TotalDuration:0.00}ms {profile.AverageDuration:0.00}ms {profile.CallCount} call(s) - {profile.Name}";
-            Widget container = parent.MakeWidget("")
+            Widget container = parent.MakeWidget($"##container{profile.GetHashCode()}")
                 .FitChildren()
                 .FlowHorizontal();
-            container.MakeWidget("")
+            container.MakeWidget($"##padding{depth}{profile.GetHashCode()}")
                 .FixedSize(new Vector2(depth * 25.0f, 0.0f));
             container.MakeWidget(text)
                 .ShowText(font, Color.WHITE)

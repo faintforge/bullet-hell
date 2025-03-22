@@ -35,6 +35,7 @@ namespace BulletHell {
                     fullscreen: false
                 );
             Renderer renderer = new Renderer();
+            UI mainMenuUI = new UI();
             Scene scene = Scene.MainMenu;
             // Scene scene = Scene.Game;
 
@@ -61,7 +62,7 @@ namespace BulletHell {
 
                 switch (scene) {
                     case Scene.MainMenu:
-                        MainMenu(window, renderer, ref scene);
+                        MainMenu(window, renderer, ref scene, mainMenuUI);
                         break;
                     case Scene.Game:
                         game.Run(dt);
@@ -92,13 +93,12 @@ namespace BulletHell {
             AssetManager.Instance.LoadTexture("beam_projectile", "assets/textures/beam_projectile.png");
         }
 
-        private static Vector2 quitPos = new Vector2();
-        private static void MainMenu(Window window, Renderer renderer, ref Scene scene) {
+        private static void MainMenu(Window window, Renderer renderer, ref Scene scene, UI ui) {
             GL.Viewport(0, 0, (int) window.Size.X, (int) window.Size.Y);
             GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            UI ui = new UI();
+            ui.Begin(Input.Instance.MousePosition);
 
             Widget container = ui.MakeWidget("container")
                 .FixedSize(window.Size)
@@ -113,79 +113,29 @@ namespace BulletHell {
                 .ShowText(AssetManager.Instance.GetFont("lato48"), Color.HSV(SDL.SDL_GetTicks() / 10.0f, 0.75f, 1.0f))
                 .FitText();
 
-            panel.MakeWidget("Play")
+            Widget playBtn = panel.MakeWidget("Play")
                 .ShowText(AssetManager.Instance.GetFont("lato32"), Color.WHITE)
+                .Background(Color.HexRGB(0x212121))
                 .FitText();
+            if (playBtn.Signal().Hovered) {
+                playBtn.Background(Color.HexRGB(0x303030));
+                if (Input.Instance.GetButtonOnDown(MouseButton.Left)) {
+                    scene = Scene.Game;
+                }
+            }
 
-            panel.MakeWidget("Quit")
+            Widget quitBtn = panel.MakeWidget("Quit")
                 .ShowText(AssetManager.Instance.GetFont("lato32"), Color.WHITE)
+                .Background(Color.HexRGB(0x212121))
                 .FitText();
+            if (quitBtn.Signal().Hovered) {
+                quitBtn.Background(Color.HexRGB(0x303030));
+                if (Input.Instance.GetButtonOnDown(MouseButton.Left)) {
+                }
+            }
 
-            ui.Begin();
-            ui.Draw(renderer, window.Size);
             ui.End();
-
-            //
-            // Font titleFont = AssetManager.Instance.GetFont("lato48");
-            // Font font = AssetManager.Instance.GetFont("lato32");
-            // Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);
-            // Color color;
-            //
-            // renderer.BeginFrame(uiCam);
-            //
-            // Vector2 pos = new Vector2(64.0f);
-            // renderer.DrawText("Bullet Hell", titleFont, pos, Color.HSV(SDL.SDL_GetTicks() / 10.0f, 0.75f, 1.0f));
-            // pos.Y += titleFont.GetMetrics().LineGap;
-            // pos.Y += 16.0f;
-            //
-            // Box playBox = new Box() {
-            //     Origin = new Vector2(-1.0f),
-            //     Pos = pos,
-            //     Size = font.MeasureText("Play") + 16.0f,
-            // };
-            // if (playBox.IntersectsPoint(Input.Instance.MousePosition)) {
-            //     if (Input.Instance.GetButtonOnDown(MouseButton.Left)) {
-            //         scene = Scene.Game;
-            //     }
-            //     color = Color.HexRGB(0x303030);
-            // } else {
-            //     color = Color.HexRGB(0x212121);
-            // }
-            // renderer.Draw(playBox, color);
-            // pos += 8.0f;
-            // renderer.DrawText("Play", font, pos, Color.WHITE);
-            // pos.X -= 8.0f;
-            // pos.Y += font.GetMetrics().LineGap;
-            // pos.Y += 16.0f;
-            //
-            // if (quitPos.X == 0.0f) {
-            //     quitPos = pos;
-            // }
-            // Box quitBox = new Box() {
-            //     Origin = new Vector2(-1.0f),
-            //     Pos = quitPos,
-            //     Size = font.MeasureText("Quit") + 16.0f,
-            // };
-            // if (quitBox.IntersectsPoint(Input.Instance.MousePosition)) {
-            //     if (Input.Instance.GetButtonOnDown(MouseButton.Left)) {
-            //         Random rng = new Random();
-            //         quitPos = new Vector2((float) rng.NextDouble(), (float) rng.NextDouble()) * (window.Size - quitBox.Size);
-            //         // window.Close();
-            //     }
-            //     color = Color.HexRGB(0x303030);
-            // } else {
-            //     color = Color.HexRGB(0x212121);
-            // }
-            // renderer.Draw(quitBox, color);
-            // quitPos += 8.0f;
-            // renderer.DrawText("Quit", font, quitPos, Color.WHITE);
-            // quitPos -= 8.0f;
-            //
-            // pos.Y += 8.0f;
-            // pos.Y += font.GetMetrics().LineGap;
-            // pos.Y += 16.0f;
-            //
-            // renderer.EndFrame();
+            ui.Draw(renderer, window.Size);
         }
     }
 }

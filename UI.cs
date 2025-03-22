@@ -1,11 +1,67 @@
 namespace BulletHell {
     public class UI {
         private List<Widget> roots = new List<Widget>();
+        private Dictionary<string, Widget> widgetTable = new Dictionary<string, Widget>();
+        private int currentFrame = 0;
+        private Vector2 mousePosition = new Vector2();
 
         public UI() {}
 
+        private (string, string) HandleText(string text) {
+            string id = text;
+            // Find id part
+            for (int i = 0; i < text.Length; i++) {
+                if (i + 2 == text.Length) {
+                    break;
+                }
+
+                if (text[i] == '#' &&
+                    text[i + 1] == '#' &&
+                    text[i + 2] == '#' ) {
+                    id = text.Substring(i);
+                    break;
+                }
+            }
+
+            // Find visible text part
+            int length = text.Length;
+            for (int i = 0; i < text.Length; i++) {
+                if (i + 1 == text.Length) {
+                    break;
+                }
+
+                if (text[i] == '#' &&
+                    text[i + 1] == '#') {
+                    length = i;
+                    break;
+                }
+            }
+
+            string display = text.Substring(0, length);
+            return (id, display);
+        }
+
+        internal Widget MakeWidget(string text, Widget? parent) {
+            (string id, string display) = HandleText(text);
+            Widget? widget;
+            if (!widgetTable.TryGetValue(id, out widget)) {
+                widget = new Widget(text, null, this);
+                widgetTable.Add(id, widget);
+            }
+
+            // Widget has already been used this frame.
+            if (widget.lastTouchFrame == currentFrame) {
+                throw new Exception("Duplicate widget ID:s are not allowed!");
+            }
+
+            widget.lastTouchFrame = currentFrame;
+            widget.Reset(display, parent);
+
+            return widget;
+        }
+
         public Widget MakeWidget(string text) {
-            Widget widget = new Widget(text, null);
+            Widget widget = MakeWidget(text, null);
             roots.Add(widget);
             return widget;
         }
@@ -52,7 +108,6 @@ namespace BulletHell {
 
         private Vector2 SumSizeOfChildren(Widget widget) {
             Vector2 childSize = new Vector2();
-            // Vector2 childSize = widget.ComputedSize;
             foreach (Widget child in widget.Children) {
                 if (child.Parent == null) {
                     continue;
@@ -191,16 +246,18 @@ namespace BulletHell {
             return siblingPosition;
         }
 
-        public void Begin() {
+        public void Begin(Vector2 mousePosition) {
+            roots = new List<Widget>();
+            currentFrame++;
+            this.mousePosition = mousePosition;
+        }
+
+        public void End() {
             foreach (Widget root in roots) {
                 BuildFixedSizes(root);
                 BuildSumOfChildrenSizes(root);
                 BuildPositions(root, new Vector2());
             }
-        }
-
-        public void End() {
-            roots = new List<Widget>();
         }
 
         private void DrawHelper(Widget widget, Renderer renderer) {
@@ -228,6 +285,16 @@ namespace BulletHell {
                 DrawHelper(root, renderer);
             }
             renderer.EndFrame();
+        }
+
+        internal WidgetSignal Signal(Widget widget) {
+            return new WidgetSignal() {
+                Hovered = new Box() {
+                    Origin = new Vector2(-1.0f),
+                    Pos = widget.ComputedAbsolutePosition,
+                    Size = widget.ComputedSize,
+                }.IntersectsPoint(mousePosition)
+            };
         }
     }
 }

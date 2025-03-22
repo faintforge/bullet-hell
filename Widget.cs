@@ -31,32 +31,51 @@ namespace BulletHell {
         public float Value { get; set; }
     }
 
+    public struct WidgetSignal {
+        public bool Hovered { get; set; }
+    }
+
     public class Widget {
-        public Widget? Parent { get; private set; }
-        private string id;
-        public string Text { get; private set; }
-        public Vector2 ComputedRelativePosition { get; set; }
-        public Vector2 ComputedAbsolutePosition { get; set; }
-        public Vector2 ComputedSize { get; set; }
-        public WidgetFlags Flags { get; private set; }
-        public List<Widget> Children { get; private set; } = new List<Widget>();
+        internal Widget? Parent { get; private set; }
+        internal string Id { get; private set; }
+        internal string Text { get; private set; }
+        internal Vector2 ComputedRelativePosition { get; set; }
+        internal Vector2 ComputedAbsolutePosition { get; set; }
+        internal Vector2 ComputedSize { get; set; }
+        internal WidgetFlags Flags { get; private set; }
+        internal List<Widget> Children { get; private set; } = new List<Widget>();
         // 0 = X-axis
         // 1 = Y-axis
-        public WidgetSize[] Sizes { get; private set; } = new WidgetSize[2];
-        public Font? Font { get; private set; }
+        internal WidgetSize[] Sizes { get; private set; } = new WidgetSize[2];
+        internal Font? Font { get; private set; }
 
-        public Color Bg { get; private set; } = Color.TRASNPARENT;
-        public Color Fg = Color.WHITE;
-        public WidgetFlow Flow { get; private set; } = WidgetFlow.Vertical;
+        internal Color Bg { get; private set; } = Color.TRASNPARENT;
+        internal Color Fg = Color.WHITE;
+        internal WidgetFlow Flow { get; private set; } = WidgetFlow.Vertical;
 
-        public WidgetAlignment VerticalAlign { get; private set; }
-        public WidgetAlignment HorizontalAlign { get; private set; }
+        internal WidgetAlignment VerticalAlign { get; private set; }
+        internal WidgetAlignment HorizontalAlign { get; private set; }
+        internal int lastTouchFrame { get; set; } = 0;
+        private UI ui;
 
-        internal Widget(string text, Widget? parent) {
+        internal Widget(string text, Widget? parent, UI ui) {
             Parent = parent;
-            id = "";
+            Id = "";
             Text = "";
+            this.ui = ui;
             HandleText(text);
+        }
+
+        internal void Reset(string displayText, Widget? parent) {
+            Flags = 0;
+            Children = new List<Widget>();
+            Sizes = new WidgetSize[2];
+            Bg = Color.TRASNPARENT;
+            Fg = Color.WHITE;
+            Flow = WidgetFlow.Vertical;
+            VerticalAlign = WidgetAlignment.Top;
+            HorizontalAlign = WidgetAlignment.Left;
+            Parent = parent;
         }
 
         private void HandleText(string text) {
@@ -69,7 +88,7 @@ namespace BulletHell {
                 if (text[i] == '#' &&
                     text[i + 1] == '#' &&
                     text[i + 2] == '#' ) {
-                    id = text.Substring(i);
+                    Id = text.Substring(i);
                     break;
                 }
             }
@@ -91,7 +110,7 @@ namespace BulletHell {
         }
 
         public Widget MakeWidget(string text) {
-            Widget child = new Widget(text, this);
+            Widget child = ui.MakeWidget(text, this);
             Children.Add(child);
             return child;
         }
@@ -181,6 +200,10 @@ namespace BulletHell {
             VerticalAlign = vertical;
             HorizontalAlign = horizontal;
             return this;
+        }
+
+        public WidgetSignal Signal() {
+            return ui.Signal(this);
         }
     }
 }
