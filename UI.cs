@@ -105,20 +105,42 @@ namespace BulletHell {
             if (!widget.Flags.HasFlag(WidgetFlags.FloatingX) && widget.Parent != null) {
                 Vector2 pos = widget.ComputedAbsolutePosition;
                 pos.X = widget.Parent.ComputedAbsolutePosition.X + relPosition.X;
-                widget.ComputedAbsolutePosition = pos;
                 if (widget.Parent.Flow == WidgetFlow.Horizontal) {
                     nextPosition.X += widget.ComputedSize.X;
+                } else {
+                    switch (widget.Parent.HorizontalAlign) {
+                        case WidgetAlignment.Left:
+                            break;
+                        case WidgetAlignment.Center:
+                            pos.X -= widget.ComputedSize.X / 2.0f;
+                            break;
+                        case WidgetAlignment.Right:
+                            pos.X -= widget.ComputedSize.X;
+                            break;
+                    }
                 }
+                widget.ComputedAbsolutePosition = pos;
             }
 
             // Y
             if (!widget.Flags.HasFlag(WidgetFlags.FloatingY) && widget.Parent != null) {
                 Vector2 pos = widget.ComputedAbsolutePosition;
                 pos.Y = widget.Parent.ComputedAbsolutePosition.Y + relPosition.Y;
-                widget.ComputedAbsolutePosition = pos;
                 if (widget.Parent.Flow == WidgetFlow.Vertical) {
                     nextPosition.Y += widget.ComputedSize.Y;
+                } else {
+                    switch (widget.Parent.VerticalAlign) {
+                        case WidgetAlignment.Top:
+                            break;
+                        case WidgetAlignment.Center:
+                            pos.Y -= widget.ComputedSize.Y / 2.0f;
+                            break;
+                        case WidgetAlignment.Bottom:
+                            pos.Y -= widget.ComputedSize.Y;
+                            break;
+                    }
                 }
+                widget.ComputedAbsolutePosition = pos;
             }
 
             Vector2 siblingPosition = nextPosition;
@@ -129,21 +151,37 @@ namespace BulletHell {
                     nextPosition.X = 0.0f;
                     break;
                 case WidgetAlignment.Center:
-                    nextPosition.X = (widget.ComputedSize.X - childSum.X) / 2.0f;
+                    if(widget.Flow == WidgetFlow.Vertical) {
+                        nextPosition.X = widget.ComputedSize.X / 2.0f;
+                    } else {
+                        nextPosition.X = (widget.ComputedSize.X - childSum.X) / 2.0f;
+                    }
                     break;
                 case WidgetAlignment.Right:
-                    nextPosition.X = widget.ComputedSize.X - childSum.X;
+                    if(widget.Flow == WidgetFlow.Vertical) {
+                        nextPosition.X = widget.ComputedSize.X;
+                    } else {
+                        nextPosition.X = widget.ComputedSize.X - childSum.X;
+                    }
                     break;
             }
             switch (widget.VerticalAlign) {
-                case WidgetAlignment.Left:
+                case WidgetAlignment.Top:
                     nextPosition.Y = 0.0f;
                     break;
                 case WidgetAlignment.Center:
-                    nextPosition.Y = (widget.ComputedSize.Y - childSum.Y) / 2.0f;
+                    if (widget.Flow == WidgetFlow.Horizontal) {
+                        nextPosition.Y = widget.ComputedSize.Y / 2.0f;
+                    } else {
+                        nextPosition.Y = (widget.ComputedSize.Y - childSum.Y) / 2.0f;
+                    }
                     break;
-                case WidgetAlignment.Right:
-                    nextPosition.Y = widget.ComputedSize.Y - childSum.Y;
+                case WidgetAlignment.Bottom:
+                    if (widget.Flow == WidgetFlow.Horizontal) {
+                        nextPosition.Y = widget.ComputedSize.Y;
+                    } else {
+                        nextPosition.Y = widget.ComputedSize.Y - childSum.Y;
+                    }
                     break;
             }
             foreach (Widget child in widget.Children) {

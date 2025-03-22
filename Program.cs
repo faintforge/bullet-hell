@@ -35,8 +35,8 @@ namespace BulletHell {
                     fullscreen: false
                 );
             Renderer renderer = new Renderer();
-            //Scene scene = Scene.MainMenu;
-            Scene scene = Scene.Game;
+            Scene scene = Scene.MainMenu;
+            // Scene scene = Scene.Game;
 
             LoadAssets();
 
@@ -100,32 +100,25 @@ namespace BulletHell {
 
             UI ui = new UI();
 
-            Widget panel = ui.MakeWidget("panel")
-                .Floating(new Vector2(32))
+            Widget container = ui.MakeWidget("container")
+                .FixedSize(window.Size)
+                .Background(Color.BLACK)
+                .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center);
+
+            Widget panel = container.MakeWidget("panel")
                 .FitChildren()
-                .Background(Color.RED);
+                .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center);
 
-            panel.MakeWidget("Hello, UI!")
-                .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE)
-                .Background(Color.TRASNPARENT)
+            panel.MakeWidget("Bullet Hell")
+                .ShowText(AssetManager.Instance.GetFont("lato48"), Color.HSV(SDL.SDL_GetTicks() / 10.0f, 0.75f, 1.0f))
                 .FitText();
 
-            Widget textIndent = panel.MakeWidget("")
-                .FitChildren()
-                .FlowHorizontal()
-                .Background(Color.BLUE);
-            textIndent.MakeWidget("padding")
-                .FixedSize(new Vector2(100.0f, 0.0f));
-            textIndent.MakeWidget("Indented Text")
-                .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE)
-                .FitText();
-            textIndent.MakeWidget("Lorem Ipsum")
-                .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE)
+            panel.MakeWidget("Play")
+                .ShowText(AssetManager.Instance.GetFont("lato32"), Color.WHITE)
                 .FitText();
 
-            panel.MakeWidget("More text")
-                .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE)
-                .Background(Color.TRASNPARENT)
+            panel.MakeWidget("Quit")
+                .ShowText(AssetManager.Instance.GetFont("lato32"), Color.WHITE)
                 .FitText();
 
             ui.Begin();
