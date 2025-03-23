@@ -135,16 +135,24 @@ namespace BulletHell {
             return this.FloatX(position.X).FloatY(position.Y);
         }
 
-        public Widget FixedSize(Vector2 size) {
+        public Widget FixedWidth(float width) {
             Sizes[0] = new WidgetSize() {
                 Type = WidgetSizeType.Pixels,
-                Value = size.X,
-            };
-            Sizes[1] = new WidgetSize() {
-                Type = WidgetSizeType.Pixels,
-                Value = size.Y,
+                 Value = width,
             };
             return this;
+        }
+
+        public Widget FixedHeight(float height) {
+            Sizes[1] = new WidgetSize() {
+                Type = WidgetSizeType.Pixels,
+                 Value = height,
+            };
+            return this;
+        }
+
+        public Widget FixedSize(Vector2 size) {
+            return this.FixedWidth(size.X).FixedHeight(size.Y);
         }
 
         public Widget Background(Color bg) {

@@ -30,7 +30,7 @@ namespace BulletHell {
             Window window = new Window(
                     "Window",
                     800, 600,
-                    resizable: false,
+                    resizable: true,
                     vsync: true,
                     fullscreen: false
                 );
