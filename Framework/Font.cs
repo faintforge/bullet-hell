@@ -89,7 +89,7 @@ namespace BulletHell {
                 };
             }
 
-            Atlas = Texture.Create<byte>(atlasSize, TextureFormat.RgbaU8, atlasData);
+            Atlas = Texture.Create<byte>(atlasSize, TextureFormat.RgbaU8, atlasData, TextureFilter.Linear);
         }
 
         ~Font() {

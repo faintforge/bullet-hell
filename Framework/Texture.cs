@@ -8,6 +8,11 @@ namespace BulletHell {
         RgbaU8 = 4,
     }
 
+    public enum TextureFilter {
+        Nearest,
+        Linear,
+    }
+
     public class Texture {
         private int handle;
         public Vector2 Size { get; private set; }
@@ -25,8 +30,9 @@ namespace BulletHell {
         /// <param name="size">2D size of the texture.</param>
         /// <param name="format">Amount of channels and datatype used.</param>
         /// <param name="data">Pixel data.</param>
+        /// <param name="filter">Which filtering to use when scaling texture.</param>
         /// <returns>Texture.</returns>
-        public static Texture Create<T>(Vector2 size, TextureFormat format, T[] data)
+        public static Texture Create<T>(Vector2 size, TextureFormat format, T[] data, TextureFilter filter)
             where T : unmanaged
         {
             PixelInternalFormat internalFormat = PixelInternalFormat.Rgba8;;
@@ -50,8 +56,18 @@ namespace BulletHell {
             GL.BindTexture(TextureTarget.Texture2D, tex.handle);
             GL.TexImage2D<T>(TextureTarget.Texture2D, 0, internalFormat, (int) size.X, (int) size.Y, 0, pixelFormat, pixelType, data);
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+            int glFilter = 0;
+            switch (filter) {
+                case TextureFilter.Nearest:
+                    glFilter = (int) TextureMinFilter.Nearest;
+                    break;
+                case TextureFilter.Linear:
+                    glFilter = (int) TextureMinFilter.Linear;
+                    break;
+            }
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, glFilter);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, glFilter);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) TextureWrapMode.ClampToEdge);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) TextureWrapMode.ClampToEdge);
 
@@ -60,7 +76,13 @@ namespace BulletHell {
             return tex;
         }
 
-        public static Texture FromFile(string filepath) {
+        /// <summary>
+        /// Reads the file at 'filepath' and creates a texture from its contents.
+        /// </summary>
+        /// <param name="filepath">Path to file.</param>
+        /// <param name="filter">Which filtering to use when scaling texture.</param>
+        /// <returns>Texture.</returns>
+        public static Texture FromFile(string filepath, TextureFilter filter) {
             IntPtr surfacePtr = SDL_image.IMG_Load(filepath);
             if (surfacePtr == IntPtr.Zero) {
                 throw new Exception($"Failed to load image file {filepath}!");
@@ -83,7 +105,7 @@ namespace BulletHell {
                 }
             }
 
-            return Texture.Create(new Vector2(width, height), (TextureFormat) channels, textureData);
+            return Texture.Create(new Vector2(width, height), (TextureFormat) channels, textureData, filter);
         }
 
         /// <summary>

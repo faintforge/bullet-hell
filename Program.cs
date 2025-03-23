@@ -84,13 +84,13 @@ namespace BulletHell {
             AssetManager.Instance.LoadFont("lato32", "assets/fonts/Lato-Regular.ttf", 32);
             AssetManager.Instance.LoadFont("roboto_mono", "assets/fonts/RobotoMono-Regular.ttf", 16);
 
-            AssetManager.Instance.LoadTexture("player", "assets/textures/player.png");
-            AssetManager.Instance.LoadTexture("firebolt", "assets/textures/firebolt.png");
-            AssetManager.Instance.LoadTexture("enemy_dagger", "assets/textures/enemy_dagger.png");
-            AssetManager.Instance.LoadTexture("goblin", "assets/textures/goblin.png");
-            AssetManager.Instance.LoadTexture("boss", "assets/textures/boss.png");
-            AssetManager.Instance.LoadTexture("crystal_shard", "assets/textures/crystal_shard.png");
-            AssetManager.Instance.LoadTexture("beam_projectile", "assets/textures/beam_projectile.png");
+            AssetManager.Instance.LoadTexture("player", "assets/textures/player.png", TextureFilter.Nearest);
+            AssetManager.Instance.LoadTexture("firebolt", "assets/textures/firebolt.png", TextureFilter.Nearest);
+            AssetManager.Instance.LoadTexture("enemy_dagger", "assets/textures/enemy_dagger.png", TextureFilter.Nearest);
+            AssetManager.Instance.LoadTexture("goblin", "assets/textures/goblin.png", TextureFilter.Nearest);
+            AssetManager.Instance.LoadTexture("boss", "assets/textures/boss.png", TextureFilter.Nearest);
+            AssetManager.Instance.LoadTexture("crystal_shard", "assets/textures/crystal_shard.png", TextureFilter.Nearest);
+            AssetManager.Instance.LoadTexture("beam_projectile", "assets/textures/beam_projectile.png", TextureFilter.Nearest);
         }
 
         private static void MainMenu(Window window, Renderer renderer, ref Scene scene, UI ui) {

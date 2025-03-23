@@ -108,7 +108,7 @@ namespace BulletHell {
             shader.UniformInt("textures", samplers);
 
             byte[] pixels = {255, 255, 255, 255};
-            textures[0] = Texture.Create<byte>(new Vector2(1.0f), TextureFormat.RgbaU8, pixels);
+            textures[0] = Texture.Create<byte>(new Vector2(1.0f), TextureFormat.RgbaU8, pixels, TextureFilter.Nearest);
 
             cam = new Camera(new Vector2(), new Vector2(), 0.0f);
         }
@@ -235,12 +235,11 @@ namespace BulletHell {
             Vector2 glyphPos = position;
             foreach (char c in text) {
                 Glyph g = font.GetGlyph(c);
-                DrawUV(
-                        new Box() {
+                DrawUV(new Box() {
                         Origin = new Vector2(-1.0f),
                         Pos = glyphPos,
                         Size = g.Size,
-                        }, color, font.Atlas, g.UVs[0], g.UVs[1]);
+                    }, color, font.Atlas, g.UVs[0], g.UVs[1]);
                 glyphPos.X += g.Advance;
             }
             float width = glyphPos.X - position.X;

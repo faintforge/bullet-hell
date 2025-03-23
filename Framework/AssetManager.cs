@@ -45,8 +45,9 @@ namespace BulletHell {
         /// </summary>
         /// <param name="name">Name of the asset.</param>
         /// <param name="filepath">Paht to texture.</param>
-        public void LoadTexture(string name, string filepath) {
-            Texture texture = Texture.FromFile(filepath);
+        /// <param name="filter">Which filtering to use when scaling texture.</param>
+        public void LoadTexture(string name, string filepath, TextureFilter filter) {
+            Texture texture = Texture.FromFile(filepath, filter);
             textures.Add(name, texture);
         }
 
