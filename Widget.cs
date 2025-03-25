@@ -49,6 +49,7 @@ namespace BulletHell {
         internal Vector2 ComputedRelativePosition { get; set; }
         internal Vector2 ComputedAbsolutePosition { get; set; }
         internal Vector2 ComputedSize { get; set; }
+        internal Box ComputedBox { get; set; }
         internal WidgetFlags Flags { get; private set; }
         internal List<Widget> Children { get; private set; } = new List<Widget>();
         // 0 = X-axis
@@ -65,6 +66,7 @@ namespace BulletHell {
         internal WidgetTextAlignment TextAlign { get; private set; }
         internal int lastTouchFrame { get; set; } = 0;
         private UI ui;
+        internal Action<Widget, Renderer>? RenderExt { get; private set; } = null;
 
         internal Widget(string text, Widget? parent, UI ui) {
             Parent = parent;
@@ -226,6 +228,11 @@ namespace BulletHell {
 
         public Widget AlignText(WidgetTextAlignment alignment) {
             TextAlign = alignment;
+            return this;
+        }
+
+        public Widget RenderingExtension(Action<Widget, Renderer> ext) {
+            RenderExt = ext;
             return this;
         }
     }

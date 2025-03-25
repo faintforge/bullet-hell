@@ -44,7 +44,7 @@ namespace BulletHell {
 
         private Profiler() {}
 
-        [Conditional("DEBUG")]
+        // [Conditional("DEBUG")]
         public void Start(string name) {
             Profile? profile;
             if (currentProfile == null) {
@@ -62,14 +62,14 @@ namespace BulletHell {
             currentProfile = profile;
         }
 
-        [Conditional("DEBUG")]
+        // [Conditional("DEBUG")]
         public void End() {
             System.Diagnostics.Debug.Assert(currentProfile != null);
             currentProfile.End();
             currentProfile = currentProfile.Parent;
         }
 
-        [Conditional("DEBUG")]
+        // [Conditional("DEBUG")]
         public void Reset() {
             Profiles = new Dictionary<string, Profile>();
         }

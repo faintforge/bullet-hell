@@ -252,21 +252,30 @@ namespace BulletHell {
             this.mousePosition = mousePosition;
         }
 
+        private void BuildBoxes(Widget widget) {
+            widget.ComputedBox = new Box() {
+                Origin = new Vector2(-1.0f),
+                Pos = widget.ComputedAbsolutePosition,
+                Size = widget.ComputedSize,
+            };
+
+            foreach (Widget child in widget.Children) {
+                BuildBoxes(child);
+            }
+        }
+
         public void End() {
             foreach (Widget root in roots) {
                 BuildFixedSizes(root);
                 BuildSumOfChildrenSizes(root);
                 BuildPositions(root, new Vector2());
+                BuildBoxes(root);
             }
         }
 
         private void DrawHelper(Widget widget, Renderer renderer) {
             if (widget.Flags.HasFlag(WidgetFlags.DrawBackground)) {
-                renderer.Draw(new Box() {
-                        Origin = new Vector2(-1.0f),
-                        Pos = widget.ComputedAbsolutePosition,
-                        Size = widget.ComputedSize,
-                    }, widget.Bg);
+                renderer.Draw(widget.ComputedBox, widget.Bg);
             }
 
             if (widget.Flags.HasFlag(WidgetFlags.ShowText)) {
@@ -290,6 +299,10 @@ namespace BulletHell {
                     }
                     renderer.DrawText(widget.Text, widget.Font, pos, widget.Fg);
                 }
+            }
+
+            if (widget.RenderExt != null) {
+                widget.RenderExt(widget, renderer);
             }
 
             foreach (Widget child in widget.Children) {

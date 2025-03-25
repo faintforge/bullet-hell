@@ -6,7 +6,6 @@ namespace BulletHell {
         private Window window;
         private Renderer renderer;
         private World world = new World();
-        private Boss? boss;
 
         private bool paused = false;
         private UI debugUI = new UI();
@@ -21,8 +20,16 @@ namespace BulletHell {
 
             world.SpawnEntity<GoblinSpawner>();
 
-            // boss = world.SpawnEntity<Boss>();
-            // boss.Transform.Pos = new Vector2();
+            Boss boss = world.SpawnEntity<Boss>();
+
+            // Random rng = new Random();
+            // for (int i = 0; i < 1024; i++) {
+            //     float angle = (float) rng.NextDouble() * 2.0f * MathF.PI;
+            //     float distance = 256.0f * MathF.Sqrt((float) rng.NextDouble());
+            //     Vector2 pos = Vector2.FromAngle(angle) * distance;
+            //     XpPoint xp = world.SpawnEntity<XpPoint>();
+            //     xp.Transform.Pos = pos;
+            // }
         }
 
         public void Run(float deltaTime) {
@@ -46,22 +53,6 @@ namespace BulletHell {
             world.Camera.ScreenSize = window.Size;
             renderer.BeginFrame(world.Camera);
 
-            // Vector2 mousePos = world.Camera.ScreenToWorldSpace(Input.Instance.MousePosition);
-            // renderer.Draw(new Box() {
-            //         Pos = mousePos,
-            //         Size = new Vector2(128.0f),
-            //     }, Color.RED);
-            //
-            // Box obj = new Box() {
-            //     Pos = new Vector2(128.0f),
-            //     Size = new Vector2(16.0f),
-            // };
-            // if (obj.GetBoundingAABB().IntersectsCircle(mousePos, 64.0f)) {
-            //     renderer.Draw(obj, Color.BLUE);
-            // } else {
-            //     renderer.Draw(obj, Color.GREEN);
-            // }
-
             world.OperateOnEntities((entity) => {
                     if (!entity.Render) {
                     return;
@@ -75,25 +66,29 @@ namespace BulletHell {
 
             Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);
             Font font = AssetManager.Instance.GetFont("lato32");
-            // renderer.BeginFrame(uiCam);
 
             hud.Begin(Input.Instance.MousePosition);
+
+            Widget bossBarContainer = hud.MakeWidget("boss_bar_container")
+                .FixedSize(window.Size)
+                .AlignChildren(WidgetAlignment.Bottom, WidgetAlignment.Center);
+
             // Health bars
             int id = 0;
             world.OperateOnEntities((entity) => {
-                Vector2 barSize = new Vector2(32.0f, 4.0f);
+                Vector2 enemyBarSize = new Vector2(32.0f, 4.0f);
                 if (entity is Player) {
                     Player player = (Player) entity;
                     Vector2 screenPos = world.Camera.WorldToScreenSpace(player.Transform.Pos + new Vector2(0.0f, player.Transform.Size.Y / 2.0f));
                     screenPos.Y -= 8.0f;
-                    screenPos.X -= barSize.X / 2.0f;
+                    screenPos.X -= enemyBarSize.X / 2.0f;
 
                     Widget bar = hud.MakeWidget($"##bar{id}")
-                        .FixedSize(barSize)
+                        .FixedSize(enemyBarSize)
                         .Floating(screenPos)
                         .Background(Color.HexRGB(0x241527));
 
-                    Vector2 healthLeft = barSize;
+                    Vector2 healthLeft = enemyBarSize;
                     healthLeft.X *= (float) player.Health / player.MaxHealth;
                     bar.MakeWidget($"##bar_fg{id}")
                         .FixedSize(healthLeft)
@@ -107,56 +102,53 @@ namespace BulletHell {
                     Enemy enemy = (Enemy) entity;
                     Vector2 screenPos = world.Camera.WorldToScreenSpace(enemy.Transform.Pos + new Vector2(0.0f, enemy.Transform.Size.Y / 2.0f));
                     screenPos.Y -= 8.0f;
-                    screenPos.X -= barSize.X / 2.0f;
+                    screenPos.X -= enemyBarSize.X / 2.0f;
 
                     Widget bar = hud.MakeWidget($"##bar{id}")
-                        .FixedSize(barSize)
+                        .FixedSize(enemyBarSize)
                         .Floating(screenPos)
                         .Background(Color.HexRGB(0x241527));
 
-                    Vector2 healthLeft = barSize;
+                    Vector2 healthLeft = enemyBarSize;
                     healthLeft.X *= (float) enemy.Health / enemy.MaxHealth;
                     bar.MakeWidget($"##bar_fg{id}")
                         .FixedSize(healthLeft)
                         .Floating(screenPos)
                         .Background(Color.HexRGB(0xcf573c));
                 }
+
+                // Boss bars
+                if (entity is Boss) {
+                    Boss boss = (Boss) entity;
+                    font = AssetManager.Instance.GetFont("roboto_mono");
+                    FontMetrics metrics = font.GetMetrics();
+
+                    Vector2 padding = new Vector2(-64.0f, 4.0f);
+                    Vector2 margin = new Vector2(64.0f, -16.0f);
+
+                    Vector2 barSize = new Vector2(window.Size.X, metrics.Ascent - metrics.Descent);
+                    barSize += padding * 2.0f;
+
+                    Widget bar = bossBarContainer.MakeWidget($"awooga##boss_bar{id}")
+                        .FixedSize(barSize)
+                        .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center)
+                        .RenderingExtension((widget, renderer) => {
+                                Box box = widget.ComputedBox;
+                                box.Size *= new Vector2((float) boss.Health / boss.MaxHealth, 1.0f);
+                                renderer.Draw(box, Color.HexRGB(0xcf573c));
+                            })
+                        .Background(Color.HexRGB(0x241527));
+
+                    bar.MakeWidget($"{boss.Health} / {boss.MaxHealth}##boss_health_text{id}")
+                        .FitText()
+                        .ShowText(font, Color.WHITE);
+
+                    bossBarContainer.MakeWidget($"##boss_bar_padding{id}")
+                        .FixedHeight(16.0f);
+                }
+
                 id++;
             });
-
-            // Boss bar
-            if (boss != null) {
-                font = AssetManager.Instance.GetFont("roboto_mono");
-                FontMetrics metrics = font.GetMetrics();
-
-                Vector2 padding = new Vector2(-64.0f, 4.0f);
-                Vector2 margin = new Vector2(64.0f, -16.0f);
-
-                Vector2 barSize = new Vector2(window.Size.X, metrics.Ascent - metrics.Descent);
-                barSize += padding * 2.0f;
-
-                Vector2 screenPos = new Vector2(0.0f, window.Size.Y - barSize.Y);
-                screenPos += margin;
-
-                Widget bar = hud.MakeWidget("##boss_bar")
-                    .Floating(screenPos)
-                    .FixedSize(barSize)
-                    .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center)
-                    .Background(Color.HexRGB(0x241527));
-
-                Vector2 healthLeft = barSize;
-                healthLeft.X *= (float) boss.Health / boss.MaxHealth;
-                bar.MakeWidget("##boss_bar_fg")
-                    .FixedSize(healthLeft)
-                    .Floating(screenPos)
-                    .Background(Color.HexRGB(0xcf573c));
-
-                bar.MakeWidget($"{boss.Health} / {boss.MaxHealth}")
-                    .FitText()
-                    .ShowText(font, Color.WHITE);
-            }
-
-            // renderer.EndFrame();
 
             if (paused) {
                 renderer.BeginFrame(uiCam);
@@ -178,7 +170,6 @@ namespace BulletHell {
 
             BuildDebugUI();
             debugUI.Draw(renderer, window.Size);
-            //PrintProfiles();
             Profiler.Instance.Reset();
         }
 
@@ -240,34 +231,6 @@ namespace BulletHell {
             foreach (Profile prof in profile.ChildProfiles.Values) {
                 BuildDebugUIHelper(prof, parent, depth + 1);
             }
-        }
-
-        private void PrintProfiles() {
-            Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);
-            Vector2 pos = new Vector2(8.0f);
-            renderer.BeginFrame(uiCam);
-            foreach (Profile prof in Profiler.Instance.Profiles.Values) {
-                pos.Y = PrintProfilesHelper(prof, pos);
-            }
-
-            Font font = AssetManager.Instance.GetFont("roboto_mono");
-            renderer.DrawText($"Entities alive: {world.Entities.Count}", font, pos, Color.WHITE);
-            renderer.EndFrame();
-        }
-
-        private float PrintProfilesHelper(Profile profile, Vector2 pos) {
-            Font font = AssetManager.Instance.GetFont("roboto_mono");
-            FontMetrics metrics = font.GetMetrics();
-
-            string text = $"{profile.TotalDuration:0.00}ms {profile.AverageDuration:0.00}ms {profile.CallCount} call(s) - {profile.Name}";
-            renderer.DrawText(text, font, pos, Color.WHITE);
-
-            pos.Y += metrics.LineGap;
-            pos.X += 16.0f;
-            foreach (Profile prof in profile.ChildProfiles.Values) {
-                pos.Y = PrintProfilesHelper(prof, pos);
-            }
-            return pos.Y;
         }
     }
 }
