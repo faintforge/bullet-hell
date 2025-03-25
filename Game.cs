@@ -98,6 +98,8 @@ namespace BulletHell {
                         .FixedSize(healthLeft)
                         .Floating(screenPos)
                         .Background(Color.HexRGB(0xcf573c));
+
+                    BuildPlayerHUD(player);
                 }
 
                 if (entity is Enemy) {
@@ -177,6 +179,27 @@ namespace BulletHell {
             debugUI.Draw(renderer, window.Size);
             //PrintProfiles();
             Profiler.Instance.Reset();
+        }
+
+        private void BuildPlayerHUD(Player player) {
+            Widget container = hud.MakeWidget("player_hud_container")
+                .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Right)
+                .FitChildrenHeight()
+                .FixedWidth(window.Size.X);
+            Widget healthBar = container.MakeWidget("player_health_bar_fg")
+                .Background(Color.HexRGB(0xcf573c))
+                .AlignText(WidgetTextAlignment.Right)
+                .FixedSize(new Vector2(512, 32));
+            container.MakeWidget($"{player.Health}/{player.MaxHealth}##player_health_text_health_text")
+                .FitText()
+                .FloatY(0)
+                .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE);
+            container.MakeWidget($"{player.Health}/{player.MaxHealth}##player_health_text_health_text")
+                .FitText()
+                .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE);
+
+            // container.MakeWidget("somepaddingiuwhri")
+            //     .FixedHeight(0);
         }
 
         private void BuildDebugUI() {

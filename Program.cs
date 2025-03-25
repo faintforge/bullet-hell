@@ -47,10 +47,10 @@ namespace BulletHell {
             uint lastFps = SDL.SDL_GetTicks();
 
             uint last = SDL.SDL_GetTicks();
-            float dt = 0.0f;
+            float dt;
             while (window.Open) {
                 uint curr = SDL.SDL_GetTicks();
-                dt = (float) (curr - last) / 1000.0f;
+                dt = (curr - last) / 1000.0f;
                 last = curr;
 
                 fps++;
