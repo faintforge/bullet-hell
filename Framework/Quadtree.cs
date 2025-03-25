@@ -69,7 +69,32 @@ namespace BulletHell {
             }
 
             public HashSet<Entity> Query(Vector2 position, float radius) {
-                throw new NotImplementedException();
+                if (!Area.IntersectsCircle(position, radius)) {
+                    return new HashSet<Entity>();
+                }
+
+                HashSet<Entity> result = new HashSet<Entity>();
+                if (Children[0] != -1) {
+                    for (int i = 0; i < Children.Length; i++) {
+                        result.UnionWith(quadtree.GetNodeIndex(Children[i]).Query(position, radius));
+                    }
+                } else {
+                    foreach (Bucket bucket in buckets) {
+                        // Profiler.Instance.Start("Intersect AABB Test");
+                        // if (!bucket.BoundingBox.IntersectsCircle(position, radius)) {
+                        //     Profiler.Instance.End();
+                        //     continue;
+                        // }
+                        // Profiler.Instance.End();
+
+                        Profiler.Instance.Start("Intersect Box Test");
+                        if (bucket.Entity.Transform.IntersectsCircle(position, radius)) {
+                            result.Add(bucket.Entity);
+                        }
+                        Profiler.Instance.End();
+                    }
+                }
+                return result;
             }
 
             public HashSet<Entity> Query(AABB boundingBox, Box box) {

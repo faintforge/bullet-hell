@@ -60,6 +60,17 @@ namespace BulletHell {
                 VelocitySpeedMax = 100.0f,
             };
             emitter.Kill();
+
+            // Spawn XP on death
+            float spawnRadius = 8.0f;
+            Random rng = new Random();
+            for (int i = 0; i < rng.Next(1, 9); i++) {
+                float angle = (float) rng.NextDouble() * 2.0f * MathF.PI;
+                float distance = spawnRadius * MathF.Sqrt((float) rng.NextDouble());
+                Vector2 pos = Vector2.FromAngle(angle) * distance;
+                XpPoint xp = world.SpawnEntity<XpPoint>();
+                xp.Transform.Pos = Transform.Pos + pos;
+            }
         }
     }
 }

@@ -30,14 +30,14 @@ namespace BulletHell {
             Window window = new Window(
                     "Window",
                     800, 600,
-                    resizable: true,
+                    resizable: false,
                     vsync: true,
                     fullscreen: false
                 );
             Renderer renderer = new Renderer();
             UI mainMenuUI = new UI();
-            Scene scene = Scene.MainMenu;
-            // Scene scene = Scene.Game;
+            // Scene scene = Scene.MainMenu;
+            Scene scene = Scene.Game;
 
             LoadAssets();
 

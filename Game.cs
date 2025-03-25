@@ -19,26 +19,10 @@ namespace BulletHell {
             world.Camera.Zoom = 360.0f;
             Player player = world.SpawnEntity<Player>();
 
-            //world.SpawnEntity<GoblinSpawner>();
+            world.SpawnEntity<GoblinSpawner>();
 
-            // ParticleEmitter emitter = world.SpawnEntity<ParticleEmitter>();
-            // emitter.Cfg = new ParticleEmitter.Config() {
-            //     Parent = player,
-            //     Count = 1000,
-            //     Continuous = true,
-            //     Time = 1.0f,
-            //     Color = Color.WHITE,
-            //     Size = new Vector2(2.0f),
-            //     ShrinkTime = 1.0f,
-            //     SpawnRadius = 128.0f,
-            //     VelocitySpeedMax = 200.0f,
-            //     VelocitySpeedMin = 100.0f,
-            //     SpawnAngle = MathF.PI / 4.0f,
-            // };
-            // emitter.Transform.Rot = MathF.PI / 4.0f;
-
-            boss = world.SpawnEntity<Boss>();
-            boss.Transform.Pos = new Vector2();
+            // boss = world.SpawnEntity<Boss>();
+            // boss.Transform.Pos = new Vector2();
         }
 
         public void Run(float deltaTime) {
@@ -61,6 +45,23 @@ namespace BulletHell {
 
             world.Camera.ScreenSize = window.Size;
             renderer.BeginFrame(world.Camera);
+
+            // Vector2 mousePos = world.Camera.ScreenToWorldSpace(Input.Instance.MousePosition);
+            // renderer.Draw(new Box() {
+            //         Pos = mousePos,
+            //         Size = new Vector2(128.0f),
+            //     }, Color.RED);
+            //
+            // Box obj = new Box() {
+            //     Pos = new Vector2(128.0f),
+            //     Size = new Vector2(16.0f),
+            // };
+            // if (obj.GetBoundingAABB().IntersectsCircle(mousePos, 64.0f)) {
+            //     renderer.Draw(obj, Color.BLUE);
+            // } else {
+            //     renderer.Draw(obj, Color.GREEN);
+            // }
+
             world.OperateOnEntities((entity) => {
                     if (!entity.Render) {
                     return;
@@ -182,24 +183,33 @@ namespace BulletHell {
         }
 
         private void BuildPlayerHUD(Player player) {
+            // Health bar
             Widget container = hud.MakeWidget("player_hud_container")
                 .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Right)
                 .FitChildrenHeight()
                 .FixedWidth(window.Size.X);
-            Widget healthBar = container.MakeWidget("player_health_bar_fg")
-                .Background(Color.HexRGB(0xcf573c))
-                .AlignText(WidgetTextAlignment.Right)
+            Widget healthBar = container.MakeWidget("player_health_bar_bg")
+                .Background(Color.HexRGB(0x241527))
+                .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Right)
                 .FixedSize(new Vector2(512, 32));
-            container.MakeWidget($"{player.Health}/{player.MaxHealth}##player_health_text_health_text")
-                .FitText()
-                .FloatY(0)
-                .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE);
-            container.MakeWidget($"{player.Health}/{player.MaxHealth}##player_health_text_health_text")
-                .FitText()
+            float percentLeft = (float) player.Health / (float) player.MaxHealth;
+            healthBar.MakeWidget($"{player.Health}/{player.MaxHealth} ##player_health_bar_fg")
+                .Background(Color.HexRGB(0xcf573c))
+                .FixedSize(new Vector2(512 * percentLeft, 32))
+                .AlignText(WidgetTextAlignment.Right)
                 .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE);
 
-            // container.MakeWidget("somepaddingiuwhri")
-            //     .FixedHeight(0);
+            // XP bar
+            Widget xpBar = container.MakeWidget("player_xp_bar_bg")
+                .Background(Color.HexRGB(0x172038))
+                .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Right)
+                .FixedSize(new Vector2(512, 32));
+            percentLeft = (float) player.Xp / (float) player.NeededXp;
+            xpBar.MakeWidget($"{player.Xp}/{player.NeededXp} ##player_xp_bar_fg")
+                .Background(Color.HexRGB(0x4f8fba))
+                .FixedSize(new Vector2(512 * percentLeft, 32))
+                .AlignText(WidgetTextAlignment.Right)
+                .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE);
         }
 
         private void BuildDebugUI() {
@@ -217,7 +227,7 @@ namespace BulletHell {
 
         private void BuildDebugUIHelper(Profile profile, Widget parent, int depth) {
             Font font = AssetManager.Instance.GetFont("roboto_mono");
-            string text = $"{profile.TotalDuration:0.00}ms {profile.AverageDuration:0.00}ms {profile.CallCount} call(s) - {profile.Name}";
+            string text = $"{profile.TotalDuration:0.00}ms {profile.AverageDuration:0.00}ms {profile.CallCount} call(s) - {profile.Name}##{depth}";
             Widget container = parent.MakeWidget($"##container{profile.GetHashCode()}")
                 .FitChildren()
                 .FlowHorizontal();

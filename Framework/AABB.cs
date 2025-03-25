@@ -14,6 +14,27 @@ namespace BulletHell {
                 Max.Y >= other.Min.Y;
         }
 
+        /// <summary>
+        /// Checks if a circle intersects the AABB.
+        /// </summary>
+        /// <param name="position">Circle position.</param>
+        /// <param name="radius">Circle radius.</param>
+        /// <returns>Whether the circle intersects the AABB or not.</returns>
+        public bool IntersectsCircle(Vector2 position, float radius) {
+            // https://www.jeffreythompson.org/collision-detection/circle-rect.php
+            Vector2 min = Min;
+            Vector2 max = Max;
+
+            Vector2 test = position;
+            if      (position.X < min.X) { test.X = min.X; }
+            else if (position.X > max.X) { test.X = max.X; }
+            if      (position.Y < min.Y) { test.Y = min.Y; }
+            else if (position.Y > max.Y) { test.Y = max.Y; }
+
+            Vector2 distance = position - test;
+            return distance.MagnitudeSquared() <= radius * radius;
+        }
+
         public static explicit operator Box(AABB aabb) {
             return new Box() {
                 Origin = new Vector2(),

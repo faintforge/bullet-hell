@@ -1,10 +1,11 @@
 namespace BulletHell {
     [Flags]
     public enum WidgetFlags {
-        None      = 0,
-        FloatingX = 1 << 0,
-        FloatingY = 1 << 1,
-        ShowText  = 1 << 2,
+        None            = 0,
+        FloatingX       = 1 << 0,
+        FloatingY       = 1 << 1,
+        ShowText        = 1 << 2,
+        DrawBackground  = 1 << 3,
     }
 
     public enum WidgetSizeType {
@@ -164,6 +165,7 @@ namespace BulletHell {
 
         public Widget Background(Color bg) {
             Bg = bg;
+            Flags |= WidgetFlags.DrawBackground;
             return this;
         }
 

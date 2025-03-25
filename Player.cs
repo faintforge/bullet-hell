@@ -7,6 +7,8 @@ namespace BulletHell {
         private float shootDelay = 0.1f;
         public int MaxHealth { get; set; } = 100;
         public int Health { get; set; }
+        public int NeededXp { get; set; } = 250;
+        public int Xp { get; set; } = 0;
 
         public Player(World world) : base(world) {
             Render = true;
@@ -46,6 +48,27 @@ namespace BulletHell {
                 Vector2 direction = (mousePos - Transform.Pos).Normalized();
                 proj.Velocity = direction * 200.0f;
                 proj.Transform.Rot = MathF.Atan2(direction.Y, direction.X) - MathF.PI / 2.0f;
+            }
+
+            // XP point interactions
+            foreach (Entity entity in world.SpatialQuery(Transform.Pos, 128.0f)) {
+                if (entity is XpPoint) {
+                    XpPoint xp = (XpPoint) entity;
+                    Vector2 diff = xp.Transform.Pos - Transform.Pos;
+                    float distance = diff.Magnitude();
+                    diff.Normalize();
+                    float speed = 10.0f * MathF.Exp(4.0f * (128.0f - distance) / 128.0f);
+                    diff *= speed;
+                    xp.Transform.Pos -= diff * deltaTime;
+                }
+            }
+        }
+
+        public override void OnCollision(Entity other) {
+            if (other is XpPoint) {
+                XpPoint xp = (XpPoint) other;
+                xp.Kill();
+                Xp++;
             }
         }
     }

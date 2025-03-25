@@ -261,11 +261,13 @@ namespace BulletHell {
         }
 
         private void DrawHelper(Widget widget, Renderer renderer) {
-            renderer.Draw(new Box() {
-                    Origin = new Vector2(-1.0f),
-                    Pos = widget.ComputedAbsolutePosition,
-                    Size = widget.ComputedSize,
-                }, widget.Bg);
+            if (widget.Flags.HasFlag(WidgetFlags.DrawBackground)) {
+                renderer.Draw(new Box() {
+                        Origin = new Vector2(-1.0f),
+                        Pos = widget.ComputedAbsolutePosition,
+                        Size = widget.ComputedSize,
+                    }, widget.Bg);
+            }
 
             if (widget.Flags.HasFlag(WidgetFlags.ShowText)) {
                 if (widget.Font != null) {
