@@ -26,6 +26,12 @@ namespace BulletHell {
         Bottom = Right,
     }
 
+    public enum WidgetTextAlignment {
+        Left,
+        Center,
+        Right,
+    }
+
     public struct WidgetSize {
         public WidgetSizeType Type { get; set; }
         public float Value { get; set; }
@@ -55,6 +61,7 @@ namespace BulletHell {
 
         internal WidgetAlignment VerticalAlign { get; private set; }
         internal WidgetAlignment HorizontalAlign { get; private set; }
+        internal WidgetTextAlignment TextAlign { get; private set; }
         internal int lastTouchFrame { get; set; } = 0;
         private UI ui;
 
@@ -199,6 +206,7 @@ namespace BulletHell {
             Flow = WidgetFlow.Horizontal;
             return this;
         }
+
         public Widget FlowVertical() {
             Flow = WidgetFlow.Vertical;
             return this;
@@ -212,6 +220,11 @@ namespace BulletHell {
 
         public WidgetSignal Signal() {
             return ui.Signal(this);
+        }
+
+        public Widget AlignText(WidgetTextAlignment alignment) {
+            TextAlign = alignment;
+            return this;
         }
     }
 }

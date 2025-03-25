@@ -269,7 +269,24 @@ namespace BulletHell {
 
             if (widget.Flags.HasFlag(WidgetFlags.ShowText)) {
                 if (widget.Font != null) {
-                    renderer.DrawText(widget.Text, widget.Font, widget.ComputedAbsolutePosition, widget.Fg);
+                    Vector2 textSize = widget.Font.MeasureText(widget.Text);
+                    Vector2 pos = widget.ComputedAbsolutePosition;
+                    // Center vertically.
+                    pos.Y += widget.ComputedSize.Y / 2.0f;
+                    pos.Y -= textSize.Y / 2.0f;
+                    switch (widget.TextAlign) {
+                        case WidgetTextAlignment.Left:
+                            break;
+                        case WidgetTextAlignment.Center:
+                            pos.X += widget.ComputedSize.X / 2.0f;
+                            pos.X -= textSize.X / 2.0f;
+                            break;
+                        case WidgetTextAlignment.Right:
+                            pos.X += widget.ComputedSize.X;
+                            pos.X -= textSize.X;
+                            break;
+                    }
+                    renderer.DrawText(widget.Text, widget.Font, pos, widget.Fg);
                 }
             }
 

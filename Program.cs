@@ -112,11 +112,16 @@ namespace BulletHell {
             panel.MakeWidget("Bullet Hell")
                 .ShowText(AssetManager.Instance.GetFont("lato48"), Color.HSV(SDL.SDL_GetTicks() / 10.0f, 0.75f, 1.0f))
                 .FitText();
+            panel.MakeWidget("padding1")
+                .FixedHeight(8);
 
             Widget playBtn = panel.MakeWidget("Play")
                 .ShowText(AssetManager.Instance.GetFont("lato32"), Color.WHITE)
                 .Background(Color.HexRGB(0x212121))
-                .FitText();
+                .AlignText(WidgetTextAlignment.Center)
+                .FixedSize(new Vector2(96, 64));
+            panel.MakeWidget("padding2")
+                .FixedHeight(8);
             if (playBtn.Signal().Hovered) {
                 playBtn.Background(Color.HexRGB(0x303030));
                 if (Input.Instance.GetButtonOnDown(MouseButton.Left)) {
@@ -127,7 +132,8 @@ namespace BulletHell {
             Widget quitBtn = panel.MakeWidget("Quit")
                 .ShowText(AssetManager.Instance.GetFont("lato32"), Color.WHITE)
                 .Background(Color.HexRGB(0x212121))
-                .FitText();
+                .AlignText(WidgetTextAlignment.Center)
+                .FixedSize(new Vector2(96, 64));
             if (quitBtn.Signal().Hovered) {
                 quitBtn.Background(Color.HexRGB(0x303030));
                 if (Input.Instance.GetButtonOnDown(MouseButton.Left)) {
