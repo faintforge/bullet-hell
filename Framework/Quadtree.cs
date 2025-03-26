@@ -19,24 +19,40 @@ namespace BulletHell {
                 this.Area = area;
             }
 
-            public void Insert(Bucket bucket, int depth) {
+            public bool Insert(Bucket bucket, int depth) {
+                // Don't insert buckets that don't fit.
+                if (!Area.ContainsAABB(bucket.BoundingBox)) {
+                    // Color c = Color.HSV(depth * 36.0f, 0.75f, 1.0f);
+                    // c.A = 0.1f;
+                    // Debug.Instance.DrawBox((Box) Area, c);
+                    // Debug.Instance.DrawBox((Box) bucket.BoundingBox, Color.WHITE);
+                    return false;
+                }
+
+                // Don't go beyond the recursion depth.
                 if (depth >= quadtree.MaxDepth) {
                     buckets.Add(bucket);
-                    return;
+                    return true;
                 }
 
-                if (!bucket.BoundingBox.IntersectsAABB(Area)) {
-                    return;
-                }
-
+                // If the node has children insert into them. If the bucket
+                // doesn't fit inside, insert into this one.
                 if (Children[0] != -1) {
                     for (int i = 0; i < Children.Length; i++) {
-                        quadtree.GetNodeIndex(Children[i]).Insert(bucket, depth + 1);
+                        if (quadtree.GetNodeIndex(Children[i]).Insert(bucket, depth + 1)) {
+                            return true;
+                        }
                     }
-                    return;
+
+                    // If no child can fit this bucket insert into this one.
+                    buckets.Add(bucket);
+                    return true;
                 }
 
-                if (buckets.Count >= quadtree.MaxCapacity) {
+                // If we've reached max capacity split into 4 subregions and try
+                // to insert into them. If a bucket doesn't fit inside any
+                // children keep it in this one.
+                if (buckets.Count >= quadtree.MaxCapacity && Children[0] == -1) {
                     Children[0] = quadtree.GetNewNode(new AABB() {
                             Pos = Area.Pos + Area.Size / new Vector2(-4.0f, 4.0f),
                             Size = Area.Size / 2.0f,
@@ -54,82 +70,95 @@ namespace BulletHell {
                             Size = Area.Size / 2.0f,
                         });
 
+                    // Add first into this node, then try to insert all buckets
+                    // into its children. If a child can contain it, cache it
+                    // for later removal.
                     buckets.Add(bucket);
+                    List<Bucket> bucketsInsertedIntoChildren = new List<Bucket>();
                     foreach (Bucket _bucket in buckets) {
+                        bool insertedIntoChild = false;
                         for (int i = 0; i < Children.Length; i++) {
-                            quadtree.GetNodeIndex(Children[i]).Insert(_bucket, depth + 1);
+                            if (quadtree.GetNodeIndex(Children[i]).Insert(_bucket, depth + 1)) {
+                                insertedIntoChild = true;
+                                break;
+                            }
+                        }
+                        if (insertedIntoChild) {
+                            bucketsInsertedIntoChildren.Add(_bucket);
                         }
                     }
-                    buckets.Clear();
+                    // Console.WriteLine($"Before inserting into children: {buckets.Count}");
+                    buckets = buckets.Except(bucketsInsertedIntoChildren).ToList();
+                    // Console.WriteLine($"After inserting into children: {buckets.Count}");
+                    // Console.WriteLine($"{bucketsInsertedIntoChildren.Count}");
 
-                    return;
+                    return true;
                 }
 
                 buckets.Add(bucket);
+                return true;
             }
 
-            public HashSet<Entity> Query(Vector2 position, float radius) {
+            public List<Entity> Query(Vector2 position, float radius) {
                 if (!Area.IntersectsCircle(position, radius)) {
-                    return new HashSet<Entity>();
+                    return new List<Entity>();
                 }
 
-                HashSet<Entity> result = new HashSet<Entity>();
+                List<Entity> result = new List<Entity>();
                 if (Children[0] != -1) {
                     for (int i = 0; i < Children.Length; i++) {
-                        result.UnionWith(quadtree.GetNodeIndex(Children[i]).Query(position, radius));
-                    }
-                } else {
-                    foreach (Bucket bucket in buckets) {
-                        // Profiler.Instance.Start("Intersect AABB Test");
-                        // if (!bucket.BoundingBox.IntersectsCircle(position, radius)) {
-                        //     Profiler.Instance.End();
-                        //     continue;
-                        // }
-                        // Profiler.Instance.End();
-
-                        Profiler.Instance.Start("Intersect Box Test");
-                        if (bucket.Entity.Transform.IntersectsCircle(position, radius)) {
-                            result.Add(bucket.Entity);
-                        }
-                        Profiler.Instance.End();
+                        result.AddRange(quadtree.GetNodeIndex(Children[i]).Query(position, radius));
                     }
                 }
+
+                foreach (Bucket bucket in buckets) {
+                    Profiler.Instance.Start("Intersect Box Test");
+                    if (bucket.Entity.Transform.IntersectsCircle(position, radius)) {
+                        result.Add(bucket.Entity);
+                    }
+                    Profiler.Instance.End();
+                }
+
                 return result;
             }
 
-            public HashSet<Entity> Query(AABB boundingBox, Box box) {
+            public List<Entity> Query(AABB boundingBox, Box box) {
+                Profiler.Instance.Start("Is inside area");
                 if (!boundingBox.IntersectsAABB(Area)) {
-                    return new HashSet<Entity>();
+                    Profiler.Instance.End();
+                    return new List<Entity>();
                 }
+                Profiler.Instance.End();
 
-                HashSet<Entity> result = new HashSet<Entity>();
+                List<Entity> result = new List<Entity>();
                 if (Children[0] != -1) {
                     for (int i = 0; i < Children.Length; i++) {
-                        result.UnionWith(quadtree.GetNodeIndex(Children[i]).Query(boundingBox, box));
-                    }
-                } else {
-                    foreach (Bucket bucket in buckets) {
-                        Profiler.Instance.Start("Check bounding boxes");
-                        if (bucket.BoundingBox == boundingBox) {
-                            Profiler.Instance.End();
-                            continue;
-                        }
-                        Profiler.Instance.End();
-
-                        Profiler.Instance.Start("Intersect AABB Test");
-                        if (!bucket.BoundingBox.IntersectsAABB(boundingBox)) {
-                            Profiler.Instance.End();
-                            continue;
-                        }
-                        Profiler.Instance.End();
-
-                        Profiler.Instance.Start("Intersect Box Test");
-                        if (bucket.Entity.Transform.IntersectsBox(box)) {
-                            result.Add(bucket.Entity);
-                        }
-                        Profiler.Instance.End();
+                        result.AddRange(quadtree.GetNodeIndex(Children[i]).Query(boundingBox, box));
                     }
                 }
+
+                foreach (Bucket bucket in buckets) {
+                    Profiler.Instance.Start("Check bounding boxes");
+                    if (bucket.BoundingBox == boundingBox) {
+                        Profiler.Instance.End();
+                        continue;
+                    }
+                    Profiler.Instance.End();
+
+                    Profiler.Instance.Start("Intersect AABB Test");
+                    if (!bucket.BoundingBox.IntersectsAABB(boundingBox)) {
+                        Profiler.Instance.End();
+                        continue;
+                    }
+                    Profiler.Instance.End();
+
+                    Profiler.Instance.Start("Intersect Box Test");
+                    if (bucket.Entity.Transform.IntersectsBox(box)) {
+                        result.Add(bucket.Entity);
+                    }
+                    Profiler.Instance.End();
+                }
+
                 return result;
             }
 
@@ -163,11 +192,11 @@ namespace BulletHell {
                 }, 0);
         }
 
-        public HashSet<Entity> Query(Vector2 position, float radius) {
+        public List<Entity> Query(Vector2 position, float radius) {
             return nodePool[root].Query(position, radius);
         }
 
-        public HashSet<Entity> Query(Box box) {
+        public List<Entity> Query(Box box) {
             return nodePool[root].Query(box.GetBoundingAABB(), box);
         }
 

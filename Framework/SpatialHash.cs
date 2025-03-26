@@ -60,7 +60,7 @@ namespace BulletHell {
         /// <param name="position">Center point of query.</param>
         /// <param name="radius">Radius of query.</param>
         /// <returns>List of entities within the specified query circle.</returns>
-        public HashSet<Entity> Query(Vector2 position, float radius) {
+        public List<Entity> Query(Vector2 position, float radius) {
             Vector2 min = (position - radius) / cellSize;
             Vector2 max = (position + radius) / cellSize;
             int minX = (int) MathF.Round(min.X);
@@ -88,7 +88,7 @@ namespace BulletHell {
                     }
                 }
             }
-            return result;
+            return result.ToList();
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace BulletHell {
         /// </summary>
         /// <param name="box">Query region.</param>
         /// <returns>List of entities within the specified box region.</returns>
-        public HashSet<Entity> Query(Box box) {
+        public List<Entity> Query(Box box) {
             AABB boundingBox = box.GetBoundingAABB();
             Vector2 min = boundingBox.Min / cellSize;
             Vector2 max = boundingBox.Max / cellSize;
@@ -141,7 +141,7 @@ namespace BulletHell {
                     }
                 }
             }
-            return result;
+            return result.ToList();
         }
 
         /// <summary>

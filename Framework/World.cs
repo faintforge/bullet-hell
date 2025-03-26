@@ -48,9 +48,9 @@ namespace BulletHell {
         /// <param name="position">Circle position.</param>
         /// <param name="radius">Circle radius.</param>
         /// <returns>List of entities within the circle.</returns>
-        public HashSet<Entity> SpatialQuery(Vector2 position, float radius) {
+        public List<Entity> SpatialQuery(Vector2 position, float radius) {
             if (spatialStructure == null) {
-                return new HashSet<Entity>();
+                return new List<Entity>();
             }
             return spatialStructure.Query(position, radius);
         }
@@ -60,9 +60,9 @@ namespace BulletHell {
         /// </summary>
         /// <param name="box">Box region.</param>
         /// <returns>List of entities within box.</returns>
-        public HashSet<Entity> SpatialQuery(Box box) {
+        public List<Entity> SpatialQuery(Box box) {
             if (spatialStructure == null) {
-                return new HashSet<Entity>();
+                return new List<Entity>();
             }
             return spatialStructure.Query(box);
         }
@@ -122,7 +122,7 @@ namespace BulletHell {
                 }
 
                 Profiler.Instance.Start("Entity Spatial Query");
-                HashSet<Entity> colliding = SpatialQuery(entity.Transform);
+                List<Entity> colliding = SpatialQuery(entity.Transform);
                 Profiler.Instance.End();
                 foreach (Entity other in colliding) {
                     if (entity == other) {

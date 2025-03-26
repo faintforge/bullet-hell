@@ -35,6 +35,13 @@ namespace BulletHell {
             return distance.MagnitudeSquared() <= radius * radius;
         }
 
+        public bool ContainsAABB(AABB other) {
+            return Min.X <= other.Min.X &&
+                Max.X >= other.Max.X &&
+                Min.Y <= other.Min.Y &&
+                Max.Y >= other.Max.Y;
+        }
+
         public static explicit operator Box(AABB aabb) {
             return new Box() {
                 Origin = new Vector2(),

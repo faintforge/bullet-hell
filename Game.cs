@@ -18,7 +18,7 @@ namespace BulletHell {
             world.Camera.Zoom = 360.0f;
             Player player = world.SpawnEntity<Player>();
 
-            world.SpawnEntity<GoblinSpawner>();
+            // world.SpawnEntity<GoblinSpawner>();
 
             // world.SpawnEntity<Boss>();
 
