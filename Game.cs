@@ -20,7 +20,7 @@ namespace BulletHell {
 
             world.SpawnEntity<GoblinSpawner>();
 
-            Boss boss = world.SpawnEntity<Boss>();
+            // world.SpawnEntity<Boss>();
 
             // Random rng = new Random();
             // for (int i = 0; i < 1024; i++) {

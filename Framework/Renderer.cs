@@ -233,6 +233,8 @@ namespace BulletHell {
         /// <returns>Size of drawn width.</returns>
         public Vector2 DrawText(string text, Font font, Vector2 position, Color color) {
             Vector2 glyphPos = position;
+            glyphPos.X = MathF.Round(glyphPos.X);
+            glyphPos.Y = MathF.Round(glyphPos.Y);
             foreach (char c in text) {
                 Glyph g = font.GetGlyph(c);
                 DrawUV(new Box() {
