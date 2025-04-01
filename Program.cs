@@ -82,6 +82,7 @@ namespace BulletHell {
         private static void LoadAssets() {
             AssetManager.Instance.LoadFont("lato48", "assets/fonts/Lato-Regular.ttf", 48);
             AssetManager.Instance.LoadFont("lato32", "assets/fonts/Lato-Regular.ttf", 32);
+            AssetManager.Instance.LoadFont("lato24", "assets/fonts/Lato-Regular.ttf", 24);
             AssetManager.Instance.LoadFont("roboto_mono", "assets/fonts/RobotoMono-Regular.ttf", 16);
 
             AssetManager.Instance.LoadTexture("player", "assets/textures/player.png", TextureFilter.Nearest);

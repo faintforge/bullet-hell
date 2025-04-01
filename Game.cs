@@ -201,6 +201,54 @@ namespace BulletHell {
                 .FixedSize(new Vector2(512 * percentLeft, 32))
                 .AlignText(WidgetTextAlignment.Right)
                 .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE);
+
+            BuildUpgradeMenu();
+        }
+
+        private void BuildUpgradeMenu() {
+            Widget fullscreenContainer = hud.MakeWidget("##fullscreenContainer-aiuohweoih")
+                .FixedSize(window.Size)
+                .Floating(new Vector2())
+                .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center);
+
+            Widget container = fullscreenContainer.MakeWidget("##cardContainer-aiuheifhuweif")
+                .FlowHorizontal()
+                .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center)
+                .FitChildren();
+
+            const int cardCount = 3;
+            for (int i = 0; i < cardCount; i++) {
+                Widget card = container.MakeWidget($"##card{i}-wieuhkjsdbkjcbv")
+                    .Background(Color.HexRGB(0x151d28))
+                    .AlignChildren(WidgetAlignment.Top, WidgetAlignment.Center)
+                    .FixedSize(new Vector2(64.0f * 4.0f, 64.0f * 6));
+
+                if (card.Signal().Hovered) {
+                    card.Background(Color.HexRGB(0x241527))
+                        .FixedSize(new Vector2(64.0f * 4.5f, 64.0f * 6.5f));
+                }
+
+                card.MakeWidget($"##spacer{i}-oiwerwioeurh")
+                    .FixedHeight(16.0f);
+                card.MakeWidget($"Seeking Missle##cardName{i}")
+                    .FitText()
+                    .ShowText(AssetManager.Instance.GetFont("lato24"), Color.WHITE);
+                card.MakeWidget($"##spacer{i}-oiwerwioeuuhiwuerhiwrh")
+                    .FixedHeight(16.0f);
+
+                Widget modContainer = card.MakeWidget($"##modContainer{i}")
+                    .FitChildrenHeight()
+                    .PercentOfParentWidth(0.8f);
+
+                modContainer.MakeWidget($"+1 seeking missle##oasmd{i}")
+                    .FitText()
+                    .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE);
+
+                if (i < cardCount - 1) {
+                    container.MakeWidget($"##padding{i}-wefuiwehfoiuwehf")
+                        .FixedWidth(32.0f);
+                }
+            }
         }
 
         private void BuildDebugUI() {

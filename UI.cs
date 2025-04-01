@@ -152,6 +152,25 @@ namespace BulletHell {
             }
         }
 
+        private void BuildPercentOfParentSizes(Widget widget) {
+            if (widget.Parent != null) {
+                if (widget.Sizes[0].Type == WidgetSizeType.PercentOfParent) {
+                    Vector2 newSize = widget.ComputedSize;
+                    newSize.X = widget.Parent.ComputedSize.X * widget.Sizes[0].Value;;
+                    widget.ComputedSize = newSize;
+                }
+                if (widget.Sizes[1].Type == WidgetSizeType.PercentOfParent) {
+                    Vector2 newSize = widget.ComputedSize;
+                    newSize.Y = widget.Parent.ComputedSize.Y * widget.Sizes[1].Value;
+                    widget.ComputedSize = newSize;
+                }
+            }
+
+            foreach (Widget child in widget.Children) {
+                BuildPercentOfParentSizes(child);
+            }
+        }
+
         private Vector2 BuildPositions(Widget widget, Vector2 relPosition) {
             Vector2 nextPosition = relPosition;
             widget.ComputedRelativePosition = relPosition;
@@ -246,12 +265,6 @@ namespace BulletHell {
             return siblingPosition;
         }
 
-        public void Begin(Vector2 mousePosition) {
-            roots = new List<Widget>();
-            currentFrame++;
-            this.mousePosition = mousePosition;
-        }
-
         private void BuildBoxes(Widget widget) {
             widget.ComputedBox = new Box() {
                 Origin = new Vector2(-1.0f),
@@ -264,10 +277,17 @@ namespace BulletHell {
             }
         }
 
+        public void Begin(Vector2 mousePosition) {
+            roots = new List<Widget>();
+            currentFrame++;
+            this.mousePosition = mousePosition;
+        }
+
         public void End() {
             foreach (Widget root in roots) {
                 BuildFixedSizes(root);
                 BuildSumOfChildrenSizes(root);
+                BuildPercentOfParentSizes(root);
                 BuildPositions(root, new Vector2());
                 BuildBoxes(root);
             }

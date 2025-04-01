@@ -12,6 +12,7 @@ namespace BulletHell {
         Pixels,
         TextContent,
         SumOfChildren,
+        PercentOfParent,
     }
 
     public enum WidgetFlow {
@@ -234,6 +235,27 @@ namespace BulletHell {
         public Widget RenderingExtension(Action<Widget, Renderer> ext) {
             RenderExt = ext;
             return this;
+        }
+
+        public Widget PercentOfParentWidth(float percent) {
+            Sizes[0] = new WidgetSize() {
+                Type = WidgetSizeType.PercentOfParent,
+                Value = percent,
+            };
+            return this;
+        }
+
+        public Widget PercentOfParentHeight(float percent) {
+            Sizes[0] = new WidgetSize() {
+                Type = WidgetSizeType.PercentOfParent,
+                Value = percent,
+            };
+            return this;
+        }
+
+        public Widget PercentOfParentSize(Vector2 percentages) {
+            return this.PercentOfParentWidth(percentages.X)
+                .PercentOfParentHeight(percentages.Y);
         }
     }
 }
