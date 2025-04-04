@@ -7,8 +7,9 @@ namespace BulletHell {
         private float shootDelay = 0.1f;
         public int MaxHealth { get; set; } = 100;
         public int Health { get; set; }
-        public int NeededXp { get; set; } = 250;
+        public int NeededXp { get; set; } = 100;
         public int Xp { get; set; } = 0;
+        public bool LeveledWithoutUpgrade { get; set; } = false;
 
         public Player(World world) : base(world) {
             Render = true;
@@ -66,9 +67,14 @@ namespace BulletHell {
 
         public override void OnCollision(Entity other) {
             if (other is XpPoint) {
-                XpPoint xp = (XpPoint) other;
-                xp.Kill();
+                XpPoint xpEnt = (XpPoint) other;
+                xpEnt.Kill();
                 Xp++;
+
+                if (Xp >= NeededXp) {
+                    LeveledWithoutUpgrade = true;
+                    Xp = 0;
+                }
             }
         }
     }

@@ -10,15 +10,21 @@ namespace BulletHell {
         private bool paused = false;
         private UI debugUI = new UI();
         private UI hud = new UI();
+        private Player player;
+        private Upgrade[] upgrades = new Upgrade[3] {
+            new TestUpgrade(),
+            new TestUpgrade(),
+            new TestUpgrade(),
+        };
 
         public Game(Window window, Renderer renderer) {
             this.window = window;
             this.renderer = renderer;
 
             world.Camera.Zoom = 360.0f;
-            Player player = world.SpawnEntity<Player>();
+            player = world.SpawnEntity<Player>();
 
-            // world.SpawnEntity<GoblinSpawner>();
+            world.SpawnEntity<GoblinSpawner>();
 
             // world.SpawnEntity<Boss>();
 
@@ -40,7 +46,7 @@ namespace BulletHell {
             GL.ClearColor(clearColor.R, clearColor.G, clearColor.B, clearColor.A);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            if (!paused) {
+            if (!paused && !player.LeveledWithoutUpgrade) {
                 if (Input.Instance.GetKeyOnDown(SDL.SDL_Keycode.SDLK_SPACE)) {
                     Vector2 pos = world.Camera.ScreenToWorldSpace(Input.Instance.MousePosition);
                     Goblin goblin = world.SpawnEntity<Goblin>();
@@ -55,13 +61,13 @@ namespace BulletHell {
 
             world.OperateOnEntities((entity) => {
                     if (!entity.Render) {
-                    return;
+                        return;
                     }
                     renderer.Draw(
-                            entity.Transform,
-                            entity.Color,
-                            entity.Texture);
-                    });
+                        entity.Transform,
+                        entity.Color,
+                        entity.Texture);
+                });
             renderer.EndFrame();
 
             Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);
@@ -75,29 +81,24 @@ namespace BulletHell {
 
             // Health bars
             int id = 0;
+            Vector2 enemyBarSize = new Vector2(32.0f, 4.0f);
+            Vector2 screenPos = world.Camera.WorldToScreenSpace(player.Transform.Pos + new Vector2(0.0f, player.Transform.Size.Y / 2.0f));
+            screenPos.Y -= 8.0f;
+            screenPos.X -= enemyBarSize.X / 2.0f;
+
+            Widget bar = hud.MakeWidget($"##bar{id}")
+                .FixedSize(enemyBarSize)
+                .Floating(screenPos)
+                .Background(Color.HexRGB(0x241527));
+
+            Vector2 healthLeft = enemyBarSize;
+            healthLeft.X *= (float)player.Health / player.MaxHealth;
+            bar.MakeWidget($"##bar_fg{id}")
+                .FixedSize(healthLeft)
+                .Floating(screenPos)
+                .Background(Color.HexRGB(0xcf573c));
+
             world.OperateOnEntities((entity) => {
-                Vector2 enemyBarSize = new Vector2(32.0f, 4.0f);
-                if (entity is Player) {
-                    Player player = (Player) entity;
-                    Vector2 screenPos = world.Camera.WorldToScreenSpace(player.Transform.Pos + new Vector2(0.0f, player.Transform.Size.Y / 2.0f));
-                    screenPos.Y -= 8.0f;
-                    screenPos.X -= enemyBarSize.X / 2.0f;
-
-                    Widget bar = hud.MakeWidget($"##bar{id}")
-                        .FixedSize(enemyBarSize)
-                        .Floating(screenPos)
-                        .Background(Color.HexRGB(0x241527));
-
-                    Vector2 healthLeft = enemyBarSize;
-                    healthLeft.X *= (float) player.Health / player.MaxHealth;
-                    bar.MakeWidget($"##bar_fg{id}")
-                        .FixedSize(healthLeft)
-                        .Floating(screenPos)
-                        .Background(Color.HexRGB(0xcf573c));
-
-                    BuildPlayerHUD(player);
-                }
-
                 if (entity is Enemy) {
                     Enemy enemy = (Enemy) entity;
                     Vector2 screenPos = world.Camera.WorldToScreenSpace(enemy.Transform.Pos + new Vector2(0.0f, enemy.Transform.Size.Y / 2.0f));
@@ -149,6 +150,8 @@ namespace BulletHell {
 
                 id++;
             });
+
+            BuildPlayerHUD(player);
 
             if (paused) {
                 renderer.BeginFrame(uiCam);
@@ -202,7 +205,9 @@ namespace BulletHell {
                 .AlignText(WidgetTextAlignment.Right)
                 .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE);
 
-            BuildUpgradeMenu();
+            if (player.LeveledWithoutUpgrade) {
+                BuildUpgradeMenu();
+            }
         }
 
         private void BuildUpgradeMenu() {
@@ -216,35 +221,15 @@ namespace BulletHell {
                 .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center)
                 .FitChildren();
 
-            const int cardCount = 3;
-            for (int i = 0; i < cardCount; i++) {
-                Widget card = container.MakeWidget($"##card{i}-wieuhkjsdbkjcbv")
-                    .Background(Color.HexRGB(0x151d28))
-                    .AlignChildren(WidgetAlignment.Top, WidgetAlignment.Center)
-                    .FixedSize(new Vector2(64.0f * 4.0f, 64.0f * 6));
-
-                if (card.Signal().Hovered) {
-                    card.Background(Color.HexRGB(0x241527))
-                        .FixedSize(new Vector2(64.0f * 4.5f, 64.0f * 6.5f));
+            for (int i = 0; i < upgrades.Length; i++) {
+                Upgrade upgrade = upgrades[i];
+                upgrade.DrawHUD(container, i);
+                if (upgrade.Selected) {
+                    upgrade.Apply(player);
+                    player.LeveledWithoutUpgrade = false;
                 }
 
-                card.MakeWidget($"##spacer{i}-oiwerwioeurh")
-                    .FixedHeight(16.0f);
-                card.MakeWidget($"Seeking Missle##cardName{i}")
-                    .FitText()
-                    .ShowText(AssetManager.Instance.GetFont("lato24"), Color.WHITE);
-                card.MakeWidget($"##spacer{i}-oiwerwioeuuhiwuerhiwrh")
-                    .FixedHeight(16.0f);
-
-                Widget modContainer = card.MakeWidget($"##modContainer{i}")
-                    .FitChildrenHeight()
-                    .PercentOfParentWidth(0.8f);
-
-                modContainer.MakeWidget($"+1 seeking missle##oasmd{i}")
-                    .FitText()
-                    .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE);
-
-                if (i < cardCount - 1) {
+                if (i < upgrades.Length - 1) {
                     container.MakeWidget($"##padding{i}-wefuiwehfoiuwehf")
                         .FixedWidth(32.0f);
                 }
