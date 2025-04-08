@@ -11,11 +11,6 @@ namespace BulletHell {
         private UI debugUI = new UI();
         private UI hud = new UI();
         private Player player;
-        private Upgrade[] upgrades = new Upgrade[3] {
-            new TestUpgrade(),
-            new TestUpgrade(),
-            new TestUpgrade(),
-        };
 
         public Game(Window window, Renderer renderer) {
             this.window = window;
@@ -177,6 +172,7 @@ namespace BulletHell {
         }
 
         private void BuildPlayerHUD(Player player) {
+            Vector2 barSize = new Vector2(512, 32);
             // Health bar
             Widget container = hud.MakeWidget("player_hud_container")
                 .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Right)
@@ -185,11 +181,12 @@ namespace BulletHell {
             Widget healthBar = container.MakeWidget("player_health_bar_bg")
                 .Background(Color.HexRGB(0x241527))
                 .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Right)
-                .FixedSize(new Vector2(512, 32));
-            float percentLeft = (float) player.Health / (float) player.MaxHealth;
+                .FixedSize(barSize);
+            Vector2 percentLeft = barSize;
+            percentLeft.X *= (float) player.Health / (float) player.MaxHealth;
             healthBar.MakeWidget($"{player.Health}/{player.MaxHealth} ##player_health_bar_fg")
                 .Background(Color.HexRGB(0xcf573c))
-                .FixedSize(new Vector2(512 * percentLeft, 32))
+                .FixedSize(percentLeft)
                 .AlignText(WidgetTextAlignment.Right)
                 .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE);
 
@@ -197,11 +194,12 @@ namespace BulletHell {
             Widget xpBar = container.MakeWidget("player_xp_bar_bg")
                 .Background(Color.HexRGB(0x172038))
                 .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Right)
-                .FixedSize(new Vector2(512, 32));
-            percentLeft = (float) player.Xp / (float) player.NeededXp;
+                .FixedSize(barSize);
+            percentLeft = barSize;
+            percentLeft.X *= (float) player.Xp / (float) player.NeededXp;
             xpBar.MakeWidget($"{player.Xp}/{player.NeededXp} ##player_xp_bar_fg")
                 .Background(Color.HexRGB(0x4f8fba))
-                .FixedSize(new Vector2(512 * percentLeft, 32))
+                .FixedSize(percentLeft)
                 .AlignText(WidgetTextAlignment.Right)
                 .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE);
 
@@ -221,15 +219,15 @@ namespace BulletHell {
                 .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center)
                 .FitChildren();
 
-            for (int i = 0; i < upgrades.Length; i++) {
-                Upgrade upgrade = upgrades[i];
+            for (int i = 0; i < player.Upgrades.Length; i++) {
+                Upgrade upgrade = player.Upgrades[i];
                 upgrade.DrawHUD(container, i);
                 if (upgrade.Selected) {
                     upgrade.Apply(player);
                     player.LeveledWithoutUpgrade = false;
                 }
 
-                if (i < upgrades.Length - 1) {
+                if (i < player.Upgrades.Length - 1) {
                     container.MakeWidget($"##padding{i}-wefuiwehfoiuwehf")
                         .FixedWidth(32.0f);
                 }

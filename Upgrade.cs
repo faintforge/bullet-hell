@@ -5,7 +5,7 @@ namespace BulletHell {
         public string[] Description { get; protected set; } = new string[] {
             "No stats"
         };
-        public bool Selected { get; private set; }
+        public bool Selected { get; private set; } = false;
 
         public void DrawHUD(Widget container, int uiID) {
             Widget card = container.MakeWidget($"##card{uiID}-wieuhkjsdbkjcbv")

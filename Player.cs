@@ -1,15 +1,17 @@
 using SDL2;
+using System.Reflection;
 
 namespace BulletHell {
     public class Player : Entity {
-        private float speed = 100.0f;
+        public float Speed { get; set; } = 100.0f;
         private float shootTimer = 0.0f;
-        private float shootDelay = 0.1f;
+        public float ShootDelay { get; set; } = 0.5f;
         public int MaxHealth { get; set; } = 100;
         public int Health { get; set; }
-        public int NeededXp { get; set; } = 100;
+        public int NeededXp { get; set; } = 50;
         public int Xp { get; set; } = 0;
         public bool LeveledWithoutUpgrade { get; set; } = false;
+        public Upgrade[] Upgrades { get; private set; } = new Upgrade[3];
 
         public Player(World world) : base(world) {
             Render = true;
@@ -32,7 +34,7 @@ namespace BulletHell {
             if (vel.MagnitudeSquared() != 0.0f) {
                 vel.Normalize();
             }
-            vel *= speed;
+            vel *= Speed;
             Transform.Pos += vel * deltaTime;
 
             // Lerp camera to player position
@@ -41,7 +43,7 @@ namespace BulletHell {
                     world.Camera.Position.Y + (Transform.Pos.Y - world.Camera.Position.Y) * deltaTime * 5.0f);
 
             shootTimer += deltaTime;
-            if (Input.Instance.GetButton(MouseButton.Left) && shootTimer >= shootDelay) {
+            if (Input.Instance.GetButton(MouseButton.Left) && shootTimer >= ShootDelay) {
                 shootTimer = 0.0f;
                 Projectile proj = world.SpawnEntity<FireBolt>();
                 proj.Transform.Pos = Transform.Pos;
@@ -72,9 +74,32 @@ namespace BulletHell {
                 Xp++;
 
                 if (Xp >= NeededXp) {
+                    PickUpgrades();
                     LeveledWithoutUpgrade = true;
+                    NeededXp = (int) (NeededXp * 1.25f);
                     Xp = 0;
                 }
+            }
+        }
+
+        private void PickUpgrades() {
+            // https://stackoverflow.com/questions/5411694/get-all-inherited-classes-of-an-abstract-class
+            Assembly? assembly = Assembly.GetAssembly(typeof(Upgrade));
+            if (assembly == null) {
+                throw new Exception("Failed to get assembly.");
+            }
+            List<Type> possibleUpgrades = assembly.GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(Upgrade))).ToList();
+
+            Random rng = new Random();
+            for (int i = 0; i < Upgrades.Length; i++) {
+                int upgradeIndex = rng.Next(possibleUpgrades.Count);
+                Type upgradeType = possibleUpgrades[upgradeIndex];
+                possibleUpgrades.RemoveAt(upgradeIndex);
+                Upgrade? upgrade = (Upgrade?) Activator.CreateInstance(upgradeType);
+                if (upgrade == null) {
+                    throw new Exception($"Couldn't create upgrade of type {upgradeType}.");
+                }
+                Upgrades[i] = upgrade;
             }
         }
     }
