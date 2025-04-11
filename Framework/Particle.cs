@@ -22,7 +22,9 @@ namespace BulletHell {
 
             timer += deltaTime;
             float t = timer / Lifespan;
-            Color.A = Utils.Lerp(startOpacity, FinalOpacity, t);
+            Color newColor = Color;
+            newColor.A = Utils.Lerp(startOpacity, FinalOpacity, t);
+            Color = newColor;
             Transform.Size = Utils.Lerp(startSize, startSize * FinalSize, t);
 
             if (timer >= Lifespan) {

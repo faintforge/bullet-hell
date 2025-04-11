@@ -6,9 +6,9 @@ namespace BulletHell {
             Texture = AssetManager.Instance.GetTexture("firebolt");
             Transform.Size = Texture.Size;
             Friendly = true;
-            Damage = 5;
+            Damage = 1;
             lifespan = 5.0f;
-            pierce = 2;
+            Pierce = 1;
         }
 
         public override void OnSpawn() {

@@ -3,12 +3,12 @@ namespace BulletHell {
         public FireRateUpgrade() {
             Name = "Fast Pew Pew";
             Description = new string[] {
-                "+8% fire rate",
+                "+18% fire rate",
             };
         }
 
         public override void Apply(Player player) {
-            player.ShootDelay *= 0.92f;
+            player.ShootDelay *= 1.0f - 0.18f;
         }
     }
 }

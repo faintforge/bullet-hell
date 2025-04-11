@@ -19,18 +19,8 @@ namespace BulletHell {
             world.Camera.Zoom = 360.0f;
             player = world.SpawnEntity<Player>();
 
-            world.SpawnEntity<GoblinSpawner>();
-
-            // world.SpawnEntity<Boss>();
-
-            // Random rng = new Random();
-            // for (int i = 0; i < 1024; i++) {
-            //     float angle = (float) rng.NextDouble() * 2.0f * MathF.PI;
-            //     float distance = 256.0f * MathF.Sqrt((float) rng.NextDouble());
-            //     Vector2 pos = Vector2.FromAngle(angle) * distance;
-            //     XpPoint xp = world.SpawnEntity<XpPoint>();
-            //     xp.Transform.Pos = pos;
-            // }
+            WaveSpawner spawner = world.SpawnEntity<WaveSpawner>();
+            spawner.Player = player;
         }
 
         public void Run(float deltaTime) {

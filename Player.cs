@@ -12,6 +12,8 @@ namespace BulletHell {
         public int Xp { get; set; } = 0;
         public bool LeveledWithoutUpgrade { get; set; } = false;
         public Upgrade[] Upgrades { get; private set; } = new Upgrade[3];
+        public int Pierce { get; set; } = 1;
+        public float DamageMod { get; set; } = 1.0f;
 
         public Player(World world) : base(world) {
             Render = true;
@@ -46,6 +48,8 @@ namespace BulletHell {
             if (Input.Instance.GetButton(MouseButton.Left) && shootTimer >= ShootDelay) {
                 shootTimer = 0.0f;
                 Projectile proj = world.SpawnEntity<FireBolt>();
+                proj.Damage = (int) (proj.Damage * DamageMod);
+                proj.Pierce = Pierce;
                 proj.Transform.Pos = Transform.Pos;
                 Vector2 mousePos = world.Camera.ScreenToWorldSpace(Input.Instance.MousePosition);
                 Vector2 direction = (mousePos - Transform.Pos).Normalized();

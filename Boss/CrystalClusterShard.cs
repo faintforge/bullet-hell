@@ -7,7 +7,7 @@ namespace BulletHell {
             Transform.Size = Texture.Size;
             Friendly = false;
             lifespan = 3.0f;
-            pierce = -1;
+            Pierce = -1;
             Damage = 2;
         }
 

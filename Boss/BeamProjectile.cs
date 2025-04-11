@@ -5,7 +5,7 @@ namespace BulletHell {
             Collider = true;
             Friendly = false;
             Damage = 5;
-            pierce = -1;
+            Pierce = -1;
             lifespan = 0.25f;
         }
     }

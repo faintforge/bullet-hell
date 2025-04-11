@@ -2,6 +2,7 @@ namespace BulletHell {
     public abstract class Enemy : Entity {
         public int MaxHealth { get; set; }
         public int Health { get; set; }
+        public Player? Target { get; set; }
 
         public Enemy(World world) : base (world) {
             Render = true;

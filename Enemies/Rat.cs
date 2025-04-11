@@ -1,45 +1,37 @@
 namespace BulletHell {
-    public class Goblin : Enemy {
-        public Player? Target { get; set; }
-        private const float shootDelay = 2.0f;
-        private float shootTimer = 0.0f;
+    public class Rat : Enemy {
         private float speed = 50.0f;
+        public int Damage { get; set; } = 1;
+        private float HitCooldown = 0.0f;
 
-        public Goblin(World world) : base(world) {
-            Texture = AssetManager.Instance.GetTexture("goblin");
+        public Rat(World world) : base(world) {
+            Texture = AssetManager.Instance.GetTexture("rat");
             Transform.Size = Texture.Size;
-            MaxHealth = 10;
+            MaxHealth = 2;
         }
 
         public override void AI(float deltaTime) {
-            // if (Target == null) {
-            //     world.OperateOnEntities((entity) => {
-            //         if (entity is Player) {
-            //             Target = (Player) entity;
-            //         }
-            //     });
-            //     if (Target == null) {
-            //         return;
-            //     }
-            // }
-
             if (Target == null) {
                 return;
             }
+            HitCooldown -= deltaTime;
 
             Vector2 dir = Target.Transform.Pos - Transform.Pos;
             dir.Normalize();
-
             Transform.Pos += dir * speed * deltaTime;
 
-            shootTimer += deltaTime;
-            if (shootTimer >= shootDelay) {
-                shootTimer = 0.0f;
+            if (Texture != null) {
+                Vector2 size = Texture.Size;
+                size.X *= MathF.Sign(dir.X);
+                Transform.Size = size;
+            }
+        }
 
-                EnemyDagger dagger = world.SpawnEntity<EnemyDagger>();
-                dagger.Transform.Pos = Transform.Pos;
-                dagger.Transform.Rot = MathF.Atan2(dir.Y, dir.X) - MathF.PI / 2.0f;
-                dagger.Velocity = dir * 300.0f;
+        public override void OnCollision(Entity other) {
+            if (other is Player && HitCooldown <= 0.0f) {
+                Player player = (Player) other;
+                player.Health -= Damage;
+                HitCooldown = 0.25f;
             }
         }
 
@@ -64,7 +56,7 @@ namespace BulletHell {
             // Spawn XP on death
             float spawnRadius = 8.0f;
             Random rng = new Random();
-            for (int i = 0; i < rng.Next(1, 9); i++) {
+            for (int i = 0; i < rng.Next(1, 4); i++) {
                 float angle = (float) rng.NextDouble() * 2.0f * MathF.PI;
                 float distance = spawnRadius * MathF.Sqrt((float) rng.NextDouble());
                 Vector2 pos = Vector2.FromAngle(angle) * distance;

@@ -92,6 +92,7 @@ namespace BulletHell {
             AssetManager.Instance.LoadTexture("boss", "assets/textures/boss.png", TextureFilter.Nearest);
             AssetManager.Instance.LoadTexture("crystal_shard", "assets/textures/crystal_shard.png", TextureFilter.Nearest);
             AssetManager.Instance.LoadTexture("beam_projectile", "assets/textures/beam_projectile.png", TextureFilter.Nearest);
+            AssetManager.Instance.LoadTexture("rat", "assets/textures/rat.png", TextureFilter.Nearest);
         }
 
         private static void MainMenu(Window window, Renderer renderer, ref Scene scene, UI ui) {

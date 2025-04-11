@@ -6,11 +6,12 @@ namespace BulletHell {
             Rot = 0.0f,
             Origin = new Vector2(),
         };
-        public Texture? Texture = null;
-        public Color Color = Color.WHITE;
-        public bool Render = false;
+        public Texture? Texture { get; set; } = null;
+        public Color Color { get; set; } = Color.WHITE;
+        public bool Render { get; set; } = false;
         protected World world;
-        public bool Collider = false;
+        public bool Collider { get; set; } = false;
+        public bool Alive { get; internal set; }
 
         /// <summary>
         /// Create an entity beloning to a world.

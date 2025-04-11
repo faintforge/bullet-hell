@@ -22,16 +22,31 @@ namespace BulletHell {
         /// <summary>
         /// Spawn an entity.
         /// </summary>
+        /// <param name="type">Type of entity to spawn.</param>
+        /// <returns>Entity spawned.</returns>
+        /// <exception cref="Exception">If type does not inherit from Entity, or if the entity failed to be spawned.</exception>
+        public Entity SpawnEntity(Type type) {
+            if (!type.IsSubclassOf(typeof(Entity))) {
+                throw new Exception($"Type must be inherit from the entity class.");
+            }
+
+            Entity? entity = (Entity?) Activator.CreateInstance(type, this);
+            if (entity == null) {
+                throw new Exception($"Failed to spawn entity of type ${type}.");
+            }
+            entity.Alive = true;
+            spawnQueue.Add(entity);
+            return entity;
+        }
+
+        /// <summary>
+        /// Spawn an entity.
+        /// </summary>
         /// <typeparam name="T">Type of entity to spawn.</typeparam>
         /// <returns>Entity spawned.</returns>
         /// <exception cref="Exception">If entity failed to be spawned.</exception>
         public T SpawnEntity<T>() where T : Entity {
-            T? entity = (T?) Activator.CreateInstance(typeof(T), this);
-            if (entity == null) {
-                throw new Exception($"Failed to spawn entity of type ${typeof(T)}.");
-            }
-            spawnQueue.Add(entity);
-            return entity;
+            return (T) SpawnEntity(typeof(T));
         }
 
         /// <summary>
@@ -40,6 +55,7 @@ namespace BulletHell {
         /// <param name="entity">Entity to kill.</param>
         public void KillEntity(Entity entity) {
             killQueue.Add(entity);
+            entity.Alive = false;
         }
 
         /// <summary>
