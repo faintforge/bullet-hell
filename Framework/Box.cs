@@ -1,18 +1,32 @@
 namespace BulletHell {
     public struct Box {
-        public Vector2 Pos { get; set; }
-        public Vector2 Size { get; set; }
-        public float Rot { get; set; }
+        /// <summary>
+        /// Origin of the box.
+        /// </summary>
         public Vector2 Origin { get; set; }
+        /// <summary>
+        /// Position of the origin of the box.
+        /// </summary>
+        public Vector2 Pos { get; set; }
+        /// <summary>
+        /// Size of the box.
+        /// </summary>
+        public Vector2 Size { get; set; }
+        /// <summary>
+        /// Rotation of the box relative to the origin.
+        /// </summary>
+        public float Rot { get; set; }
 
         /// <summary>
         /// Gets the vertices of the box in a specific order.
+        /// </summary>
+        /// <returns>
+        /// Array of four vertices.
         /// [0] = Top left
         /// [1] = Top right
         /// [2] = Bottom right
         /// [3] = Bottom left
-        /// </summary>
-        /// <returns>Array of four vertices.</returns>
+        /// </returns>
         public Vector2[] GetVertices() {
             Vector2[] verts = new Vector2[4] {
                 new Vector2(-0.5f,  0.5f),

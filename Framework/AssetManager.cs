@@ -1,6 +1,10 @@
 namespace BulletHell {
     public class AssetManager {
         private static AssetManager? instance;
+
+        /// <summary>
+        /// Singleton instance of this class.
+        /// </summary>
         public static AssetManager Instance {
             get {
                 if (instance == null) {

@@ -1,17 +1,39 @@
 namespace BulletHell {
     public abstract class Entity {
+        /// <summary>
+        /// Box representing the position, size, origin and rotation of the entity in world space.
+        /// NOTE: Not a getter or setter because I forgot and making it one now creates A LOT of errors all over the codebase.
+        /// </summary>
         public Box Transform = new Box() {
             Pos = new Vector2(),
             Size = new Vector2(1.0f),
             Rot = 0.0f,
             Origin = new Vector2(),
         };
-        public Texture? Texture { get; set; } = null;
-        public Color Color { get; set; } = Color.WHITE;
-        public bool Render { get; set; } = false;
-        protected World world;
+
+        /// <summary>
+        /// Entity can collide with other entities if true, cannot collide if false.
+        /// </summary>
         public bool Collider { get; set; } = false;
+
+        protected World world;
+        /// <summary>
+        /// If true, the entity is still alive in the world.
+        /// </summary>
         public bool Alive { get; internal set; }
+
+        /// <summary>
+        /// Texture of the entity to be rendered. If it's null a white square will be used.
+        /// </summary>
+        public Texture? Texture { get; set; } = null;
+        /// <summary>
+        /// Color to tint the texture when drawn.
+        /// </summary>
+        public Color Color { get; set; } = Color.WHITE;
+        /// <summary>
+        /// Render the entity if true, don't render if false.
+        /// </summary>
+        public bool Render { get; set; } = false;
 
         /// <summary>
         /// Create an entity beloning to a world.

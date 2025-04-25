@@ -1,13 +1,30 @@
 namespace BulletHell {
     public abstract class Projectile : Entity {
+        /// <summary>
+        /// If true, do damage to enemies, if false, do damage to player.
+        /// </summary>
         public bool Friendly { get; protected set; } = false;
+        /// <summary>
+        /// Damage dealt when hitting an entity.
+        /// </summary>
         public int Damage { get; set; } = 0;
-        public Vector2 Velocity { get; set; } = new Vector2();
-        protected float lifespan = -1.0f;
+        /// <summary>
+        /// Amount of entities that can be hit before being killed.
+        /// </summary>
         public int Pierce { get; set; } = 1;
+        /// <summary>
+        /// Distance traveled per second.
+        /// </summary>
+        public Vector2 Velocity { get; set; } = new Vector2();
+
+        protected float lifespan = -1.0f;
         private Entity[] alreadyHit = new Entity[8];
         private int alreadyHitIndex = 0;
 
+        /// <summary>
+        /// Create an instance of a projectile.
+        /// </summary>
+        /// <param name="world">World the projectile belongs to.</param>
         public Projectile(World world) : base(world) {
             Render = true;
             Collider = true;

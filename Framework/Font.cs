@@ -3,25 +3,51 @@ using System.Runtime.InteropServices;
 
 namespace BulletHell {
     public struct Glyph {
+        /// <summary>
+        /// Size of the glyph in pixels.
+        /// </summary>
         public Vector2 Size;
+        /// <summary>
+        /// Pixel offset of the glyph.
+        /// </summary>
         public Vector2 Offset;
+        /// <summary>
+        /// UV coordinates to the glyph in the texture atlas.
+        /// [0] = Top left
+        /// [1] = Bottom right
+        /// </summary>
         public Vector2[] UVs;
+        /// <summary>
+        /// Pixels to advance until the next glyph position.
+        /// </summary>
         public float Advance;
     }
 
     public struct FontMetrics {
+        /// <summary>
+        /// Height of the talest glyph from the baseline in the font in pixels.
+        /// </summary>
         public float Ascent;
+        /// <summary>
+        /// Pixel distance from baseline to the lowest point a glyph can reach.
+        /// </summary>
         public float Descent;
+        /// <summary>
+        /// Pixel distance between two baselines when spacing for lines.
+        /// </summary>
         public float LineGap;
     }
 
     public class Font {
+        /// <summary>
+        /// Texture atlas containing all glyphs.
+        /// </summary>
         public Texture Atlas { get; private set; }
-        IntPtr sdlFont;
 
-        const byte ASCII_START = 32;
-        const byte ASCII_END = 126;
+        private IntPtr sdlFont;
 
+        private const byte ASCII_START = 32;
+        private const byte ASCII_END = 126;
         private Glyph[] glyphs = new Glyph[ASCII_END - ASCII_START + 1];
         
         /// <summary>
@@ -92,6 +118,9 @@ namespace BulletHell {
             Atlas = Texture.Create<byte>(atlasSize, TextureFormat.RgbaU8, atlasData, TextureFilter.Linear);
         }
 
+        /// <summary>
+        /// Clean up the font data.
+        /// </summary>
         ~Font() {
             SDL_ttf.TTF_CloseFont(sdlFont);
         }

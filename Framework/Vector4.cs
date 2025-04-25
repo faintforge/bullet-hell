@@ -3,9 +3,21 @@ using System.Runtime.InteropServices;
 namespace BulletHell {
     [StructLayout(LayoutKind.Sequential)]
     public struct Vector4 {
+        /// <summary>
+        /// X coordinate.
+        /// </summary>
         public float X;
+        /// <summary>
+        /// Y coordinate.
+        /// </summary>
         public float Y;
+        /// <summary>
+        /// Z coordinate.
+        /// </summary>
         public float Z;
+        /// <summary>
+        /// W coordinate.
+        /// </summary>
         public float W;
 
         /// <summary>

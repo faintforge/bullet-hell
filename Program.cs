@@ -36,8 +36,7 @@ namespace BulletHell {
                 );
             Renderer renderer = new Renderer();
             UI mainMenuUI = new UI();
-            // Scene scene = Scene.MainMenu;
-            Scene scene = Scene.Game;
+            Scene scene = Scene.MainMenu;
 
             LoadAssets();
 

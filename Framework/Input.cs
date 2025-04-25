@@ -14,6 +14,9 @@ namespace BulletHell {
         }
 
         private static Input? instance = null;
+        /// <summary>
+        /// Singleton instance of this class.
+        /// </summary>
         public static Input Instance {
             get {
                 if (instance == null) {
@@ -25,6 +28,9 @@ namespace BulletHell {
 
         private Dictionary<SDL.SDL_Keycode, KeyState> keyboardMap = new Dictionary<SDL.SDL_Keycode, KeyState>();
         private KeyState[] mouseState = new KeyState[Enum.GetNames(typeof(MouseButton)).Length];
+        /// <summary>
+        /// Mouse position in the window. (0, 0) is in the top left and Y increases down.
+        /// </summary>
         public Vector2 MousePosition { get; internal set; }
 
         private Input() {}

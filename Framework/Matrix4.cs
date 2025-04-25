@@ -3,11 +3,26 @@ using System.Runtime.InteropServices;
 namespace BulletHell {
     [StructLayout(LayoutKind.Sequential)]
     public struct Matrix4 {
+        /// <summary>
+        /// First row.
+        /// </summary>
         public Vector4 I = new Vector4();
+        /// <summary>
+        /// Second row.
+        /// </summary>
         public Vector4 J = new Vector4();
+        /// <summary>
+        /// Third row.
+        /// </summary>
         public Vector4 K = new Vector4();
+        /// <summary>
+        /// Fourth row.
+        /// </summary>
         public Vector4 L = new Vector4();
 
+        /// <summary>
+        /// Create a 4x4 matrix filled with 0s.
+        /// </summary>
         public Matrix4() {}
 
         /// <summary>
@@ -70,6 +85,12 @@ namespace BulletHell {
             return mat;
         }
 
+        /// <summary>
+        /// Multiply a 4D vector with a 4x4 matrix.
+        /// </summary>
+        /// <param name="a">Left side matrix.</param>
+        /// <param name="b">Right side vector.</param>
+        /// <returns>Vector product of the multiplication.</returns>
         public static Vector4 operator *(Matrix4 a, Vector4 b) {
             return new Vector4(
                     a.I.X * b.X + a.I.Y * b.Y + a.I.Z * b.Z + a.I.W * b.W,

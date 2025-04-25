@@ -1,31 +1,92 @@
 namespace BulletHell {
     public class ParticleEmitter : Entity {
         public struct Config {
-            public Entity? Parent;
-            public int Count;
-            public float Time;
-            public bool Continuous;
+            /// <summary>
+            /// Parent entity to be anchored to.
+            /// </summary>
+            public Entity? Parent { get; set; }
+            /// <summary>
+            /// Amount of particles to spawn within the time specified.
+            /// </summary>
+            public int Count { get; set; }
+            /// <summary>
+            /// Will the emitter continously spawn particles with no stop.
+            /// </summary>
+            public bool Continuous { get; set; }
+            /// <summary>
+            /// Time spent emitting 'count' particles.
+            /// </summary>
+            public float Time { get; set; }
 
-            public Vector2 Size;
-            public Color Color;
-            public float FinalOpacity;
-            public float FinalSize;
-            public float RotationMin;
-            public float RotationMax;
-            public float VelocitySpeedMin;
-            public float VelocitySpeedMax;
-            public float SpawnAngle;
-            public float SpawnRadius;
-            public float MinLifespan;
-            public float MaxLifespan;
+            /// <summary>
+            /// Initial size of the particles.
+            /// </summary>
+            public Vector2 Size { get; set; }
+            /// <summary>
+            /// Final size of the particles.
+            /// </summary>
+            public float FinalSize { get; set; }
+
+            /// <summary>
+            /// Color of the particles.
+            /// </summary>
+            public Color Color { get; set; }
+            /// <summary>
+            /// Final opacity of the particles color.
+            /// </summary>
+            public float FinalOpacity { get; set; }
+
+
+            /// <summary>
+            /// Lower bound of the particles rotation.
+            /// </summary>
+            public float RotationMin { get; set; }
+            /// <summary>
+            /// Upper bound of the particles rotation.
+            /// </summary>
+            public float RotationMax { get; set; }
+
+            /// <summary>
+            /// Lower bound of the particles velocity.
+            /// </summary>
+            public float VelocitySpeedMin { get; set; }
+            /// <summary>
+            /// Upper bound of the particles velocity.
+            /// </summary>
+            public float VelocitySpeedMax { get; set; }
+
+            /// <summary>
+            /// Angle of the cone particles are spawned in.
+            /// </summary>
+            public float SpawnAngle { get; set; }
+            /// <summary>
+            /// Radius of the cone particles are spawned in.
+            /// </summary>
+            public float SpawnRadius { get; set; }
+
+            /// <summary>
+            /// Lower bound of particle lifespan.
+            /// </summary>
+            public float MinLifespan { get; set; }
+            /// <summary>
+            /// Upper bound of particle lifespan.
+            /// </summary>
+            public float MaxLifespan { get; set; }
         }
 
+        /// <summary>
+        /// Emitter configuration.
+        /// </summary>
         public Config Cfg { get; set; }
         private float timer = 0.0f;
         private float burstTimer = 0.0f;
         private bool emitting = true;
         private Random rng = new Random();
 
+        /// <summary>
+        /// Create an instance of a particle emitter.
+        /// </summary>
+        /// <param name="world">World the emtiter belongs to.</param>
         public ParticleEmitter(World world) : base(world) {
             Render = false;
         }
@@ -76,6 +137,9 @@ namespace BulletHell {
             }
         }
 
+        /// <summary>
+        /// Make the emitter emit if it isn't already.
+        /// </summary>
         public void Emit() {
             emitting = true;
         }

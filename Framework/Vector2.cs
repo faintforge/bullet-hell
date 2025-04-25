@@ -175,6 +175,10 @@ namespace BulletHell {
             return X * other.X + Y * other.Y;
         }
 
+        /// <summary>
+        /// Converts vector into a string representation.
+        /// </summary>
+        /// <returns>String representation of vector.</returns>
         public override string ToString() {
             return $"({X}, {Y})";
         }

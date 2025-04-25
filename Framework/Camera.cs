@@ -1,11 +1,26 @@
 namespace BulletHell {
     public class Camera {
+        /// <summary>
+        /// Whether the Y-axis increases up or down. When false, Y increases up, if true Y increases down.
+        /// </summary>
         public bool InvertY { get; private set; }
+        /// <summary>
+        /// Orthographic camera projection.
+        /// </summary>
         public Matrix4 Projection { get; private set; }
+        /// <summary>
+        /// Inverse orthographic camera projection.
+        /// </summary>
         public Matrix4 InverseProjection { get; private set; }
+        /// <summary>
+        /// Position of the camera in world space.
+        /// </summary>
         public Vector2 Position { get; set; }
 
         private Vector2 screenSize;
+        /// <summary>
+        /// Size of the screen to be projected onto.
+        /// </summary>
         public Vector2 ScreenSize {
             get => screenSize;
             set {
@@ -15,6 +30,9 @@ namespace BulletHell {
         }
 
         private float zoom;
+        /// <summary>
+        /// How many world units high the screen is.
+        /// </summary>
         public float Zoom {
             get => zoom;
             set {

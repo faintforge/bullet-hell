@@ -2,26 +2,38 @@ using System.Diagnostics;
 
 namespace BulletHell {
     public class Profile {
+        /// <summary>
+        /// Name identifier of profile.
+        /// </summary>
         public string Name { get; }
+        /// <summary>
+        /// Average duration of a single call.
+        /// </summary>
         public double AverageDuration { get; private set; }
+        /// <summary>
+        /// Total time spent executing this profile.
+        /// </summary>
         public double TotalDuration { get; private set; }
+        /// <summary>
+        /// Total times this profile has been called.
+        /// </summary>
         public int CallCount { get; private set; }
-        public Profile? Parent { get; }
+
+        internal Profile? Parent { get; }
         private Stopwatch stopwatch = new Stopwatch();
+        internal Dictionary<string, Profile> ChildProfiles = new Dictionary<string, Profile>();
 
-        public Dictionary<string, Profile> ChildProfiles = new Dictionary<string, Profile>();
-
-        public Profile(Profile? parent, string name) {
+        internal Profile(Profile? parent, string name) {
             Parent = parent;
             Name = name;
         }
 
-        public void Start() {
+        internal void Start() {
             CallCount++;
             stopwatch = Stopwatch.StartNew();
         }
 
-        public void End() {
+        internal void End() {
             stopwatch.Stop();
             TotalDuration += stopwatch.Elapsed.TotalMilliseconds;
             AverageDuration = TotalDuration / CallCount;
@@ -30,6 +42,9 @@ namespace BulletHell {
 
     public class Profiler {
         private static Profiler? instance;
+        /// <summary>
+        /// Singelton instance of this class.
+        /// </summary>
         public static Profiler Instance {
             get {
                 if (instance == null) {
@@ -39,12 +54,19 @@ namespace BulletHell {
             }
         }
 
+        /// <summary>
+        /// All profiles stored with their name as their key.
+        /// </summary>
         public Dictionary<string, Profile> Profiles { get; private set; } = new Dictionary<string, Profile>();
         private Profile? currentProfile = null;
 
         private Profiler() {}
 
-        // [Conditional("DEBUG")]
+        /// <summary>
+        /// Start scope of a profile.
+        /// </summary>
+        /// <param name="name">Name of profile.</param>
+        [Conditional("DEBUG")]
         public void Start(string name) {
             Profile? profile;
             if (currentProfile == null) {
@@ -62,14 +84,20 @@ namespace BulletHell {
             currentProfile = profile;
         }
 
-        // [Conditional("DEBUG")]
+        /// <summary>
+        /// End scope of a profile.
+        /// </summary>
+        [Conditional("DEBUG")]
         public void End() {
             System.Diagnostics.Debug.Assert(currentProfile != null);
             currentProfile.End();
             currentProfile = currentProfile.Parent;
         }
 
-        // [Conditional("DEBUG")]
+        /// <summary>
+        /// Reset the profiler for a new frame of profiling.
+        /// </summary>
+        [Conditional("DEBUG")]
         public void Reset() {
             Profiles = new Dictionary<string, Profile>();
         }

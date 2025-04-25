@@ -223,7 +223,7 @@ namespace BulletHell {
                 }
             }
         }
-
+         
         private void BuildDebugUI() {
             debugUI.Begin(Input.Instance.MousePosition);
             Widget root = debugUI.MakeWidget("root");

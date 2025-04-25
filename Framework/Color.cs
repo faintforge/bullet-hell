@@ -3,16 +3,46 @@ using System.Runtime.InteropServices;
 namespace BulletHell {
     [StructLayout(LayoutKind.Sequential)]
     public struct Color {
+        /// <summary>
+        /// White color constant.
+        /// </summary>
         public readonly static Color WHITE = Color.HexRGB(0xffffff);
+        /// <summary>
+        /// Black color constant.
+        /// </summary>
         public readonly static Color BLACK = Color.HexRGB(0x000000);
+        /// <summary>
+        /// Red color constant.
+        /// </summary>
         public readonly static Color RED = Color.HexRGB(0xff0000);
+        /// <summary>
+        /// Green color contanst.
+        /// </summary>
         public readonly static Color GREEN = Color.HexRGB(0x00ff00);
+        /// <summary>
+        /// Blue color constant.
+        /// </summary>
         public readonly static Color BLUE = Color.HexRGB(0x0000ff);
+        /// <summary>
+        /// Fully transparent color constant.
+        /// </summary>
         public readonly static Color TRASNPARENT = Color.HexRGBA(0x00000000);
 
+        /// <summary>
+        /// Red channel.
+        /// </summary>
         public float R { get; set; }
+        /// <summary>
+        /// Green channel.
+        /// </summary>
         public float G { get; set; }
+        /// <summary>
+        /// Blue channel.
+        /// </summary>
         public float B { get; set; }
+        /// <summary>
+        /// Alpha channel.
+        /// </summary>
         public float A { get; set; }
 
         /// <summary>
