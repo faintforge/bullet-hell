@@ -264,8 +264,8 @@ namespace BulletHell {
                 panel.MakeWidget("paddingohwieufhwieuf")
                     .FixedHeight(8);
 
-                if (Button("Restart", panel)) {
-                    gameState.InteractiveScene = new Game(window, renderer);
+                if (Button("Resume", panel)) {
+                    paused = false;
                 }
 
                 panel.MakeWidget("paddingowieuhrwieurhiwuer")

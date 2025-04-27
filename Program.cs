@@ -123,6 +123,18 @@ namespace BulletHell {
                 window.Close();
             }
 
+#if DEBUG
+            Widget debugContainer = ui.MakeWidget("debug_container")
+                .Floating(new Vector2())
+                .FitChildren();
+            debugContainer.MakeWidget("Debug information is shown in debug builds.")
+                .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE)
+                .FitText();
+            debugContainer.MakeWidget("To turn it off, run the game in release mode.")
+                .ShowText(AssetManager.Instance.GetFont("roboto_mono"), Color.WHITE)
+                .FitText();
+#endif
+
             ui.End();
             ui.Draw(renderer, window.Size);
         }
