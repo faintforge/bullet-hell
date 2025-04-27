@@ -9,8 +9,8 @@ namespace BulletHell {
             spawner.Player = player;
         }
 
-        public override void Run(float deltaTime) {
-            base.Run(deltaTime);
+        public override void Run(GameState gameState) {
+            base.Run(gameState);
 
             if (player.Health > 0) {
                 updating = !player.LeveledWithoutUpgrade;

@@ -3,30 +3,6 @@ using SDL2;
 
 namespace BulletHell {
     internal class Program {
-        private enum Scene {
-            MainMenu,
-            Tutorial,
-            Game,
-        }
-
-        private static void PrintProfilesHelper(Profile profile, int depth) {
-            string spaces = "";
-            for (int i = 0; i < depth * 4; i++) {
-                spaces += ' ';
-            }
-            Console.WriteLine($"{spaces}{profile.TotalDuration:0.00}ms {profile.AverageDuration:0.00}ms {profile.CallCount} call(s) - {profile.Name}");
-
-            foreach (Profile prof in profile.ChildProfiles.Values) {
-                PrintProfilesHelper(prof, depth + 1);
-            }
-        }
-
-        private static void PrintProfiles() {
-            foreach (Profile prof in Profiler.Instance.Profiles.Values) {
-                PrintProfilesHelper(prof, 0);
-            }
-        }
-
         private static void Main(string[] args) {
             Window window = new Window(
                     "Window",
@@ -37,7 +13,7 @@ namespace BulletHell {
                 );
             Renderer renderer = new Renderer();
             UI mainMenuUI = new UI();
-            Scene scene = Scene.MainMenu;
+            GameState gameState = new GameState();
 
             LoadAssets();
 
@@ -48,10 +24,9 @@ namespace BulletHell {
             uint lastFps = SDL.SDL_GetTicks();
 
             uint last = SDL.SDL_GetTicks();
-            float dt;
             while (window.Open) {
                 uint curr = SDL.SDL_GetTicks();
-                dt = (curr - last) / 1000.0f;
+                gameState.DeltaTime = (curr - last) / 1000.0f;
                 last = curr;
 
                 fps++;
@@ -61,15 +36,14 @@ namespace BulletHell {
                     lastFps = SDL.SDL_GetTicks();
                 }
 
-                switch (scene) {
+                switch (gameState.Scene) {
                     case Scene.MainMenu:
-                        MainMenu(window, renderer, ref scene, mainMenuUI);
-                        break;
-                    case Scene.Tutorial:
-                        tutorial.Run(dt);
+                        MainMenu(window, renderer, gameState, mainMenuUI);
                         break;
                     case Scene.Game:
-                        game.Run(dt);
+                        if (gameState.InteractiveScene != null) {
+                            gameState.InteractiveScene.Run(gameState);
+                        }
                         break;
                 }
 
@@ -112,7 +86,7 @@ namespace BulletHell {
             return false;
         }
 
-        private static void MainMenu(Window window, Renderer renderer, ref Scene scene, UI ui) {
+        private static void MainMenu(Window window, Renderer renderer, GameState gameState, UI ui) {
             GL.Viewport(0, 0, (int) window.Size.X, (int) window.Size.Y);
             GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
@@ -134,12 +108,14 @@ namespace BulletHell {
             panel.MakeWidget("padding1")
                 .FixedHeight(8);
             if (Button("Play", panel)) {
-                scene = Scene.Game;
+                gameState.Scene = Scene.Game;
+                gameState.InteractiveScene = new Game(window, renderer);
             }
             panel.MakeWidget("padding3")
                 .FixedHeight(8);
             if (Button("Tutorial", panel)) {
-                scene = Scene.Tutorial;
+                gameState.Scene = Scene.Game;
+                gameState.InteractiveScene = new Tutorial(window, renderer);
             }
             panel.MakeWidget("padding2")
                 .FixedHeight(8);

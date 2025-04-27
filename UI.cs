@@ -51,7 +51,7 @@ namespace BulletHell {
 
             // Widget has already been used this frame.
             if (widget.lastTouchFrame == currentFrame) {
-                throw new Exception("Duplicate widget ID:s are not allowed!");
+                throw new Exception($"Duplicate widget ID:s ({id}) are not allowed!");
             }
 
             widget.lastTouchFrame = currentFrame;
