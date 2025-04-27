@@ -7,7 +7,7 @@ namespace BulletHell {
         public Rat(World world) : base(world) {
             Texture = AssetManager.Instance.GetTexture("rat");
             Transform.Size = Texture.Size;
-            MaxHealth = 2;
+            MaxHealth = 20;
         }
 
         public override void AI(float deltaTime) {

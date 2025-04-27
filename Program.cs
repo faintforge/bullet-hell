@@ -5,6 +5,7 @@ namespace BulletHell {
     internal class Program {
         private enum Scene {
             MainMenu,
+            Tutorial,
             Game,
         }
 
@@ -32,7 +33,7 @@ namespace BulletHell {
                     800, 600,
                     resizable: false,
                     vsync: true,
-                    fullscreen: false
+                    fullscreen: true
                 );
             Renderer renderer = new Renderer();
             UI mainMenuUI = new UI();
@@ -41,6 +42,7 @@ namespace BulletHell {
             LoadAssets();
 
             Game game = new Game(window, renderer);
+            Tutorial tutorial = new Tutorial(window, renderer);
 
             int fps = 0;
             uint lastFps = SDL.SDL_GetTicks();
@@ -62,6 +64,9 @@ namespace BulletHell {
                 switch (scene) {
                     case Scene.MainMenu:
                         MainMenu(window, renderer, ref scene, mainMenuUI);
+                        break;
+                    case Scene.Tutorial:
+                        tutorial.Run(dt);
                         break;
                     case Scene.Game:
                         game.Run(dt);
@@ -94,6 +99,19 @@ namespace BulletHell {
             AssetManager.Instance.LoadTexture("rat", "assets/textures/rat.png", TextureFilter.Nearest);
         }
 
+        private static bool Button(string text, Widget container) {
+            Widget quitBtn = container.MakeWidget(text)
+                .ShowText(AssetManager.Instance.GetFont("lato32"), Color.WHITE)
+                .Background(Color.HexRGB(0x212121))
+                .AlignText(WidgetTextAlignment.Center)
+                .FixedSize(new Vector2(128, 64));
+            if (quitBtn.Signal().Hovered) {
+                quitBtn.Background(Color.HexRGB(0x303030));
+                return Input.Instance.GetButtonOnDown(MouseButton.Left);
+            }
+            return false;
+        }
+
         private static void MainMenu(Window window, Renderer renderer, ref Scene scene, UI ui) {
             GL.Viewport(0, 0, (int) window.Size.X, (int) window.Size.Y);
             GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -115,30 +133,18 @@ namespace BulletHell {
                 .FitText();
             panel.MakeWidget("padding1")
                 .FixedHeight(8);
-
-            Widget playBtn = panel.MakeWidget("Play")
-                .ShowText(AssetManager.Instance.GetFont("lato32"), Color.WHITE)
-                .Background(Color.HexRGB(0x212121))
-                .AlignText(WidgetTextAlignment.Center)
-                .FixedSize(new Vector2(96, 64));
+            if (Button("Play", panel)) {
+                scene = Scene.Game;
+            }
+            panel.MakeWidget("padding3")
+                .FixedHeight(8);
+            if (Button("Tutorial", panel)) {
+                scene = Scene.Tutorial;
+            }
             panel.MakeWidget("padding2")
                 .FixedHeight(8);
-            if (playBtn.Signal().Hovered) {
-                playBtn.Background(Color.HexRGB(0x303030));
-                if (Input.Instance.GetButtonOnDown(MouseButton.Left)) {
-                    scene = Scene.Game;
-                }
-            }
-
-            Widget quitBtn = panel.MakeWidget("Quit")
-                .ShowText(AssetManager.Instance.GetFont("lato32"), Color.WHITE)
-                .Background(Color.HexRGB(0x212121))
-                .AlignText(WidgetTextAlignment.Center)
-                .FixedSize(new Vector2(96, 64));
-            if (quitBtn.Signal().Hovered) {
-                quitBtn.Background(Color.HexRGB(0x303030));
-                if (Input.Instance.GetButtonOnDown(MouseButton.Left)) {
-                }
+            if (Button("Quit", panel)) {
+                window.Close();
             }
 
             ui.End();

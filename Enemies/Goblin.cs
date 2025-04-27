@@ -7,7 +7,7 @@ namespace BulletHell {
         public Goblin(World world) : base(world) {
             Texture = AssetManager.Instance.GetTexture("goblin");
             Transform.Size = Texture.Size;
-            MaxHealth = 1;
+            MaxHealth = 10;
         }
 
         public override void AI(float deltaTime) {
