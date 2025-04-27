@@ -52,6 +52,42 @@ namespace BulletHell {
             }
         }
 
+        private void SpawnGrid(Vector2 center, Vector2 gapSize) {
+            if (target == null) {
+                return;
+            }
+
+            Vector2 screenTL = world.Camera.ScreenToWorldSpace(new Vector2());
+            Vector2 screenBR = world.Camera.ScreenToWorldSpace(world.Camera.ScreenSize);
+
+            Vector2 screenSize = screenBR - screenTL;
+            screenSize.Y = MathF.Abs(screenSize.Y);
+
+            Vector2 segmentPerScreen = screenSize / 16.0f;
+            Vector2 gridCount = screenSize / gapSize + 4.0f;
+            gridCount /= 2.0f;
+            Vector2 gridMin = -new Vector2(MathF.Floor(gridCount.X), MathF.Floor(gridCount.Y));
+            Vector2 gridMax = new Vector2(MathF.Ceiling(gridCount.X), MathF.Ceiling(gridCount.Y));
+            gridCount *= 2.0f;
+
+            // Horizontal indicators
+            for (float gridY = gridMin.Y; gridY < gridMax.Y; gridY++) {
+                for (float x = MathF.Floor(gridMin.X * gapSize.X / 16.0f); x < MathF.Ceiling(gridMax.X * gapSize.X / 16.0f); x++) {
+                    BeamIndicator indicatorSegment = world.SpawnEntity<BeamIndicator>();
+                    indicatorSegment.Transform.Pos = center + new Vector2(x, 0.0f) * 16.0f + new Vector2(0.0f, gridY) * gapSize;;
+                    indicatorSegment.Transform.Rot = MathF.PI / 2.0f;
+                }
+            }
+
+            // Vertical indicators
+            for (float gridX = gridMin.X; gridX < gridMax.X; gridX++) {
+                for (float y = MathF.Floor(gridMin.Y * gapSize.Y / 16.0f); y < MathF.Ceiling(gridMax.Y * gapSize.Y / 16.0f); y++) {
+                    BeamIndicator indicatorSegment = world.SpawnEntity<BeamIndicator>();
+                    indicatorSegment.Transform.Pos = center + new Vector2(0.0f, y) * 16.0f + new Vector2(gridX, 0.0f) * gapSize;
+                }
+            }
+        }
+
         public override void AI(float deltaTime) {
             if (target == null) {
                 world.OperateOnEntities((entity) => {
@@ -163,39 +199,33 @@ namespace BulletHell {
             }
         }
 
-        private void SpawnGrid(Vector2 center, Vector2 gapSize) {
-            if (target == null) {
-                return;
-            }
+        public override void OnKill() {
+            ParticleEmitter emitter = world.SpawnEntity<ParticleEmitter>();
+            emitter.Cfg = new ParticleEmitter.Config() {
+                Parent = this,
+                SpawnRadius = 16.0f,
+                SpawnAngle = 2.0f * MathF.PI,
+                Color = Color.HexRGB(0xc65197),
+                Size = new Vector2(2.0f),
+                Count = 1000,
+                Time = 0.0f,
+                FinalSize = 0.5f,
+                FinalOpacity = 0.0f,
+                MinLifespan = 0.0f,
+                MaxLifespan = 0.5f,
+                VelocitySpeedMax = 100.0f,
+            };
+            emitter.Kill();
 
-            Vector2 screenTL = world.Camera.ScreenToWorldSpace(new Vector2());
-            Vector2 screenBR = world.Camera.ScreenToWorldSpace(world.Camera.ScreenSize);
-
-            Vector2 screenSize = screenBR - screenTL;
-            screenSize.Y = MathF.Abs(screenSize.Y);
-
-            Vector2 segmentPerScreen = screenSize / 16.0f;
-            Vector2 gridCount = screenSize / gapSize + 4.0f;
-            gridCount /= 2.0f;
-            Vector2 gridMin = -new Vector2(MathF.Floor(gridCount.X), MathF.Floor(gridCount.Y));
-            Vector2 gridMax = new Vector2(MathF.Ceiling(gridCount.X), MathF.Ceiling(gridCount.Y));
-            gridCount *= 2.0f;
-
-            // Horizontal indicators
-            for (float gridY = gridMin.Y; gridY < gridMax.Y; gridY++) {
-                for (float x = MathF.Floor(gridMin.X * gapSize.X / 16.0f); x < MathF.Ceiling(gridMax.X * gapSize.X / 16.0f); x++) {
-                    BeamIndicator indicatorSegment = world.SpawnEntity<BeamIndicator>();
-                    indicatorSegment.Transform.Pos = center + new Vector2(x, 0.0f) * 16.0f + new Vector2(0.0f, gridY) * gapSize;;
-                    indicatorSegment.Transform.Rot = MathF.PI / 2.0f;
-                }
-            }
-
-            // Vertical indicators
-            for (float gridX = gridMin.X; gridX < gridMax.X; gridX++) {
-                for (float y = MathF.Floor(gridMin.Y * gapSize.Y / 16.0f); y < MathF.Ceiling(gridMax.Y * gapSize.Y / 16.0f); y++) {
-                    BeamIndicator indicatorSegment = world.SpawnEntity<BeamIndicator>();
-                    indicatorSegment.Transform.Pos = center + new Vector2(0.0f, y) * 16.0f + new Vector2(gridX, 0.0f) * gapSize;
-                }
+            // Spawn XP on death
+            float spawnRadius = 8.0f;
+            Random rng = new Random();
+            for (int i = 0; i < rng.Next(1, 9); i++) {
+                float angle = (float) rng.NextDouble() * 2.0f * MathF.PI;
+                float distance = spawnRadius * MathF.Sqrt((float) rng.NextDouble());
+                Vector2 pos = Vector2.FromAngle(angle) * distance;
+                XpPoint xp = world.SpawnEntity<XpPoint>();
+                xp.Transform.Pos = Transform.Pos + pos;
             }
         }
     }

@@ -37,7 +37,7 @@ namespace BulletHell {
         private void BuildDebugUIHelper(Profile profile, Widget parent, int depth) {
             Font font = AssetManager.Instance.GetFont("roboto_mono");
             string text = $"{profile.TotalDuration:0.00}ms {profile.AverageDuration:0.00}ms {profile.CallCount} call(s) - {profile.Name}##{depth}";
-            Widget container = parent.MakeWidget($"##container{profile.GetHashCode()}")
+            Widget container = parent.MakeWidget($"##container{profile.GetHashCode()}{depth}")
                 .FitChildren()
                 .FlowHorizontal();
             container.MakeWidget($"##padding{depth}{profile.GetHashCode()}")
