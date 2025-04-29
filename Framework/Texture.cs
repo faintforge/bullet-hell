@@ -15,6 +15,10 @@ namespace BulletHell {
 
     public class Texture {
         private int handle;
+
+        /// <summary>
+        /// Size of texture in pixels.
+        /// </summary>
         public Vector2 Size { get; private set; }
 
         private Texture() { }

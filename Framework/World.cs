@@ -1,11 +1,18 @@
 namespace BulletHell {
     public class World {
+        /// <summary>
+        /// List of alive entities.
+        /// </summary>
         public List<Entity> Entities { get; } = new List<Entity>();
+
         private ISpatialPartitioner spatialStructure;
 
         private List<Entity> spawnQueue = new List<Entity>();
         private List<Entity> killQueue = new List<Entity>();
 
+        /// <summary>
+        /// Camera to render the current world.
+        /// </summary>
         public Camera Camera { get; set; } = new Camera(new Vector2(), new Vector2(), 0.0f);
 
         /// <summary>

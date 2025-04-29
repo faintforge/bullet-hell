@@ -4,7 +4,13 @@ using System.Runtime.InteropServices;
 namespace BulletHell {
     [StructLayout(LayoutKind.Sequential)]
     public struct Vector2 {
+        /// <summary>
+        /// X component.
+        /// </summary>
         public float X { get; set; } = 0.0f;
+        /// <summary>
+        /// Y component.
+        /// </summary>
         public float Y { get; set; } = 0.0f;
 
         /// <summary>
@@ -93,25 +99,109 @@ namespace BulletHell {
         /// <returns>Difference of vector and scaler.</returns>
         public Vector2 Sub(float scaler) { return new Vector2(X - scaler, Y - scaler); }
 
+        /// <summary>
+        /// Element wise multiply two vectors together.
+        /// </summary>
+        /// <param name="a">Left side of expression.</param>
+        /// <param name="b">Right side of expression.</param>
+        /// <returns>Product of the multiplication.</returns>
         public static Vector2 operator *(Vector2 a, Vector2 b) => a.Mul(b);
+
+        /// <summary>
+        /// Element wise division between two vectors.
+        /// </summary>
+        /// <param name="a">Dividend.</param>
+        /// <param name="b">Divisor.</param>
+        /// <returns>Quotient of the operation.</returns>
         public static Vector2 operator /(Vector2 a, Vector2 b) => a.Div(b);
+
+        /// <summary>
+        /// Element wise additin of two vectors.
+        /// </summary>
+        /// <param name="a">Left side of expression.</param>
+        /// <param name="b">Right side of expression.</param>
+        /// <returns>Sum of the addition.</returns>
         public static Vector2 operator +(Vector2 a, Vector2 b) => a.Add(b);
+
+        /// <summary>
+        /// Element wise subtraction of two vectors.
+        /// </summary>
+        /// <param name="a">Left side of expression.</param>
+        /// <param name="b">Right side of expression.</param>
+        /// <returns>Difference of the subtraction.</returns>
         public static Vector2 operator -(Vector2 a, Vector2 b) => a.Sub(b);
+
+        /// <summary>
+        /// Negation operator.
+        /// </summary>
+        /// <param name="a">Vector to negate.</param>
+        /// <returns>Inverted vector.</returns>
         public static Vector2 operator -(Vector2 a) => new Vector2(-a.X, -a.Y);
 
+        /// <summary>
+        /// Scaler multiplication.
+        /// </summary>
+        /// <param name="vec">Vector.</param>
+        /// <param name="scaler">Scaler.</param>
+        /// <returns>Scaled vector.</returns>
         public static Vector2 operator *(Vector2 vec, float scaler) => vec.Mul(scaler);
+
+        /// <summary>
+        /// Scaler division.
+        /// </summary>
+        /// <param name="vec">Vector.</param>
+        /// <param name="scaler">Scaler.</param>
+        /// <returns>Scaler divided vector.</returns>
         public static Vector2 operator /(Vector2 vec, float scaler) => vec.Div(scaler);
+
+        /// <summary>
+        /// Scaler addition.
+        /// </summary>
+        /// <param name="vec">Vector.</param>
+        /// <param name="scaler">Scaler.</param>
+        /// <returns>Scaler added vector.</returns>
         public static Vector2 operator +(Vector2 vec, float scaler) => vec.Add(scaler);
+
+        /// <summary>
+        /// Scaler subtraction.
+        /// </summary>
+        /// <param name="vec">Vector.</param>
+        /// <param name="scaler">Scaler.</param>
+        /// <returns>Scaler subtracted vector.</returns>
         public static Vector2 operator -(Vector2 vec, float scaler) => vec.Sub(scaler);
 
+        /// <summary>
+        /// Equality operator.
+        /// </summary>
+        /// <param name="a">Left side of expression.</param>
+        /// <param name="b">Right side of expression.</param>
+        /// <returns>True if a and b are equal, false if not.</returns>
         public static bool operator ==(Vector2 a, Vector2 b) { return a.X == b.X && a.Y == b.Y; }
+
+        /// <summary>
+        /// Not equal operator.
+        /// </summary>
+        /// <param name="a">Left side of expression.</param>
+        /// <param name="b">Right side of expression.</param>
+        /// <returns>True if a and b are not equal, false if not.</returns>
         public static bool operator !=(Vector2 a, Vector2 b) { return a.X != b.X || a.Y != b.Y; }
+
+        /// <summary>
+        /// Equality check with objects.
+        /// </summary>
+        /// <param name="obj">Object.</param>
+        /// <returns>The equality between the object and vector.</returns>
         public override bool Equals([NotNullWhen(true)] object? obj) {
             if (obj == null) {
                 return false;
             }
             return this == (Vector2) obj;
         }
+
+        /// <summary>
+        /// Gets 32-bit integer hash from object.
+        /// </summary>
+        /// <returns>32-bit integer hash.</returns>
         public override int GetHashCode() { return base.GetHashCode(); }
 
         /// <summary>

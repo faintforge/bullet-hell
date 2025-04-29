@@ -15,7 +15,14 @@ namespace BulletHell {
         private IntPtr sdlGLContext;
         private bool fullscreen;
 
+        /// <summary>
+        /// Whether the window is open or not.
+        /// </summary>
         public bool Open { get; private set; } = true;
+
+        /// <summary>
+        /// Size of the window.
+        /// </summary>
         public Vector2 Size { get; private set; }
 
         /// <summary>

@@ -118,6 +118,7 @@ namespace BulletHell {
                         .FixedHeight(512);
                     if (!player.LeveledWithoutUpgrade) {
                         stage = Stage.Finished;
+                        gameState.InteractiveScene = new Game(window, renderer);
                     }
                     break;
                 case Stage.Finished:

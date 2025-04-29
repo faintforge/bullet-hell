@@ -16,14 +16,18 @@ namespace BulletHell {
         private int vertexArray;
         private int vertexBuffer;
         private int indexBuffer;
+
         private int maxQuadCount = 0;
         private int currentQuad = 0;
-        private Shader shader;
-        private Texture[] textures = new Texture[32];
-        private int currentTexture = 1;
-        private Camera cam;
 
         private Vertex[] vertices;
+
+        private Shader shader;
+
+        private Camera cam;
+
+        private Texture[] textures = new Texture[32];
+        private int currentTexture = 1;
 
         /// <summary>
         /// Create a batch renderer.
@@ -230,7 +234,7 @@ namespace BulletHell {
         /// <param name="font">Font to use.</param>
         /// <param name="position">Top left position of text.</param>
         /// <param name="color">Color of text.</param>
-        /// <returns>Size of drawn width.</returns>
+        /// <returns>Size of drawn text.</returns>
         public Vector2 DrawText(string text, Font font, Vector2 position, Color color) {
             Vector2 glyphPos = position;
             glyphPos.X = MathF.Round(glyphPos.X);

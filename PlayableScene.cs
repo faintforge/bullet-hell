@@ -18,6 +18,136 @@ namespace BulletHell {
             player = world.SpawnEntity<Player>();
         }
 
+        private static bool Button(string text, Widget container) {
+            Widget quitBtn = container.MakeWidget(text)
+                .ShowText(AssetManager.Instance.GetFont("lato32"), Color.WHITE)
+                .Background(Color.HexRGB(0x212121))
+                .AlignText(WidgetTextAlignment.Center)
+                .FixedSize(new Vector2(192, 64));
+            if (quitBtn.Signal().Hovered) {
+                quitBtn.Background(Color.HexRGB(0x303030));
+                return Input.Instance.GetButtonOnDown(MouseButton.Left);
+            }
+            return false;
+        }
+
+        public virtual void Run(GameState gameState) {
+            Debug.Instance.Camera = world.Camera;
+
+            GL.Viewport(0, 0, (int) window.Size.X, (int) window.Size.Y);
+            Color clearColor = Color.HexRGB(0x090a14);
+            GL.ClearColor(clearColor.R, clearColor.G, clearColor.B, clearColor.A);
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+
+            if (updating && !paused) {
+                world.Update(gameState.DeltaTime);
+            }
+
+            world.Camera.ScreenSize = window.Size;
+            renderer.BeginFrame(world.Camera);
+            world.OperateOnEntities((entity) => {
+                    if (!entity.Render) {
+                        return;
+                    }
+                    renderer.Draw(
+                        entity.Transform,
+                        entity.Color,
+                        entity.Texture);
+                });
+            renderer.EndFrame();
+
+            Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);
+            Font font = AssetManager.Instance.GetFont("lato32");
+
+            hud.Begin(Input.Instance.MousePosition);
+
+            BuildHealthBars();
+            BuildPlayerHUD(player);
+
+            if (player.Health <= 0) {
+                player.Health = 0;
+                updating = false;
+
+                Widget container = hud.MakeWidget("game_over_container")
+                    .FixedSize(window.Size)
+                    .Floating(new Vector2())
+                    .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center);
+
+                Widget panel = container.MakeWidget("game_over_panel")
+                    .Background(Color.HexRGBA(0x394a50))
+                    .FixedSize(new Vector2(256, 320))
+                    .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center);
+                panel.MakeWidget("Game Over")
+                    .FitText()
+                    .ShowText(AssetManager.Instance.GetFont("lato48"), Color.HexRGB(0xcf573c));
+
+                panel.MakeWidget("paddingohwieufhwieuf")
+                    .FixedHeight(8);
+
+                if (Button("Restart", panel)) {
+                    gameState.InteractiveScene = new Game(window, renderer);
+                }
+
+                panel.MakeWidget("paddingowieuhrwieurhiwuer")
+                    .FixedHeight(8);
+
+                if (Button("Main Menu", panel)) {
+                    gameState.Scene = Scene.MainMenu;
+                }
+
+                panel.MakeWidget("paddingiu234yukhsjbf")
+                    .FixedHeight(8);
+
+                if (Button("Quit", panel)) {
+                    window.Close();
+                }
+            }
+
+            if (paused) {
+                font = AssetManager.Instance.GetFont("lato32");
+                Widget container = hud.MakeWidget("paused_container")
+                    .FixedSize(window.Size)
+                    .Floating(new Vector2())
+                    .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center);
+
+                Widget panel = container.MakeWidget("paused_panel")
+                    .Background(Color.HexRGB(0x151d28))
+                    .FixedSize(new Vector2(256, 320))
+                    .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center);
+                panel.MakeWidget("Paused")
+                    .FitText()
+                    .ShowText(AssetManager.Instance.GetFont("lato48"), Color.HexRGB(0xde9e41));
+
+                panel.MakeWidget("paddingohwieufhwieuf")
+                    .FixedHeight(8);
+
+                if (Button("Resume", panel)) {
+                    paused = false;
+                }
+
+                panel.MakeWidget("paddingowieuhrwieurhiwuer")
+                    .FixedHeight(8);
+
+                if (Button("Main Menu", panel)) {
+                    gameState.Scene = Scene.MainMenu;
+                }
+
+                panel.MakeWidget("paddingiu234yukhsjbf")
+                    .FixedHeight(8);
+
+                if (Button("Quit", panel)) {
+                    window.Close();
+                }
+            }
+
+            if (Input.Instance.GetKeyOnDown(SDL.SDL_Keycode.SDLK_ESCAPE)) {
+                paused = !paused;
+            }
+
+            hud.End();
+            hud.Draw(renderer, window.Size);
+        }
+
         private void BuildUpgradeMenu() {
             Widget fullscreenContainer = hud.MakeWidget("##fullscreenContainer-aiuohweoih")
                 .FixedSize(window.Size)
@@ -161,134 +291,5 @@ namespace BulletHell {
             });
         }
 
-        private static bool Button(string text, Widget container) {
-            Widget quitBtn = container.MakeWidget(text)
-                .ShowText(AssetManager.Instance.GetFont("lato32"), Color.WHITE)
-                .Background(Color.HexRGB(0x212121))
-                .AlignText(WidgetTextAlignment.Center)
-                .FixedSize(new Vector2(192, 64));
-            if (quitBtn.Signal().Hovered) {
-                quitBtn.Background(Color.HexRGB(0x303030));
-                return Input.Instance.GetButtonOnDown(MouseButton.Left);
-            }
-            return false;
-        }
-
-        public virtual void Run(GameState gameState) {
-            Debug.Instance.Camera = world.Camera;
-
-            GL.Viewport(0, 0, (int) window.Size.X, (int) window.Size.Y);
-            Color clearColor = Color.HexRGB(0x090a14);
-            GL.ClearColor(clearColor.R, clearColor.G, clearColor.B, clearColor.A);
-            GL.Clear(ClearBufferMask.ColorBufferBit);
-
-            if (updating && !paused) {
-                world.Update(gameState.DeltaTime);
-            }
-
-            world.Camera.ScreenSize = window.Size;
-            renderer.BeginFrame(world.Camera);
-            world.OperateOnEntities((entity) => {
-                    if (!entity.Render) {
-                        return;
-                    }
-                    renderer.Draw(
-                        entity.Transform,
-                        entity.Color,
-                        entity.Texture);
-                });
-            renderer.EndFrame();
-
-            Camera uiCam = new Camera(window.Size, window.Size / 2.0f, window.Size.Y, true);
-            Font font = AssetManager.Instance.GetFont("lato32");
-
-            hud.Begin(Input.Instance.MousePosition);
-
-            BuildHealthBars();
-            BuildPlayerHUD(player);
-
-            if (player.Health <= 0) {
-                player.Health = 0;
-                updating = false;
-
-                Widget container = hud.MakeWidget("game_over_container")
-                    .FixedSize(window.Size)
-                    .Floating(new Vector2())
-                    .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center);
-
-                Widget panel = container.MakeWidget("game_over_panel")
-                    .Background(Color.HexRGBA(0x394a50))
-                    .FixedSize(new Vector2(256, 320))
-                    .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center);
-                panel.MakeWidget("Game Over")
-                    .FitText()
-                    .ShowText(AssetManager.Instance.GetFont("lato48"), Color.HexRGB(0xcf573c));
-
-                panel.MakeWidget("paddingohwieufhwieuf")
-                    .FixedHeight(8);
-
-                if (Button("Restart", panel)) {
-                    gameState.InteractiveScene = new Game(window, renderer);
-                }
-
-                panel.MakeWidget("paddingowieuhrwieurhiwuer")
-                    .FixedHeight(8);
-
-                if (Button("Main Menu", panel)) {
-                    gameState.Scene = Scene.MainMenu;
-                }
-
-                panel.MakeWidget("paddingiu234yukhsjbf")
-                    .FixedHeight(8);
-
-                if (Button("Quit", panel)) {
-                    window.Close();
-                }
-            }
-
-            if (paused) {
-                font = AssetManager.Instance.GetFont("lato32");
-                Widget container = hud.MakeWidget("paused_container")
-                    .FixedSize(window.Size)
-                    .Floating(new Vector2())
-                    .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center);
-
-                Widget panel = container.MakeWidget("paused_panel")
-                    .Background(Color.HexRGB(0x151d28))
-                    .FixedSize(new Vector2(256, 320))
-                    .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center);
-                panel.MakeWidget("Paused")
-                    .FitText()
-                    .ShowText(AssetManager.Instance.GetFont("lato48"), Color.HexRGB(0xde9e41));
-
-                panel.MakeWidget("paddingohwieufhwieuf")
-                    .FixedHeight(8);
-
-                if (Button("Resume", panel)) {
-                    paused = false;
-                }
-
-                panel.MakeWidget("paddingowieuhrwieurhiwuer")
-                    .FixedHeight(8);
-
-                if (Button("Main Menu", panel)) {
-                    gameState.Scene = Scene.MainMenu;
-                }
-
-                panel.MakeWidget("paddingiu234yukhsjbf")
-                    .FixedHeight(8);
-
-                if (Button("Quit", panel)) {
-                    window.Close();
-                }
-            }
-
-            if (Input.Instance.GetKeyOnDown(SDL.SDL_Keycode.SDLK_ESCAPE)) {
-                paused = !paused;
-            }
-
-            hud.End();
-            hud.Draw(renderer, window.Size);
-        }
     }
 }

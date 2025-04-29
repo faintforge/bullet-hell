@@ -173,18 +173,28 @@ namespace BulletHell {
             }
         }
 
-        public int MaxDepth { get; }
-        public int MaxCapacity { get; }
+        internal int MaxDepth { get; }
+        internal int MaxCapacity { get; }
         private int root;
         private List<Node> nodePool = new List<Node>();
         private int currentNode = 0;
 
+        /// <summary>
+        /// Create a quadtree instance.
+        /// </summary>
+        /// <param name="area">Area covered by the quadtree.</param>
+        /// <param name="maxDepth">Maximum amount of subdivisions possible.</param>
+        /// <param name="maxCapacity">Maximum amount of objects in a cell before subdividing.</param>
         public Quadtree(AABB area, int maxDepth, int maxCapacity) {
             MaxDepth = maxDepth;
             MaxCapacity = maxCapacity;
             root = GetNewNode(area);
         }
 
+        /// <summary>
+        /// Insert an entity into the quadtree.
+        /// </summary>
+        /// <param name="entity">Entity to insert.</param>
         public void Insert(Entity entity) {
             nodePool[root].Insert(new Bucket() {
                     Entity = entity,
@@ -192,19 +202,36 @@ namespace BulletHell {
                 }, 0);
         }
 
+        /// <summary>
+        /// Query quadtree for enemies intersecting a circle.
+        /// </summary>
+        /// <param name="position">Center point of circle.</param>
+        /// <param name="radius">Radius of circle.</param>
+        /// <returns>List of entities intersecting the circle.</returns>
         public List<Entity> Query(Vector2 position, float radius) {
             return nodePool[root].Query(position, radius);
         }
 
+        /// <summary>
+        /// Query quadtree for enemies intersecting a rectangle.
+        /// </summary>
+        /// <param name="box">Rectangle to check against.</param>
+        /// <returns>List of entities intersecting rectangle.</returns>
         public List<Entity> Query(Box box) {
             return nodePool[root].Query(box.GetBoundingAABB(), box);
         }
 
+        /// <summary>
+        /// Remove all entities from the quadtree.
+        /// </summary>
         public void Clear() {
             currentNode = 0;
             root = GetNewNode(nodePool[root].Area);
         }
 
+        /// <summary>
+        /// Draw wireframe of quadtree.
+        /// </summary>
         [Conditional("DEBUG")]
         public void DebugDraw() {
             nodePool[root].DebugDraw();
