@@ -5,7 +5,7 @@ namespace BulletHell {
         private Random rng = new Random();
         private float waveTimer = 0.0f;
         private int wavePoints = 10;
-        private int wave = 0;
+        public int Wave { get; set; } = 0;
         private Boss? boss;
 
         private struct Option {
@@ -43,7 +43,7 @@ namespace BulletHell {
         }
 
         private void SpawnWave() {
-            if (wave >= 10 && wave % 10 == 0) {
+            if (Wave >= 10 && Wave % 10 == 0) {
                 boss = world.SpawnEntity<Boss>();
             } else {
                 int startingPoints = wavePoints;
@@ -76,7 +76,7 @@ namespace BulletHell {
                 wavePoints = (int) MathF.Ceiling(startingPoints * 1.10f) + 10;
             }
 
-            wave++;
+            Wave++;
         }
     }
 }

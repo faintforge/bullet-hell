@@ -57,7 +57,7 @@ namespace BulletHell {
                 proj.Transform.Rot = MathF.Atan2(direction.Y, direction.X) - MathF.PI / 2.0f;
             }
 
-            // XP point interactions
+            // XP/HP point interactions
             foreach (Entity entity in world.SpatialQuery(Transform.Pos, 128.0f)) {
                 if (entity is XpPoint) {
                     XpPoint xp = (XpPoint) entity;

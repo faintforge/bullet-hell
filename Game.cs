@@ -3,14 +3,28 @@ using System.Diagnostics;
 namespace BulletHell {
     public class Game : PlayableScene {
         private UI debugUI = new UI();
+        private WaveSpawner spawner;
 
         public Game(Window window, Renderer renderer) : base(window, renderer) {
-            WaveSpawner spawner = world.SpawnEntity<WaveSpawner>();
+            spawner = world.SpawnEntity<WaveSpawner>();
             spawner.Player = player;
         }
 
         public override void Run(GameState gameState) {
             base.Run(gameState);
+
+            hud.Begin(Input.Instance.MousePosition);
+            Widget container = hud.MakeWidget("container")
+                .FitChildrenHeight()
+                .FixedWidth(window.Size.X)
+                .AlignChildren(WidgetAlignment.Center, WidgetAlignment.Center);
+            container.MakeWidget("padding")
+                .FixedHeight(16.0f);
+            container.MakeWidget($"Wave: {spawner.Wave}")
+                .FitText()
+                .ShowText(AssetManager.Instance.GetFont("lato24"), Color.WHITE);
+            hud.End();
+            hud.Draw(renderer, window.Size);
 
             if (player.Health > 0) {
                 updating = !player.LeveledWithoutUpgrade;
